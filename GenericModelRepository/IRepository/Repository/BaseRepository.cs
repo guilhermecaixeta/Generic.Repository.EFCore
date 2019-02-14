@@ -42,16 +42,13 @@ namespace IRepository
 
         public virtual async Task<E> GetByAsync(Expression<Func<E, bool>> predicate) => await _context.Set<E>().FirstOrDefaultAsync(predicate);
 
-        public virtual async Task<E> CreateAsync()
+        public virtual async Task<E> CreateAsync(E data)
         {
             SetDateInclusion();
-            var item = ReturnE();
-            SetState(EntityState.Added, item);
+            SetState(EntityState.Added, data);
             await _context.SaveChangesAsync();
-            return item;
+            return data;
         }
-
-        private E ReturnE() => (E)Convert.ChangeType(this, typeof(E));
 
         private void SetState(EntityState state, E item) => _context.Entry<E>(item).State = state;
         
@@ -61,10 +58,9 @@ namespace IRepository
             await _context.SaveChangesAsync();
         }
 
-        public virtual async Task UpdateAsync()
+        public virtual async Task UpdateAsync(E data)
         {
-            var item = ReturnE();
-            SetState(EntityState.Modified, item);
+            SetState(EntityState.Modified, data);
             await _context.SaveChangesAsync();
         }
 
