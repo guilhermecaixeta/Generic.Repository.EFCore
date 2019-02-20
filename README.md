@@ -1,4 +1,4 @@
-# GenericModelLayerRepository
+# Generic Repository .Net core 2.2 
 This is a Generic Repository
 
 
