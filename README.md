@@ -22,13 +22,13 @@ Adding an extra layer of abstraction in application.
 This project has building using the best programmation pratices.
 
 Principles used:
-   * Reactive progammation;
-   * SOLID principles.
+* Reactive progammation;
+* SOLID principles.
 
 Add an generic layer of abstraction in application. 
 
 This project is builded in *asp.net core 2.2* and has the dependencies below:
- * Microsoft.EntityFrameworkCore (>= 2.2.1)
+* Microsoft.EntityFrameworkCore (>= 2.2.1)
 
 ## *All methods is Async. This project is focused in repository pattern.*
 
@@ -48,15 +48,17 @@ For implements this package, follow the steps:
   * *Paket CLI* > paket add GenericModelRepository --version 1.0.3
   
   
-- In your repository make this:
+- In your code you make this to use the package:
   
 ```
-public class MyRepo<E, F>: BaseRepository<Entity, Filter>, IBaseRepository<Entity, Filter>
-where E : class
-where F : IBaseFilter
-{
-//if has any code you implements here!!!
-}
+//IBaseRepo
+public interface IMyRepo : IBaseRepository<Entity, Filter> {}
+
+//Implementation
+public class MyRepo: BaseRepository<Entity, Filter>, IMyRepo{}
+
+//On the startup
+services.AddScoped<IMyRepo, MyRepo>();
 
 ///On the Controller
 ...Controller code
@@ -80,27 +82,27 @@ Atention on this
 If you add one this word below the generated lambda will attend this.
 
 List words reserved to lambda methods:
-    * Equal
-    * Contains (only used in string types)
-    * GreaterThan
-    * LessThan
-    * GreaterThanOrEqual
-    * LessThanOrEqual
+* Equal
+* Contains (only used in string types)
+* GreaterThan
+* LessThan
+* GreaterThanOrEqual
+* LessThanOrEqual
 
 To use this words: IdEqual
 
 *Generated lambda: x => x.Id == value;*
 
 List words reserved to merge expressions:
-    * Or
-    * And
+* Or
+* And
 
 To use this words: IdEqualAnd
 
 *Generated lambda: x => x.Id == value && .....;*
 ### If none word reserved is informed on properties the method assumes the follow default values:
-     * word reserved to merge expressions : And
-     * word reserved to lambda methods: Equal
+* word reserved to merge expressions : And
+* word reserved to lambda methods: Equal
 
 
 
