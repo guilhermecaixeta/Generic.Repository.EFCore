@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Generic.Repository.Entity.IFilter;
 using Microsoft.EntityFrameworkCore;
-using Models.BaseEnties.BaseFilter;
 
-namespace IRepository
+namespace Generic.Repository.Base
 {
-    public interface IBaseRepository<E, F, C>
+    public interface IBaseRepository<E, F>
     where E : class
-    where F : BaseFilter
-    where C : DbContext
+    where F : IBaseFilter
     {
         ///<summary>
         /// Return all data

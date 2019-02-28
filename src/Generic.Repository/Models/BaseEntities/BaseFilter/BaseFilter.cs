@@ -1,6 +1,6 @@
-namespace Models.BaseEnties.BaseFilter
+namespace Generic.Repository.Entity.IFilter
 {
-    public abstract class BaseFilter
+    public interface IBaseFilter
     {
 
     }

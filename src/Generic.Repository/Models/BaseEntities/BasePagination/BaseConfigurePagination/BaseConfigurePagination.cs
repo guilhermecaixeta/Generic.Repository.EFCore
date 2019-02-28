@@ -1,4 +1,4 @@
-namespace Models.BaseEnties.Pagination
+namespace Generic.Repository.Base.Pagination
 {
     public class BaseConfigurePagination
     {

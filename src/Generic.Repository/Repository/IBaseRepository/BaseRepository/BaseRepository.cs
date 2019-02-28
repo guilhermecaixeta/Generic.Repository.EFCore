@@ -2,25 +2,25 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Generic.Repository.Entity.IFilter;
 using Microsoft.EntityFrameworkCore;
-using Models.BaseEnties.BaseFilter;
+using Generic.Repository.Extension.Repository;
 
-namespace IRepository
+namespace Generic.Repository.Base
 {
-    public abstract class BaseRepository<E, F, C>
+    public abstract class BaseRepository<E, F>
     where E: class
-    where F: BaseFilter
-    where C: DbContext
+    where F: IBaseFilter
     {
-        protected readonly C _context;
+        protected readonly DbContext _context;
         private readonly string _dataInclusionNameField; 
-        public BaseRepository(C context)
+        public BaseRepository(DbContext context)
         {
             _context = context;
             _dataInclusionNameField = "dateInclusion";
         }
 
-        public BaseRepository(C context, string dataInclusionNameField)
+        public BaseRepository(DbContext context, string dataInclusionNameField)
         {
             _context = context;
             _dataInclusionNameField = dataInclusionNameField;
@@ -37,6 +37,8 @@ namespace IRepository
 
             return GetAll().Where(predicate);
         }
+
+        public IQueryable<E> FilterAll(F filter) => GetAll().Where(filter.GenerateLambda<E, F>());
 
         public virtual async Task<E> GetByIdAsync(long id) => await _context.Set<E>().FindAsync(id);
 
@@ -70,6 +72,5 @@ namespace IRepository
                 this.GetType().GetProperty(_dataInclusionNameField).SetValue(this, DateTime.Now);
         }
 
-        public abstract IQueryable<E> FilterAll(F filter);
     }
 }

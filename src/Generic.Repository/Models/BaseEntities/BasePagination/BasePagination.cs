@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Models.BaseEnties.Pagination
+namespace Generic.Repository.Base.Pagination
 {
     /// <summary>
     /// Pagination Class
