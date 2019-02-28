@@ -51,6 +51,13 @@ For implements this package, follow the steps:
 - In your code you make this to use the package:
   
 ```
+//MyEntity
+public class Entity
+{
+    public string Name { get; set; }
+    public string Email { get; set; }
+}
+
 //IBaseRepo
 public interface IMyRepo : IBaseRepository<Entity, Filter> {}
 
@@ -104,7 +111,25 @@ To use this words: IdEqualAnd
 * word reserved to merge expressions : And
 * word reserved to lambda methods: Equal
 
+To make get filter data
+```
+//My EntityFilter
+public class EntityFilter: IBaseFilter
+{
+    [FromQuery(Name = "Name")]
+    public string NameContainsOr { get; set; }
+    [FromQuery(Name = "Email")]
+    public string EmailEqual { get; set; }
+}
+//lambda generated is like this: (x=> x.Name.Contains(valueName) || x.Email == valueEmail);
 
+//On the Controller
+[HttpGet("Filter")]
+public IEnumerable<Category> GetPage([FromQuery]EntityFilter filter)
+{
+    return _repo.FilterAll(filter).ToListAsync();
+}
+```
 
 To make a Pagination
 ```
@@ -137,6 +162,16 @@ JSON Page format
         }
 ...more code...
 ```
+
+To get paginated and filtred data
+```
+    [HttpGet("Paginate")]
+    public Pagination<Category> GetPage([FromQuery]BaseConfigurePagination config, [FromQuery]EntityFilter filter)
+    {
+        return _repo.FilterAll(filter).PaginateTo(config);
+    }
+```
+
 
 Saving data on database:
 ```
