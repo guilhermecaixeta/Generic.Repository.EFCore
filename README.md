@@ -36,7 +36,7 @@ Like or dislike, tell me and togheter make this project better.
 *Come and be part of this project!*
 
 Link to [this](https://www.nuget.org/packages/GenericModelRepository/1.0.3) package on nuget.org.
-Link to [repository](https://github.com/guilhermecaixeta/GenericModelLayerRepository) 
+Link to [repository](https://github.com/guilhermecaixeta/StoreApi) 
 
 ## *DOCs*
 
