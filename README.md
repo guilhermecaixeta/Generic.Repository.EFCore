@@ -36,7 +36,7 @@ Like or dislike, tell me and togheter make this project better.
 *Come and be part of this project!*
 
 Link to [this](https://www.nuget.org/packages/GenericModelRepository/1.0.3) package on nuget.org.
-Link to [repository](https://github.com/guilhermecaixeta/StoreApi) 
+Link to [repository](https://github.com/guilhermecaixeta/Generic.Repository.DotNetCore2.2) 
 
 ## *DOCs*
 
@@ -217,7 +217,7 @@ public async Task<ActionResult> DeleteAsync(long id)
         }
 ```
 
-[Here](https://github.com/guilhermecaixeta/TodoApi) are the implemented package on project using web api.
+[Here](https://github.com/guilhermecaixeta/StoreApi) are the implemented package on project using web api.
 
 Doubts or recommendations? 
 Send me an e-mail: guilherme.lpcaixeta@gmail.com
