@@ -4,3 +4,7 @@ GenericModelService/bin/
 GenericModelService/obj/
 
 src/Generic\.Service/obj/
+
+src/Generic\.Service/bin/
+
+\.vs/

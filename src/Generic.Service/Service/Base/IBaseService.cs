@@ -1,18 +1,17 @@
+using Generic.Service.Entity.IFilter;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Generic.Service.Entity.IFilter;
-using Microsoft.EntityFrameworkCore;
 
 namespace Generic.Service.Base
 {
-   public interface IBaseService<TValue, TFilter>
-    where TFilter : IBaseFilter
+    public interface IBaseService<TValue, TFilter>
+    where TFilter : IFilter
     where TValue : class
     {
+
         ///<summary>
         /// Return all data
         ///</summary>
@@ -53,6 +52,11 @@ namespace Generic.Service.Base
         /// Commit async transaction if useCommit is true 
         /// </summary>
         /// <returns></returns>
-        Task CommitAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task CommitAsync();
+        /// <summary>
+        /// Commit async transaction if useCommit is true 
+        /// </summary>
+        /// <returns></returns>
+        Task CommitAsync(CancellationToken cancellationToken);
     }
 }
