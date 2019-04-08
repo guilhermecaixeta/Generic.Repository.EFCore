@@ -1,83 +1,107 @@
+using Generic.Service.Entity.IFilter;
+using Generic.Service.Extensions.Filter;
+using Generic.Service.Extensions.Validation;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Generic.Service.Entity.IFilter;
-using Generic.Service.Extensions.Filter;
-using Microsoft.EntityFrameworkCore;
 
 namespace Generic.Service.Base
 {
     ///<summary>
     /// This is a Base Service implementation which any entity or Service should be have.
-    /// TValue - Entity Type, F inheritance of IBaseFilter or IBaseFilter
+    /// TValue - Entity Type, F inheritance of IFilter or IFilter
     ///</summary>
     public abstract class BaseService<TValue, TFilter> : IBaseService<TValue, TFilter>
         where TValue : class
-    where TFilter : class, IBaseFilter {
+    where TFilter : class, IFilter
+    {
         protected readonly DbContext _context;
         private readonly string _includeDateNameField;
         private readonly bool _useCommit;
 
-        public BaseService (DbContext context) {
+        public BaseService(DbContext context)
+        {
             _context = context;
             _useCommit = false;
             _includeDateNameField = "dateInclusion";
 
         }
 
-        public BaseService (DbContext context, bool useCommit) {
+        public BaseService(DbContext context, bool useCommit)
+        {
             _includeDateNameField = "dateInclusion";
             _useCommit = useCommit;
             _context = context;
         }
 
-        public BaseService (DbContext context, string includeDateNameField) {
+        public BaseService(DbContext context, string includeDateNameField)
+        {
             _includeDateNameField = includeDateNameField ??
-                throw new ArgumentNullException (nameof (includeDateNameField));
+                throw new ArgumentNullException(nameof(includeDateNameField));
             _useCommit = false;
             _context = context;
         }
 
-        public BaseService (DbContext context, string includeDateNameField, bool useCommit) {
+        public BaseService(DbContext context, string includeDateNameField, bool useCommit)
+        {
             _includeDateNameField = includeDateNameField ??
-                throw new ArgumentNullException (nameof (includeDateNameField));
+                throw new ArgumentNullException(nameof(includeDateNameField));
             _useCommit = useCommit;
             _context = context;
         }
 
-        public virtual IQueryable<TValue> GetAll (bool EnableAsNoTracking) => EnableAsNoTracking ? _context.Set<TValue> ().AsNoTracking () : _context.Set<TValue> ();
+        public virtual IQueryable<TValue> GetAll(bool EnableAsNoTracking) => EnableAsNoTracking ? _context.Set<TValue>().AsNoTracking() : _context.Set<TValue>();
 
-        public virtual IQueryable<TValue> GetAllBy (Expression<Func<TValue, bool>> predicate, bool EnableAsNoTracking) => predicate != null ?
-            GetAll (EnableAsNoTracking).Where (predicate) : GetAll (EnableAsNoTracking);
+        public virtual IQueryable<TValue> GetAllBy(Expression<Func<TValue, bool>> predicate, bool EnableAsNoTracking) => predicate != null ?
+            GetAll(EnableAsNoTracking) : GetAll(EnableAsNoTracking);
 
-        public virtual IQueryable<TValue> FilterAll (TFilter filter, bool EnableAsNoTracking) => GetAllBy (filter.GenerateLambda<TValue, TFilter> (), EnableAsNoTracking);
+        public virtual IQueryable<TValue> FilterAll(TFilter filter, bool EnableAsNoTracking)
+        {
+            var predicate = filter.GenerateLambda<TValue, TFilter>();
+            return predicate == null ? GetAll(EnableAsNoTracking) : GetAllBy(predicate, EnableAsNoTracking);
+        }
 
-        public virtual async Task<TValue> GetByAsync (Expression<Func<TValue, bool>> predicate, bool EnableAsNoTracking) => EnableAsNoTracking? await _context.Set<TValue> ().AsNoTracking ().SingleOrDefaultAsync (predicate) : await _context.Set<TValue> ().SingleOrDefaultAsync (predicate);
+        public virtual async Task<TValue> GetByAsync(Expression<Func<TValue, bool>> predicate, bool EnableAsNoTracking) => !predicate.IsNull(nameof(GetByAsync), nameof(predicate)) &&
+        EnableAsNoTracking ? await _context.Set<TValue>().AsNoTracking().SingleOrDefaultAsync(predicate) : await _context.Set<TValue>().SingleOrDefaultAsync(predicate);
 
-        public virtual async Task<TValue> CreateAsync (TValue entity) {
-            SetState (EntityState.Added, entity);
+        public virtual async Task<TValue> CreateAsync(TValue entity)
+        {
+            entity.IsNull(nameof(CreateAsync), nameof(entity));
+            SetState(EntityState.Added, entity);
             if (!_useCommit)
-                await CommitAsync ();
+            {
+                await CommitAsync();
+            }
             return entity;
         }
 
-        public virtual async Task UpdateAsync (TValue entity) {
-            SetState (EntityState.Modified, entity);
+        public virtual async Task UpdateAsync(TValue entity)
+        {
+            entity.IsNull(nameof(UpdateAsync), nameof(entity));
+            SetState(EntityState.Modified, entity);
             if (!_useCommit)
-                await CommitAsync ();
+            {
+                await CommitAsync();
+            }
         }
 
-        public virtual async Task DeleteAsync (TValue entity) {
-            _context.Remove (entity);
+        public virtual async Task DeleteAsync(TValue entity)
+        {
+            entity.IsNull(nameof(DeleteAsync), nameof(entity));
+            _context.Remove(entity);
             if (!_useCommit)
-                await CommitAsync ();
+            {
+                await CommitAsync();
+            }
         }
 
-        private void SetState (EntityState state, TValue item) => _context.Entry<TValue> (item).State = state;
+        private void SetState(EntityState state, TValue item) => _context.Entry(item).State = state;
 
-        public Task CommitAsync (CancellationToken cancellationToken = default (CancellationToken)) => _context.SaveChangesAsync (cancellationToken);
+        public Task CommitAsync() => CommitAsync(default(CancellationToken));
 
+        public Task CommitAsync(CancellationToken cancellationToken) => _context.SaveChangesAsync(cancellationToken);
     }
 }

@@ -1,6 +1,6 @@
 namespace Generic.Service.Entity.IFilter
 {
-    public interface IBaseFilter
+    public interface IFilter
     {
 
     }
