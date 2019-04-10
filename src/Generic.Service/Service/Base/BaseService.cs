@@ -72,7 +72,7 @@ namespace Generic.Service.Base
             SetState(EntityState.Added, entity);
             if (!_useCommit)
             {
-                await CommitAsync();
+                await CommitAsync().ConfigureAwait(false);
             }
             return entity;
         }
@@ -83,7 +83,7 @@ namespace Generic.Service.Base
             SetState(EntityState.Modified, entity);
             if (!_useCommit)
             {
-                await CommitAsync();
+                await CommitAsync().ConfigureAwait(false);
             }
         }
 
@@ -93,7 +93,7 @@ namespace Generic.Service.Base
             _context.Remove(entity);
             if (!_useCommit)
             {
-                await CommitAsync();
+                await CommitAsync().ConfigureAwait(false);
             }
         }
 

@@ -8,7 +8,7 @@ namespace Generic.Service.Extensions.Commom
 {
     public static class Commom
     {
-        internal static bool isExecuted { get; set; } = false;
+        internal static bool isExecuted { get; set; }
         internal static int TotalTypesInAssemblyModel { get; set; }
         public static Dictionary<string, Dictionary<string, Func<object, object>>> CacheGet { get; private set; }
         public static Dictionary<string, Dictionary<string, Action<object, object>>> CacheSet { get; private set; }
@@ -99,11 +99,12 @@ namespace Generic.Service.Extensions.Commom
                 {
                     CacheAttribute.Add(typeName, new Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>(totalProperties));
                     foreach (var property in properties)
+                    {
                         SaveOnCacheAttrIfNonExist(property, typeName);
+                    }
                 }
             }
         }
-
         private static void SaveOnCacheAttrIfNonExist(PropertyInfo propertyInfo, string typeName)
         {
             string propetyName = propertyInfo.Name;
