@@ -1,8 +1,9 @@
+using System;
 using System.Collections.Generic;
 
 namespace Generic.Service.Models.BaseModel.Page
 {
-    public interface IPage<TReturn>
+    public interface IPage<TReturn> : IEquatable<TReturn>
      where TReturn : class
     {
         List<TReturn> Content { get; }

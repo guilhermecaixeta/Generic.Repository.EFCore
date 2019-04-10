@@ -24,7 +24,7 @@ namespace Generic.Service.Models.BaseModel.Page
         #endregion
 
         #region Ctor
-        public AbstractPage(IQueryable<TValue> listEntities, Func<IEnumerable<TValue>, IEnumerable<TResult>> mapperTo, IPageConfiguration config, bool pageStartInOne, string defaultSort, string defaultOrder, int defaultSize)
+        protected AbstractPage(IQueryable<TValue> listEntities, Func<IEnumerable<TValue>, IEnumerable<TResult>> mapperTo, IPageConfiguration config, bool pageStartInOne, string defaultSort, string defaultOrder, int defaultSize)
         {
             _mapperTo = mapperTo;
             _count = listEntities.Count();
@@ -42,6 +42,11 @@ namespace Generic.Service.Models.BaseModel.Page
         {
             if (count < 1 || config == null)
                 throw new ArgumentNullException($"ERROR> NameClass: {nameof(ValidateCtor)}. {Environment.NewLine}Message: The {(config != null ? nameof(listEntities) : nameof(config))} is empty!");
+        }
+
+        public bool Equals(TResult other)
+        {
+            return other == this;
         }
 
         public virtual List<TResult> Content
