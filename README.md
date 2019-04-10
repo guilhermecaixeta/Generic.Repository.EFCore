@@ -1,4 +1,7 @@
 # Generic Service .Net core 2.2 
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a00c4c47d9384986afd9440598eae17a)](https://app.codacy.com/app/guilhermecaixeta/Generic.Service.DotNetCore2.2?utm_source=github.com&utm_medium=referral&utm_content=guilhermecaixeta/Generic.Service.DotNetCore2.2&utm_campaign=Badge_Grade_Dashboard)
+
 This is a Generic Service
 
 ## This version is final.
