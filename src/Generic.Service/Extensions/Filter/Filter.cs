@@ -58,7 +58,7 @@ namespace Generic.Service.Extensions.Filter
                                     methodOption = (LambdaMethod)attribute.Value;
                                     lambda = methodOption.SetExpressionType(param, property, propertyValueTFilter);
                                 }
-                                lambda.IsNull($"ClassName: {nameof(GenerateLambda)} {Environment.NewLine}Message: Predicate is null. Please verify parameters.");
+                                lambda.IsNull(nameof(GenerateLambda), nameof(lambda));
                                 predicate = predicate == null ? lambda.MergeExpressions<TValue>(param) :
                                     predicate.MergeExpressions(mergeOption, param, lambda.MergeExpressions<TValue>(param));
                                 if (attributes.TryGetValue("MergeOption", out attribute))
@@ -74,7 +74,6 @@ namespace Generic.Service.Extensions.Filter
                     }
                 }
             });
-            //return predicate != null ? predicate.Compile() : null;
             return predicate;
         }
 
@@ -91,8 +90,6 @@ namespace Generic.Service.Extensions.Filter
             Expression lambda = null;
             switch (type)
             {
-                case LambdaMethod.Equals:
-                    return Expression.Equal(Expression.Property(parameter, prop), Expression.Constant(value));
                 case LambdaMethod.Contains:
                     if (prop.PropertyType != typeof(string))
                     {

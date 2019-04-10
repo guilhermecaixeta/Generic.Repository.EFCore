@@ -22,7 +22,7 @@ namespace Generic.Service.Base
         private readonly string _includeDateNameField;
         private readonly bool _useCommit;
 
-        public BaseService(DbContext context)
+        protected BaseService(DbContext context)
         {
             _context = context;
             _useCommit = false;
@@ -30,14 +30,14 @@ namespace Generic.Service.Base
 
         }
 
-        public BaseService(DbContext context, bool useCommit)
+        protected BaseService(DbContext context, bool useCommit)
         {
             _includeDateNameField = "dateInclusion";
             _useCommit = useCommit;
             _context = context;
         }
 
-        public BaseService(DbContext context, string includeDateNameField)
+        protected BaseService(DbContext context, string includeDateNameField)
         {
             _includeDateNameField = includeDateNameField ??
                 throw new ArgumentNullException(nameof(includeDateNameField));
@@ -45,10 +45,9 @@ namespace Generic.Service.Base
             _context = context;
         }
 
-        public BaseService(DbContext context, string includeDateNameField, bool useCommit)
+        protected BaseService(DbContext context, string includeDateNameField, bool useCommit)
         {
-            _includeDateNameField = includeDateNameField ??
-                throw new ArgumentNullException(nameof(includeDateNameField));
+            _includeDateNameField.IsNull(nameof(BaseService<TValue, TFilter>), nameof(_includeDateNameField));
             _useCommit = useCommit;
             _context = context;
         }
