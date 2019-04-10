@@ -8,3 +8,5 @@ src/Generic\.Service/obj/
 src/Generic\.Service/bin/
 
 \.vs/
+
+\.vscode/
