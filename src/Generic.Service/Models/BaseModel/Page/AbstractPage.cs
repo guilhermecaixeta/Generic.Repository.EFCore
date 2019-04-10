@@ -11,14 +11,7 @@ namespace Generic.Service.Models.BaseModel.Page
     where TResult : class
     {
         #region Default Parameters
-        protected Func<IEnumerable<TValue>, IEnumerable<TResult>> _mapperTo
-        {
-            get
-            {
-                return _mapperTo ?? throw new ArgumentNullException($"ERROR> NameClass: {nameof(AbstractPage<TValue, TResult>)}. {Environment.NewLine}Message: The {nameof(_mapperTo)} is empty!");
-            }
-            set { _mapperTo = value; }
-        }
+        protected readonly Func<IEnumerable<TValue>, IEnumerable<TResult>> _mapperTo;
         protected readonly bool _pageStatsInOne;
         protected readonly string _defaultSort;
         protected readonly string _defaultOrder;
@@ -49,6 +42,7 @@ namespace Generic.Service.Models.BaseModel.Page
         {
             if (count < 1 || config == null)
             {
+                throw new ArgumentNullException($"ERROR> NameClass: {nameof(ValidateCtor)} {Environment.NewLine}Message: The {(config is null ? nameof(listEntities) : nameof(config))} is empty!");
             }
         }
         public bool Equals(TResult other)

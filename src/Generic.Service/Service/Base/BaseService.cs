@@ -93,7 +93,7 @@ namespace Generic.Service.Base
             _context.Remove(entity);
             if (!_useCommit)
             {
-                await CommitAsync();
+                await CommitAsync().ConfigureAwait(false);
             }
         }
 
