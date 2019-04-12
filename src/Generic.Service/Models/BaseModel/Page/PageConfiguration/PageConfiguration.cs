@@ -1,4 +1,5 @@
 using System;
+using Generic.Service.Extensions.Validation;
 
 namespace Generic.Service.Models.BaseModel.Page.PageConfiguration
 {
@@ -11,6 +12,7 @@ namespace Generic.Service.Models.BaseModel.Page.PageConfiguration
 
         public bool Equals(PageConfiguration other)
         {
+            other.IsNull(nameof(Equals),nameof(other));
             return other.Equals(this);
         }
     }

@@ -1,4 +1,5 @@
 using Generic.Service.Extensions.Commom;
+using Generic.Service.Extensions.Validation;
 using Generic.Service.Models.BaseModel.Page.PageConfiguration;
 using System;
 using System.Collections.Generic;
@@ -40,13 +41,15 @@ namespace Generic.Service.Models.BaseModel.Page
 
         private void ValidateCtor(int count, IQueryable<TValue> listEntities, IPageConfiguration config)
         {
-            if (count < 1 || config == null)
+            config.IsNull(nameof(ValidateCtor), nameof(config));
+            if (count < 1)
             {
-                throw new ArgumentNullException($"ERROR> NameClass: {nameof(ValidateCtor)} {Environment.NewLine}Message: The {(config is null ? nameof(listEntities) : nameof(config))} is empty!");
+                throw new ArgumentNullException($"ERROR> ClassName: {nameof(ValidateCtor)} {Environment.NewLine}Message: The {nameof(listEntities)} is empty!");
             }
         }
         public bool Equals(TResult other)
         {
+            other.IsNull(nameof(Equals),nameof(other));
             return other == this;
         }
 
