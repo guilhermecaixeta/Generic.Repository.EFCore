@@ -39,12 +39,12 @@ namespace Generic.Service.Models.BaseModel.Page
         }
         #endregion
 
-        private void ValidateCtor(int count, IQueryable<TValue> listEntities, IPageConfiguration config)
+        private static void ValidateCtor(int count, IQueryable<TValue> listEntities, IPageConfiguration config)
         {
             config.IsNull(nameof(ValidateCtor), nameof(config));
             if (count < 1)
             {
-                throw new ArgumentNullException($"ERROR> ClassName: {nameof(ValidateCtor)} {Environment.NewLine}Message: The {nameof(listEntities)} is empty!");
+                ValidateObject.HandleNullError($"ClassName: {nameof(ValidateCtor)} {Environment.NewLine}Message: The {nameof(listEntities)} is empty!");
             }
         }
         public bool Equals(TResult other)

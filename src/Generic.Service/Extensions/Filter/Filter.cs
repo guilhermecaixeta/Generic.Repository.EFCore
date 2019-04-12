@@ -58,16 +58,17 @@ namespace Generic.Service.Extensions.Filter
                                     methodOption = (LambdaMethod)attribute.Value;
                                     lambda = methodOption.SetExpressionType(param, property, propertyValueTFilter);
                                 }
-                                lambda.IsNull(nameof(GenerateLambda), nameof(lambda));
-                                predicate = predicate == null ? lambda.MergeExpressions<TValue>(param) :
-                                    predicate.MergeExpressions(mergeOption, param, lambda.MergeExpressions<TValue>(param));
-                                if (attributes.TryGetValue("MergeOption", out attribute))
-                                {
-                                    mergeOption = (LambdaMerge)attribute.Value;
-                                }
-                                else
-                                {
-                                    mergeOption = LambdaMerge.And;
+                                if(!lambda.IsNull(nameof(GenerateLambda), nameof(lambda))){
+                                    predicate = predicate == null ? lambda.MergeExpressions<TValue>(param) :
+                                        predicate.MergeExpressions(mergeOption, param, lambda.MergeExpressions<TValue>(param));
+                                    if (attributes.TryGetValue("MergeOption", out attribute))
+                                    {
+                                        mergeOption = (LambdaMerge)attribute.Value;
+                                    }
+                                    else
+                                    {
+                                        mergeOption = LambdaMerge.And;
+                                    }
                                 }
                             }
                         }
