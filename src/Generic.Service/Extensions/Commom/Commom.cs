@@ -71,10 +71,7 @@ namespace Generic.Service.Extensions.Commom
         public static void SaveOnCacheIfNonExists<TValue>(bool saveAttribute, bool saveGet, bool saveSet, bool saveProperties)
         where TValue : class
         {
-            if (!isExecuted)
-            {
-                throw new OperationCanceledException($"Method {nameof(SetSizeByLengthProperties)} is not instantiate. Please invoke this method on Startup!");
-            }
+            isExecuted.OperationIsValid($"Method {nameof(SetSizeByLengthProperties)} is not instantiate. Please invoke this method on Startup!");
             string typeName = typeof(TValue).Name;
             PropertyInfo[] properties = null;
 

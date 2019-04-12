@@ -91,33 +91,31 @@ namespace Generic.Service.Extensions.Filter
             switch (type)
             {
                 case LambdaMethod.Contains:
-                    if (prop.PropertyType != typeof(string))
-                    {
-                        throw new NotSupportedException($"ERROR> ClassName: {nameof(SetExpressionType)} {Environment.NewLine}Message: {prop.Name} type is not string. This method only can be used by string type parameter.");
-                    }
+                    if (prop.PropertyType.IsString(nameof(SetExpressionType),prop.Name)){
                     MethodInfo method = typeof(string).GetMethod(LambdaMethod.Contains.ToString(), new[] { typeof(string) });
                     lambda = Expression.Call(Expression.Property(parameter, prop), method, Expression.Constant(value));
+                    }
                     break;
                 case LambdaMethod.GreaterThan:
-                    if (prop.IsNotString(LambdaMethod.GreaterThan.ToString()))
+                    if (prop.GetType().IsNotString(nameof(SetExpressionType),prop.Name, LambdaMethod.GreaterThan.ToString()))
                     {
                         lambda = Expression.GreaterThan(Expression.Property(parameter, prop), Expression.Constant(value));
                     }
                     break;
                 case LambdaMethod.LessThan:
-                    if (prop.IsNotString(LambdaMethod.LessThan.ToString()))
+                    if (prop.GetType().IsNotString(nameof(SetExpressionType),prop.Name,LambdaMethod.LessThan.ToString()))
                     {
                         lambda = Expression.LessThan(Expression.Property(parameter, prop), Expression.Constant(value));
                     }
                     break;
                 case LambdaMethod.GreaterThanOrEqual:
-                    if (prop.IsNotString(LambdaMethod.GreaterThanOrEqual.ToString()))
+                    if (prop.GetType().IsNotString(nameof(SetExpressionType),prop.Name,LambdaMethod.GreaterThanOrEqual.ToString()))
                     {
                         lambda = Expression.GreaterThanOrEqual(Expression.Property(parameter, prop), Expression.Constant(value));
                     }
                     break;
                 case LambdaMethod.LessThanOrEqual:
-                    if (prop.IsNotString(LambdaMethod.GreaterThanOrEqual.ToString()))
+                    if (prop.GetType().IsNotString(nameof(SetExpressionType),prop.Name,LambdaMethod.GreaterThanOrEqual.ToString()))
                     {
                         lambda = Expression.LessThanOrEqual(Expression.Property(parameter, prop), Expression.Constant(value));
                     }
@@ -127,22 +125,7 @@ namespace Generic.Service.Extensions.Filter
             return lambda;
         }
 
-        /// <summary>
-        /// Validation data
-        /// </summary>
-        /// <param name="prop">Property to validate</param>
-        /// <param name="typeMethod">Name of method will be used</param>
-        /// <returns>Return a bool</returns>
-        private static bool IsNotString(this PropertyInfo prop, string typeMethod)
-        {
-            if (prop.PropertyType == typeof(string))
-            {
-                throw new NotSupportedException($"ERROR> ClassName: {nameof(SetExpressionType)} {Environment.NewLine}Message: {prop.Name} type is string. {typeMethod} method doesn't support this type. Please inform Contains or Equal.");
-            }
-            return true;
-        }
-
-        private static Expression<Func<TValue, bool>> MergeExpressions<TValue>(this Expression lambda, ParameterExpression parameter)
+       private static Expression<Func<TValue, bool>> MergeExpressions<TValue>(this Expression lambda, ParameterExpression parameter)
         where TValue : class => Expression.Lambda<Func<TValue, bool>>(lambda, parameter);
 
         private static Expression<Func<TValue, bool>> MergeExpressions<TValue>(this Expression<Func<TValue, bool>> predicate, LambdaMerge typeMerge, ParameterExpression parameter, Expression<Func<TValue, bool>> predicateMerge)
