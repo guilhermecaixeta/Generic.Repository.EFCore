@@ -57,6 +57,7 @@ namespace Generic.Service.Models.BaseModel.Page
         {
             get
             {
+                _mapperTo.IsNull(nameof(AbstractPage<TValue, TResult>), nameof(_mapperTo));
                 IQueryable<TValue> queryableE = Sort == "ASC" ? _listEntities.OrderBy(x => Commom.CacheGet[typeof(TValue).Name][Order](x)) :
                     _listEntities.OrderByDescending(x => Commom.CacheGet[typeof(TValue).Name][Order](x));
                 queryableE = queryableE.Skip(NumberPage * Size).Take(Size);

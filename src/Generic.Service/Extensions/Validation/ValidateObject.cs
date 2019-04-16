@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Generic.Service.Extensions.Validation
 {
@@ -11,9 +9,6 @@ namespace Generic.Service.Extensions.Validation
 
         public static bool IsNull(this object value, string Message)=> value.ValidateNullableOfObject()? 
         throw new ArgumentNullException($"ERROR> {Message}"):false;
-
-        public static bool ListIsEmpty<TValue>(this IEnumerable<TValue> list, string ClassName, string nameObject) => !list.IsNull(ClassName, nameObject) && list.Any()? 
-        true : throw new ArgumentNullException($"ERROR> ClassName: {ClassName} {Environment.NewLine} Message: {nameObject} is empty.");
 
         /// <summary>
         /// Validate if data type is not string
@@ -33,7 +28,7 @@ namespace Generic.Service.Extensions.Validation
 
         public static bool OperationIsValid(this bool isValid, string message) => !isValid? throw new OperationCanceledException($"ERROR> {message}") : true;      
     
-        private static bool ValidateNullableOfObject(this object value) => isValidType(value.GetType(), typeof(string)) && string.IsNullOrEmpty(value.ToString()) || value == null;
+        private static bool ValidateNullableOfObject(this object value) => isValidType(value.GetType(), typeof(string)) && string.IsNullOrEmpty(value as string) || value == null;
         
         private static bool isValidType(Type typeObject, Type typeComparison) => typeObject == typeComparison;
     }

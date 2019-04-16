@@ -69,20 +69,6 @@ namespace Generic.Service.Base
         EnableAsNoTracking ? await _context.Set<TValue>().AsNoTracking().SingleOrDefaultAsync(predicate) : await _context.Set<TValue>().SingleOrDefaultAsync(predicate);
 #endregion
 
-#region COMMAND - (CREAT, UPDATE, DELETE) Without CancellationToken
-        public virtual async Task<TValue> CreateAsync(TValue entity)=> await CreateAsync(entity, default(CancellationToken));
-
-        public virtual async Task CreateAsync(IEnumerable<TValue> entityList) => await CreateAsync(entityList, default(CancellationToken));
-
-        public virtual async Task UpdateAsync(TValue entity)=> await UpdateAsync(entity, default(CancellationToken));
-
-        public virtual async Task UpdateAsync(IEnumerable<TValue> entityList)=> await UpdateAsync(entityList, default(CancellationToken));
-
-        public virtual async Task DeleteAsync(TValue entity)=> await DeleteAsync(entity, default(CancellationToken));
-
-        public virtual async Task DeleteAsync(IEnumerable<TValue> entityList)=> await DeleteAsync(entityList, default(CancellationToken));
-#endregion
-
 #region COMMAND - (CREAT, UPDATE, DELETE) With CancellationToken
         public virtual async Task<TValue> CreateAsync(TValue entity, CancellationToken token)
         {
@@ -144,6 +130,20 @@ namespace Generic.Service.Base
                 await CommitAsync(token).ConfigureAwait(false);
             }
         }
+#endregion
+
+#region COMMAND - (CREAT, UPDATE, DELETE) Without CancellationToken
+        public virtual async Task<TValue> CreateAsync(TValue entity)=> await CreateAsync(entity, default(CancellationToken));
+
+        public virtual async Task CreateAsync(IEnumerable<TValue> entityList) => await CreateAsync(entityList, default(CancellationToken));
+
+        public virtual async Task UpdateAsync(TValue entity)=> await UpdateAsync(entity, default(CancellationToken));
+
+        public virtual async Task UpdateAsync(IEnumerable<TValue> entityList)=> await UpdateAsync(entityList, default(CancellationToken));
+
+        public virtual async Task DeleteAsync(TValue entity)=> await DeleteAsync(entity, default(CancellationToken));
+
+        public virtual async Task DeleteAsync(IEnumerable<TValue> entityList)=> await DeleteAsync(entityList, default(CancellationToken));
 #endregion
 
 #region Commit
