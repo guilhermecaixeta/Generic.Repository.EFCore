@@ -29,7 +29,7 @@ namespace Generic.Service.Models.BaseModel.Page
         {
             _mapperTo = mapperTo;
             _count = listEntities.Count();
-            ValidateCtor(_count, listEntities, config);
+            ValidateCtor(_count, config);
             _config = config;
             _listEntities = listEntities;
             _pageStatsInOne = pageStartInOne;
@@ -39,12 +39,12 @@ namespace Generic.Service.Models.BaseModel.Page
         }
         #endregion
 
-        private void ValidateCtor(int count, IQueryable<TValue> listEntities, IPageConfiguration config)
+        private void ValidateCtor(int count, IPageConfiguration config)
         {
             config.IsNull(nameof(ValidateCtor), nameof(config));
             if (count < 1)
             {
-                throw new ArgumentNullException($"ERROR> ClassName: {nameof(ValidateCtor)} {Environment.NewLine}Message: The {nameof(listEntities)} is empty!");
+                throw new ArgumentNullException($"ERROR> ClassName: {nameof(ValidateCtor)} {Environment.NewLine}Message: The listEntities is empty!");
             }
         }
         public bool Equals(TResult other)
