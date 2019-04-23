@@ -1,5 +1,5 @@
-# Generic Service .Net core 2.2 
-This is a Generic Service
+# Generic.Repository.EFCore
+This is a Generic Repository Async make using EFCore 2.2.4
 
 Code Quality - Master
 
@@ -18,8 +18,8 @@ Principles used:
 
 Add an generic layer of abstraction in application. 
 
-This project is builded in *asp.net core 2.2* and has the dependencies below:
-* Microsoft.EntityFrameworkCore (>= 2.2.1)
+This project is builded in *asp.net standard* and has the dependencies below:
+* Microsoft.EntityFrameworkCore (>= 2.2.4)
 
  ### V.1.0.0
  An new project has born..
