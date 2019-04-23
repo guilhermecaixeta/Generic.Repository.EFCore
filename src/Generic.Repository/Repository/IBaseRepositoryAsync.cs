@@ -11,22 +11,26 @@ namespace Generic.Repository.Repository
     where TValue : class
     where TFilter : IFilter
     {
+        #region ATTR
+        IEnumerable<string> includesString { get; set; }
+        IEnumerable<Expression<Func<TValue, object>>> includesExp { get; set; }
+        #endregion
 
         #region Query
         ///<summary>
         /// Return all data
         ///</summary>
-        Task<IReadOnlyList<TValue>> GetAll(bool EnableAsNoTracking);
+        Task<IReadOnlyList<TValue>> GetAllAsync(bool EnableAsNoTracking);
         ///<summary>
         /// Return all data filtred
         ///</summary>
         ///<param name="filter">Filter to apply</param>
-        Task<IReadOnlyList<TValue>> FilterAll(TFilter filter, bool EnableAsNoTracking);
+        Task<IReadOnlyList<TValue>> FilterAllAsync(TFilter filter, bool EnableAsNoTracking);
         ///<summary>
         /// Return all data with pass on the predicate
         ///</summary>
         ///<param name="predicate">Condition to apply on data</param>
-        Task<IReadOnlyList<TValue>> GetAllBy(Expression<Func<TValue, bool>> predicate, bool EnableAsNoTracking);
+        Task<IReadOnlyList<TValue>> GetAllByAsync(Expression<Func<TValue, bool>> predicate, bool EnableAsNoTracking);
         /// <summary>
         /// Return first data from a informed predicate
         /// </summary>
