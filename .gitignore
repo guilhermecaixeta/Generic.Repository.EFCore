@@ -1,12 +1,4 @@
 
-GenericModelService/bin/
-
-GenericModelService/obj/
-
-src/Generic\.Service/obj/
-
-src/Generic\.Service/bin/
-
-\.vs/
-
 \.vscode/
+
+src/Generic\.Repository/obj/
