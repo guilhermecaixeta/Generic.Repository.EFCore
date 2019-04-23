@@ -17,7 +17,6 @@ namespace Generic.Repository.Repository
     {
         #region Attr
         protected readonly DbContext _context;
-        private readonly string _nameField;
         private readonly bool _useCommit;
         #endregion
 
@@ -33,19 +32,6 @@ namespace Generic.Repository.Repository
             _context = context;
         }
 
-        protected BaseRepositoryAsync(DbContext context, string includeDateNameField)
-        {
-            _nameField.IsNull(nameof(BaseRepositoryAsync<TValue, TFilter>), nameof(_nameField));
-            _useCommit = false;
-            _context = context;
-        }
-
-        protected BaseRepositoryAsync(DbContext context, string includeDateNameField, bool useCommit)
-        {
-            _nameField.IsNull(nameof(BaseRepositoryAsync<TValue, TFilter>), nameof(_nameField));
-            _useCommit = useCommit;
-            _context = context;
-        }
         #endregion
 
         #region QUERY
