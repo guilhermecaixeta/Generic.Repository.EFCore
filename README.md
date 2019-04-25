@@ -35,7 +35,7 @@ This project is builded in *asp.net standard* and has the dependencies below:
         {
            //You can pass empty parameter on here!!! EX: Commom.SetSizeByLengthProperties("", "");
          Commom.SetSizeByLengthProperties("AssemblyName", "Namespace of Entity; Namespace of Filters");
-         Commom.SaveOnCacheIfNonExists<NameEntity>();
+         Commom.SaveOnCacheIfNonExists<TypeEntity>();
          ... rest your code...
  ```
  ### Step 2
