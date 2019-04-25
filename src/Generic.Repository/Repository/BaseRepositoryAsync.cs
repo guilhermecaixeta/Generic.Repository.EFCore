@@ -44,8 +44,7 @@ namespace Generic.Repository.Repository
 
         public virtual async Task<IReadOnlyList<TValue>> FilterAllAsync(TFilter filter, bool EnableAsNoTracking) => await GetAllByAsync(filter.GenerateLambda<TValue, TFilter>(), EnableAsNoTracking);
 
-        public virtual async Task<TValue> GetByAsync(Expression<Func<TValue, bool>> predicate, bool EnableAsNoTracking) => !predicate.IsNull(nameof(GetByAsync), nameof(predicate)) &&
-        EnableAsNoTracking ? await _context.Set<TValue>().AsNoTracking().SingleOrDefaultAsync(predicate) : await _context.Set<TValue>().SingleOrDefaultAsync(predicate);
+        public virtual async Task<TValue> GetByAsync(Expression<Func<TValue, bool>> predicate, bool EnableAsNoTracking) => !predicate.IsNull(nameof(GetByAsync), nameof(predicate))? await GetAllQueryable(EnableAsNoTracking).SingleOrDefaultAsync(predicate) : null;
 
         #endregion
 
