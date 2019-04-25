@@ -44,8 +44,7 @@ namespace Generic.Repository.Repository
 
         public virtual async Task<IReadOnlyList<TValue>> FilterAllAsync(TFilter filter, bool EnableAsNoTracking) => await GetAllByAsync(filter.GenerateLambda<TValue, TFilter>(), EnableAsNoTracking);
 
-        public virtual async Task<TValue> GetByAsync(Expression<Func<TValue, bool>> predicate, bool EnableAsNoTracking) => !predicate.IsNull(nameof(GetByAsync), nameof(predicate)) &&
-        EnableAsNoTracking ? await _context.Set<TValue>().AsNoTracking().SingleOrDefaultAsync(predicate) : await _context.Set<TValue>().SingleOrDefaultAsync(predicate);
+        public virtual async Task<TValue> GetByAsync(Expression<Func<TValue, bool>> predicate, bool EnableAsNoTracking) => !predicate.IsNull(nameof(GetByAsync), nameof(predicate))? await GetAllQueryable(EnableAsNoTracking).SingleOrDefaultAsync(predicate) : null;
 
         #endregion
 
@@ -137,7 +136,15 @@ namespace Generic.Repository.Repository
                 includesString.Aggregate(query, (current, include) => current.Include(include)) : includesExp.Any() ?
                 includesExp.Aggregate(query, (current, include) => current.Include(include)) : query;
 
-        private IQueryable<TValue> GetAllQueryable(bool EnableAsNoTracking) => EnableAsNoTracking ? SetIncludes(_context.Set<TValue>().AsNoTracking()) : SetIncludes(_context.Set<TValue>());
+        private IQueryable<TValue> GetAllQueryable(bool EnableAsNoTracking)
+        {
+            var query = SetIncludes(_context.Set<TValue>());
+            if (EnableAsNoTracking)
+            {
+                query = query.AsNoTracking();
+            }
+            return query;
+        }
 
         private void SetState(EntityState state, TValue item) => _context.Attach(item).State = state;
         #endregion
