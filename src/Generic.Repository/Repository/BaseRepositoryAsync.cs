@@ -137,7 +137,15 @@ namespace Generic.Repository.Repository
                 includesString.Aggregate(query, (current, include) => current.Include(include)) : includesExp.Any() ?
                 includesExp.Aggregate(query, (current, include) => current.Include(include)) : query;
 
-        private IQueryable<TValue> GetAllQueryable(bool EnableAsNoTracking) => EnableAsNoTracking ? SetIncludes(_context.Set<TValue>().AsNoTracking()) : SetIncludes(_context.Set<TValue>());
+        private IQueryable<TValue> GetAllQueryable(bool EnableAsNoTracking)
+        {
+            var query = SetIncludes(_context.Set<TValue>());
+            if (EnableAsNoTracking)
+            {
+                query = query.AsNoTracking();
+            }
+            return query;
+        }
 
         private void SetState(EntityState state, TValue item) => _context.Attach(item).State = state;
         #endregion
