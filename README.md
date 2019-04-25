@@ -30,14 +30,14 @@ This project is builded in *asp.net standard* and has the dependencies below:
  ### Step 1
  On startup project yor will add this
 
- ´´´
+ ```
   public void ConfigureServices(IServiceCollection services)
         {
            //You can pass empty parameter on here!!! EX: Commom.SetSizeByLengthProperties("", "");
          Commom.SetSizeByLengthProperties("AssemblyName", "Namespace of Entity; Namespace of Filters");
          Commom.SaveOnCacheIfNonExists<NameEntity>();
          ... rest your code...
- ´´´
+ ```
  ### Step 2
  
 ```
@@ -76,7 +76,7 @@ This project is builded in *asp.net standard* and has the dependencies below:
 Now you need add your repository on your Controller....
 P.S.: This is a sample, if you want you can add repository on your Service layer and add your Service in your Controller, this is a simple sample.
 
-´´´
+```
     [ApiController]
     [Route("api/[controller]")]
     public class CustomerController : ControllerBase
@@ -128,4 +128,4 @@ P.S.: This is a sample, if you want you can add repository on your Service layer
 
     }
 
-´´´
+```
