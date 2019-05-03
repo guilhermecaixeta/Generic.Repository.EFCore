@@ -23,10 +23,16 @@ This project is builded in *asp.net standard* and has the dependencies below:
 * Microsoft.EntityFrameworkCore (>= 2.2.4)
 
  ### V.1.0.0
- An new project has born..
+This version is a pilot.
+
+### V.1.0.1 - Pre-release
+New features and fixs:
+* Fix include validation;
+* Add GetPageAsync on Repository;
+* Add new Repository override which enable possibility to return a diferent object from Repository;  
+
 
  ## DOCS
-
  To use this package is necessary make this steps:
 
  ### Step 1
@@ -40,8 +46,8 @@ This project is builded in *asp.net standard* and has the dependencies below:
          Commom.SaveOnCacheIfNonExists<TypeEntity>();
          ... rest your code...
  ```
+
  ### Step 2
- 
 ```
    //Create your own repository, like this sample:
    //Interface
