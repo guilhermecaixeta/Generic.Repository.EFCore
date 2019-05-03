@@ -4,6 +4,8 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Generic.Repository.Models.Filter;
+using Generic.Repository.Models.Page;
+using Generic.Repository.Models.Page.PageConfig;
 
 namespace Generic.Repository.Repository
 {
@@ -31,6 +33,7 @@ namespace Generic.Repository.Repository
         ///</summary>
         ///<param name="predicate">Condition to apply on data</param>
         Task<IReadOnlyList<TValue>> GetAllByAsync(Expression<Func<TValue, bool>> predicate, bool EnableAsNoTracking);
+        Task<IPage<TValue>> GetPageAsync(IPageConfig config, bool EnableAsNoTracking);
         /// <summary>
         /// Return first data from a informed predicate
         /// </summary>
@@ -119,5 +122,40 @@ namespace Generic.Repository.Repository
         /// <returns></returns>
         Task CommitAsync(CancellationToken cancellationToken);
         #endregion
+    }
+
+    public interface IBaseRepositoryAsync<TValue, TResult, TFilter> : IBaseRepositoryAsync<TValue, TFilter>
+    where TValue : class
+    where TResult : class
+    where TFilter : IFilter
+    {
+        Func<IEnumerable<TValue>, IEnumerable<TResult>> mapperList { get; set; }
+        Func<TValue, TResult> mapperData { get; set; }
+
+        #region Query
+        ///<summary>
+        /// Return all data
+        ///</summary>
+        new Task<IReadOnlyList<TResult>> GetAllAsync(bool EnableAsNoTracking);
+        ///<summary>
+        /// Return all data filtred
+        ///</summary>
+        ///<param name="filter">Filter to apply</param>
+        new Task<IReadOnlyList<TResult>> FilterAllAsync(TFilter filter, bool EnableAsNoTracking);
+        ///<summary>
+        /// Return all data with pass on the predicate
+        ///</summary>
+        ///<param name="predicate">Condition to apply on data</param>
+        new Task<IReadOnlyList<TResult>> GetAllByAsync(Expression<Func<TValue, bool>> predicate, bool EnableAsNoTracking);
+
+        new Task<IPage<TResult>> GetPageAsync(IPageConfig config, bool EnableAsNoTracking);
+        /// <summary>
+        /// Return first data from a informed predicate
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        new Task<TResult> GetByAsync(Expression<Func<TValue, bool>> predicate, bool EnableAsNoTracking);
+        #endregion
+
     }
 }

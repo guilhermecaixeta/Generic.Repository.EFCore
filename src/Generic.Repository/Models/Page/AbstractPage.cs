@@ -47,6 +47,7 @@ namespace Generic.Repository.Models.Page
                 Validation.HandleNullError($"ClassName: {nameof(ValidateCtor)} {Environment.NewLine}Message: The {nameof(listEntities)} is empty!");
             }
         }
+
         public bool Equals(TResult other)
         {
             other.IsNull(nameof(Equals), nameof(other));
@@ -94,7 +95,7 @@ namespace Generic.Repository.Models.Page
 
         protected IQueryable<TValue> GetItems()
         {
-            IQueryable<TValue> dataList = !Sort.Equals("ASC") ? _listEntities.OrderByDescending(x => Commom.CacheGet[typeof(TValue).Name][Order](x)) : _listEntities.OrderBy(x => Commom.CacheGet[typeof(TValue).Name][Order](x));
+            IQueryable<TValue> dataList = !Sort.ToLower().Equals("asc") ? _listEntities.OrderByDescending(x => Commom.CacheGet[typeof(TValue).Name][Order](x)) : _listEntities.OrderBy(x => Commom.CacheGet[typeof(TValue).Name][Order](x));
             return dataList.Skip(NumberPage * Size).Take(Size);
         }
     }
