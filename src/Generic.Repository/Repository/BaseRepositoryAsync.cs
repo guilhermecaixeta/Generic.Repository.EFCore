@@ -161,10 +161,10 @@ namespace Generic.Repository.Repository
     where TResult : class
     where TFilter : class, IFilter
     {
-        #region Ctor
+        #region CTOR
         protected BaseRepositoryAsync(DbContext context, Func<IEnumerable<TValue>, IEnumerable<TResult>> mapperList, Func<TValue, TResult> mapperData) : base(context)
         {
-            if (!mapperList.IsNull(nameof(BaseRepositoryAsync<TValue, TResult, TFilter>), nameof(mapperList)) && !mapperData.IsNull(nameof(BaseRepositoryAsync<TValue, TResult, TFilter>), nameof(mapperData)))
+            if (IsValidCtor(mapperList, mapperData))
             {
                 this.mapperList = mapperList;
                 this.mapperData = mapperData;
@@ -172,15 +172,27 @@ namespace Generic.Repository.Repository
         }
         protected BaseRepositoryAsync(DbContext context, bool useCommit, Func<IEnumerable<TValue>, IEnumerable<TResult>> mapperList, Func<TValue, TResult> mapperData) : base(context, useCommit)
         {
-            if (!mapperList.IsNull(nameof(BaseRepositoryAsync<TValue, TResult, TFilter>), nameof(mapperList)) && !mapperData.IsNull(nameof(BaseRepositoryAsync<TValue, TResult, TFilter>), nameof(mapperData)))
+            if (IsValidCtor(mapperList, mapperData))
             {
                 this.mapperList = mapperList;
                 this.mapperData = mapperData;
             }
         }
 
+        private bool IsValidCtor(Func<IEnumerable<TValue>, IEnumerable<TResult>> mapperList, Func<TValue, TResult> mapperData)
+        {
+            if (!mapperList.IsNull(nameof(BaseRepositoryAsync<TValue, TResult, TFilter>), nameof(mapperList)) && !mapperData.IsNull(nameof(BaseRepositoryAsync<TValue, TResult, TFilter>), nameof(mapperData)))
+            {
+                return true;
+            }
+            return false;
+        }
+        #endregion
+
+        #region ATTRIBUTES
         public Func<IEnumerable<TValue>, IEnumerable<TResult>> mapperList { get; set; }
         public Func<TValue, TResult> mapperData { get; set; }
+        #endregion
 
         #region QUERY
         public new virtual async Task<IReadOnlyList<TResult>> GetAllAsync(bool EnableAsNoTracking) => mapperList(await GetAllQueryable(EnableAsNoTracking).ToListAsync()).ToList();
