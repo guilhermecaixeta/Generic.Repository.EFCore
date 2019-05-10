@@ -230,6 +230,10 @@ namespace Generic.Repository.Repository
 
         public new virtual async Task<IPage<TResult>> GetPageAsync(IPageConfig config, bool EnableAsNoTracking) => await Task.Run(() => GetAllQueryable(EnableAsNoTracking).ToPage<TValue, TResult>(mapperList, config));
 
+        public new virtual async Task<IPage<TResult>> GetPageAsync(IPageConfig config, TFilter filter, bool EnableAsNoTracking) => await Task.Run(() => GetAllQueryable(EnableAsNoTracking).ToPage<TValue, TResult>(mapperList, config));
+
+        public new virtual async Task<IPage<TResult>> GetPageAsync(IPageConfig config, Expression<Func<TValue, bool>> predicate, bool EnableAsNoTracking) => await Task.Run(() => GetAllQueryable(EnableAsNoTracking).ToPage<TValue, TResult>(mapperList, config));
         #endregion
+
     }
 }

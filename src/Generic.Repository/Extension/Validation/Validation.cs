@@ -32,7 +32,7 @@ namespace Generic.Repository.Extension.Validation
         /// <param name="nameObject"></param>
         /// <typeparam name="TValue"></typeparam>
         /// <returns></returns>
-        public static bool HasAny<TValue>(this IEnumerable<TValue> list, string className, string nameObject) => !list.IsNull(className, nameObject) && !list.Any() ? true : throw new ArgumentException(MessageError($"ClassName: {ClassName} {Environment.NewLine}Message: {nameObject} don't has any element."));
+        public static bool HasAny<TValue>(this IEnumerable<TValue> list, string className, string nameObject) => !list.IsNull(className, nameObject) && list.Any() ? true : throw new ArgumentException(MessageError($"ClassName: {className} {Environment.NewLine}Message: {nameObject} don't has any element."));
 
         /// <summary>
         /// Validate if data type is not string
