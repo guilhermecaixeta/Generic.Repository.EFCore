@@ -23,8 +23,9 @@ namespace Generic.Repository.Cache
             CacheAttribute = new Dictionary<string, Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>>();
         }
 
-        public CacheRepository(string AssemblyName, string Namespace)
+        public CacheRepository(ICacheRepositoryFacade cacheFacade, string AssemblyName, string Namespace)
         {
+            CacheFacade = cacheFacade;
             if (!string.IsNullOrEmpty(AssemblyName) && !string.IsNullOrEmpty(Namespace))
             {
                 var size = Assembly.Load(AssemblyName).GetTypes().Where(x => Namespace.Split(';').Contains(x.Namespace)).Count();
