@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Generic.Repository.Cache;
 using Generic.Repository.Enums;
 using Generic.Repository.Extension.Validation;
 using Generic.Repository.Models.Filter;
@@ -21,56 +22,69 @@ namespace Generic.Repository.Extension.Filter
         /// <typeparam name="TValue">Type Entity</typeparam>
         /// <typeparam name="F">Type Filter</typeparam>
         /// <returns>Predicate generated</returns>
-        public static Expression<Func<TValue, bool>> GenerateLambda<TValue, TFilter>(this TFilter filter)
+        public static Expression<Func<TValue, bool>> GenerateLambda<TValue, TFilter>(
+        this TFilter filter,
+        ICacheRepository cacheRepository)
         where TValue : class
         where TFilter : class, IFilter
         {
-            string typeNameTFilter = typeof(TFilter).Name;
-            string typeNameTValue = typeof(TValue).Name;
+            var param = Expression.Parameter(typeof(TValue));
+            var typeNameTFilter = typeof(TFilter).Name;
+            var typeNameTValue = typeof(TValue).Name;
+            var mergeOption = LambdaMerge.And;
 
-            ParameterExpression param = Expression.Parameter(typeof(TValue));
             Expression<Func<TValue, bool>> predicate = null;
-            LambdaMerge mergeOption = LambdaMerge.And;
             LambdaMethod methodOption;
 
-            Commom.Commom.SaveOnCacheIfNonExists<TFilter>(true, true, false, false);
-            Commom.Commom.CacheGet[typeNameTFilter].ToList().ForEach(propertyTFilter =>
+            cacheRepository.
+            SaveOnCacheIfNonExists<TFilter>(
+                true,
+                true,
+                false,
+                false);
+            cacheRepository.
+            GetDictionaryMethodGet(typeNameTFilter).
+            ToList().
+            ForEach(propertyTFilter =>
             {
                 Expression lambda = null;
-                string namePropertyOnE = null;
-                string namePropertyOnTFilter = propertyTFilter.Key;
+                var namePropertyOnE = string.Empty;
+                var namePropertyOnTFilter = propertyTFilter.Key;
                 var propertyValueTFilter = propertyTFilter.Value(filter);
-                if (propertyValueTFilter != null && (!propertyValueTFilter.ToString().Equals("0") || (propertyValueTFilter.GetType() == typeof(DateTime) &&
-                        ((DateTime)propertyValueTFilter != DateTime.MinValue || (DateTime)propertyValueTFilter != DateTime.MaxValue))))
+
+                if (
+                    propertyValueTFilter != null &&
+                    (!propertyValueTFilter.ToString().Equals("0") ||
+                    (propertyValueTFilter.GetType() == typeof(DateTime) &&
+                    ((DateTime)propertyValueTFilter != DateTime.MinValue ||
+                    (DateTime)propertyValueTFilter != DateTime.MaxValue))))
                 {
-                    if (Commom.Commom.CacheAttribute.TryGetValue(typeNameTFilter, out Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>> customAttributes))
+                    var customAttributes = cacheRepository.GetDictionaryAttribute(typeNameTFilter);
+                    if (customAttributes.TryGetValue(namePropertyOnTFilter, out Dictionary<string, CustomAttributeTypedArgument> attributes))
                     {
-                        if (customAttributes.TryGetValue(namePropertyOnTFilter, out Dictionary<string, CustomAttributeTypedArgument> attributes))
+                        if (attributes.TryGetValue("EntityPropertyName", out CustomAttributeTypedArgument attribute))
                         {
-                            if (attributes.TryGetValue("EntityPropertyName", out CustomAttributeTypedArgument attribute))
+                            namePropertyOnE = attribute.Value.ToString();
+                        }
+                        if (attributes.TryGetValue("MethodOption", out attribute))
+                        {
+                            var property = cacheRepository.GetProperty(typeNameTValue, namePropertyOnE ?? propertyTFilter.Key.ToString());
+                            methodOption = (LambdaMethod)attribute.Value;
+                            lambda = methodOption.SetExpressionType(param, property, propertyValueTFilter);
+                        }
+                        if (!lambda.IsNull(nameof(GenerateLambda), nameof(lambda)))
+                        {
+                            predicate = predicate == null ?
+                                lambda.MergeExpressions<TValue>(param) :
+                                predicate.MergeExpressions(mergeOption, param, lambda.MergeExpressions<TValue>(param));
+
+                            if (attributes.TryGetValue("MergeOption", out attribute))
                             {
-                                namePropertyOnE = attribute.Value.ToString();
+                                mergeOption = (LambdaMerge)attribute.Value;
                             }
-                            if (Commom.Commom.CacheProperties[typeNameTValue].TryGetValue(namePropertyOnE ?? propertyTFilter.Key.ToString(), out PropertyInfo property))
+                            else
                             {
-                                if (attributes.TryGetValue("MethodOption", out attribute))
-                                {
-                                    methodOption = (LambdaMethod)attribute.Value;
-                                    lambda = methodOption.SetExpressionType(param, property, propertyValueTFilter);
-                                }
-                                if (!lambda.IsNull(nameof(GenerateLambda), nameof(lambda)))
-                                {
-                                    predicate = predicate == null ? lambda.MergeExpressions<TValue>(param) :
-                                        predicate.MergeExpressions(mergeOption, param, lambda.MergeExpressions<TValue>(param));
-                                    if (attributes.TryGetValue("MergeOption", out attribute))
-                                    {
-                                        mergeOption = (LambdaMerge)attribute.Value;
-                                    }
-                                    else
-                                    {
-                                        mergeOption = LambdaMerge.And;
-                                    }
-                                }
+                                mergeOption = LambdaMerge.And;
                             }
                         }
                     }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Generic.Repository.Cache;
 using Generic.Repository.Models.Page.PageConfig;
 
 namespace Generic.Repository.Models.Page
@@ -15,14 +16,50 @@ namespace Generic.Repository.Models.Page
     public class Page<TValue> : AbstractPage<TValue>
     where TValue : class
     {
-        public Page(IQueryable<TValue> listEntities, IPageConfig config, bool pageStartInOne, string defaultSort, string defaultOrder, int defaultSize)
-        : base(listEntities, config, pageStartInOne, defaultSort, defaultOrder, defaultSize) { }
+        public Page(
+        ICacheRepository cacheRepository,
+        IQueryable<TValue> listEntities,
+        IPageConfig config,
+        bool pageStartInOne,
+        string defaultSort,
+        string defaultOrder,
+        int defaultSize
+        ) :
+        base(
+        cacheRepository,
+        listEntities,
+        config,
+        pageStartInOne,
+        defaultSort,
+        defaultOrder,
+        defaultSize)
+        { }
     }
 
     public class Page<TValue, TResult> : AbstractPage<TValue, TResult>
     where TValue : class
     where TResult : class
     {
-        public Page(IQueryable<TValue> listEntities, Func<IEnumerable<TValue>, IEnumerable<TResult>> mapperTo, IPageConfig config, bool pageStartInOne, string defaultSort, string defaultOrder, int defaultSize) : base(listEntities, mapperTo, config, pageStartInOne, defaultSort, defaultOrder, defaultSize) { }
+        public Page(
+                ICacheRepository cacheRepository,
+                IQueryable<TValue> listEntities,
+                Func<IEnumerable<TValue>, IEnumerable<TResult>> mapperTo,
+                IPageConfig config,
+                bool pageStartInOne,
+                string defaultSort,
+                string defaultOrder,
+                int defaultSize
+            ) :
+            base(
+                cacheRepository,
+                listEntities,
+                mapperTo,
+                config,
+                pageStartInOne,
+                defaultSort,
+                defaultOrder,
+                defaultSize
+            )
+        { }
     }
 }
