@@ -18,7 +18,7 @@ namespace Generic.Repository.Cache
         public Func<object, object> CreateFunctionGeneric<TValue, TReturn>(MethodInfo getter)
         {
             Func<TValue, TReturn> getterTypedDelegate = (Func<TValue, TReturn>)Delegate.CreateDelegate(typeof(Func<TValue, TReturn>), getter);
-            Func<object, object> getterDelegate = ((object instance) => getterTypedDelegate((TValue)instance));
+             Func<object, object> getterDelegate = ((object instance) => getterTypedDelegate((TValue)instance));
             return getterDelegate;
         }
 

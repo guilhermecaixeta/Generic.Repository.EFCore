@@ -32,7 +32,7 @@ namespace Generic.Repository.Repository
         #endregion
 
         #region Ctor
-        protected BaseRepositoryAsync(
+        public BaseRepositoryAsync(
             ICacheRepository cacheService,
             DbContext context)
         {
@@ -41,7 +41,7 @@ namespace Generic.Repository.Repository
             StartCache();
         }
 
-        protected BaseRepositoryAsync(
+        public BaseRepositoryAsync(
             ICacheRepository cacheService,
             DbContext context,
             bool useCommit)
@@ -234,7 +234,7 @@ namespace Generic.Repository.Repository
     where TFilter : class, IFilter
     {
         #region CTOR
-        protected BaseRepositoryAsync(
+        public BaseRepositoryAsync(
             ICacheRepository cacheService,
             DbContext context, Func<IEnumerable<TValue>,
             IEnumerable<TResult>> mapperList,
@@ -248,7 +248,7 @@ namespace Generic.Repository.Repository
                 this.mapperData = mapperData;
             }
         }
-        protected BaseRepositoryAsync(
+        public BaseRepositoryAsync(
             ICacheRepository cacheRepository,
             DbContext context,
             bool useCommit,

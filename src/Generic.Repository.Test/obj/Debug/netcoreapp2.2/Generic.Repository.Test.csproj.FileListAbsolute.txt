@@ -1,0 +1,4 @@
+c:\Users\guilh\Documents\My repos\Generic.Repository.EFCore\src\Generic.Repository.Test\obj\Debug\netcoreapp2.2\Generic.Repository.Test.csprojAssemblyReference.cache
+c:\Users\guilh\Documents\My repos\Generic.Repository.EFCore\src\Generic.Repository.Test\obj\Debug\netcoreapp2.2\Generic.Repository.Test.csproj.CoreCompileInputs.cache
+c:\Users\guilh\Documents\My repos\Generic.Repository.EFCore\src\Generic.Repository.Test\obj\Debug\netcoreapp2.2\Generic.Repository.Test.AssemblyInfoInputs.cache
+c:\Users\guilh\Documents\My repos\Generic.Repository.EFCore\src\Generic.Repository.Test\obj\Debug\netcoreapp2.2\Generic.Repository.Test.AssemblyInfo.cs

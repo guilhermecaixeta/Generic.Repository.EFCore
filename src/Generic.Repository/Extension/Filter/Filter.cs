@@ -48,21 +48,16 @@ namespace Generic.Repository.Extension.Filter
             ForEach(propertyTFilter =>
             {
                 Expression lambda = null;
-                var namePropertyOnE = string.Empty;
+                string namePropertyOnE = null;
                 var namePropertyOnTFilter = propertyTFilter.Key;
                 var propertyValueTFilter = propertyTFilter.Value(filter);
 
-                if (
-                    propertyValueTFilter != null &&
-                    (!propertyValueTFilter.ToString().Equals("0") ||
-                    (propertyValueTFilter.GetType() == typeof(DateTime) &&
-                    ((DateTime)propertyValueTFilter != DateTime.MinValue ||
-                    (DateTime)propertyValueTFilter != DateTime.MaxValue))))
+                if (ValidateProperty(propertyValueTFilter))
                 {
                     var customAttributes = cacheRepository.GetDictionaryAttribute(typeNameTFilter);
                     if (customAttributes.TryGetValue(namePropertyOnTFilter, out Dictionary<string, CustomAttributeTypedArgument> attributes))
                     {
-                        if (attributes.TryGetValue("EntityPropertyName", out CustomAttributeTypedArgument attribute))
+                        if (attributes.TryGetValue("NameProperty", out CustomAttributeTypedArgument attribute))
                         {
                             namePropertyOnE = attribute.Value.ToString();
                         }
@@ -120,7 +115,11 @@ namespace Generic.Repository.Extension.Filter
                     }
                     break;
                 case LambdaMethod.LessThan:
-                    if (prop.GetType().IsNotString(nameof(SetExpressionType), prop.Name, LambdaMethod.LessThan.ToString()))
+                    if (prop.GetType()
+                    .IsNotString(
+                        nameof(SetExpressionType), 
+                        prop.Name, 
+                        LambdaMethod.LessThan.ToString()))
                     {
                         lambda = Expression.LessThan(Expression.Property(parameter, prop), Expression.Constant(value));
                     }
@@ -142,10 +141,17 @@ namespace Generic.Repository.Extension.Filter
             return lambda;
         }
 
-        private static Expression<Func<TValue, bool>> MergeExpressions<TValue>(this Expression lambda, ParameterExpression parameter)
-         where TValue : class => Expression.Lambda<Func<TValue, bool>>(lambda, parameter);
+        private static Expression<Func<TValue, bool>> MergeExpressions<TValue>(
+            this Expression lambda, 
+            ParameterExpression parameter)
+            where TValue : class => 
+                Expression.Lambda<Func<TValue, bool>>(lambda, parameter);
 
-        private static Expression<Func<TValue, bool>> MergeExpressions<TValue>(this Expression<Func<TValue, bool>> predicate, LambdaMerge typeMerge, ParameterExpression parameter, Expression<Func<TValue, bool>> predicateMerge)
+        private static Expression<Func<TValue, bool>> MergeExpressions<TValue>(
+            this Expression<Func<TValue, bool>> predicate, 
+            LambdaMerge typeMerge, 
+            ParameterExpression parameter, 
+            Expression<Func<TValue, bool>> predicateMerge)
         where TValue : class
         {
             Expression lambda = null;
@@ -163,5 +169,10 @@ namespace Generic.Repository.Extension.Filter
             }
             return Expression.Lambda<Func<TValue, bool>>(lambda, parameter);
         }
+
+        private static bool ValidateProperty(object obj)
+        => obj != null && 
+                (!obj.ToString().Equals(DateTime.MinValue.ToString()) || 
+                !obj.ToString().Equals(DateTime.MaxValue.ToString()));
     }
 }

@@ -162,7 +162,7 @@ namespace Generic.Repository.Cache
             {
                 return result;
             }
-            else throw new ArgumentNullException(nameof(key));
+            else throw new ArgumentNullException($"FIELD> {nameof(key)} VALUE>{key}");
         }
     }
 }
