@@ -72,12 +72,15 @@ namespace Generic.Repository.Repository
         public virtual async Task<TValue> GetFirstByAsync(Expression<Func<TValue, bool>> predicate, bool EnableAsNoTracking) =>
         !predicate.IsNull(nameof(GetSingleByAsync), nameof(predicate)) ? await GetAllQueryable(EnableAsNoTracking).FirstOrDefaultAsync(predicate) : null;
 
-        public virtual async Task<IPage<TValue>> GetPageAsync(IPageConfig config, bool EnableAsNoTracking) =>
+        public virtual async Task<IPage<TValue>> GetPageAsync(
+            IPageConfig config, 
+            bool EnableAsNoTracking) =>
         await Task.Run(() => GetAllQueryable(EnableAsNoTracking).ToPage<TValue>(_cacheService, config));
 
-        public virtual async Task<IPage<TValue>> GetPageAsync(IPageConfig config,
-         TFilter filter,
-         bool EnableAsNoTracking) =>
+        public virtual async Task<IPage<TValue>> GetPageAsync(
+            IPageConfig config,
+            TFilter filter,
+            bool EnableAsNoTracking) =>
          await Task.Run(() => GetAllQueryable(EnableAsNoTracking)
          .Where(filter.GenerateLambda<TValue, TFilter>(_cacheService))
          .ToPage<TValue>(_cacheService, config));
@@ -91,7 +94,9 @@ namespace Generic.Repository.Repository
         .ToPage<TValue>(_cacheService, config));
 
         public virtual async Task<int> CountAsync(Expression<Func<TValue, bool>> predicate) =>
-        !predicate.IsNull(nameof(GetSingleByAsync), nameof(predicate)) ? await GetAllQueryable(true).CountAsync(predicate) : 0;
+        !predicate.IsNull(nameof(GetSingleByAsync), nameof(predicate)) ? 
+            await GetAllQueryable(true).CountAsync(predicate) 
+            : 0;
 
         public virtual async Task<int> CountAsync() => await GetAllQueryable(true).CountAsync();
 
@@ -291,7 +296,8 @@ namespace Generic.Repository.Repository
         #endregion
 
         #region QUERY
-        public new virtual async Task<IReadOnlyList<TResult>> GetAllAsync(bool EnableAsNoTracking) => mapperList(await GetAllQueryable(EnableAsNoTracking).ToListAsync()).ToList();
+        public new virtual async Task<IReadOnlyList<TResult>> GetAllAsync(bool EnableAsNoTracking) 
+            => mapperList(await GetAllQueryable(EnableAsNoTracking).ToListAsync()).ToList();
 
         public new virtual async Task<IReadOnlyList<TResult>> GetAllByAsync(
             Expression<Func<TValue, bool>> predicate,

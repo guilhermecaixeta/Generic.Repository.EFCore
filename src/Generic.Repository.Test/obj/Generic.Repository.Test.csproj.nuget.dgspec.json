@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\src\\Generic.Repository.Test\\Generic.Repository.Test.csproj": {}
+    "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\src\\Generic.Repository.Test\\Generic.Repository.Test.csproj": {}
   },
   "projects": {
-    "c:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\src\\Generic.Repository.Test\\Generic.Repository.Test.csproj": {
+    "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\src\\Generic.Repository.Test\\Generic.Repository.Test.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\src\\Generic.Repository.Test\\Generic.Repository.Test.csproj",
+        "projectUniqueName": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\src\\Generic.Repository.Test\\Generic.Repository.Test.csproj",
         "projectName": "Generic.Repository.Test",
-        "projectPath": "c:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\src\\Generic.Repository.Test\\Generic.Repository.Test.csproj",
-        "packagesPath": "C:\\Users\\guilh\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\src\\Generic.Repository.Test\\obj\\",
+        "projectPath": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\src\\Generic.Repository.Test\\Generic.Repository.Test.csproj",
+        "packagesPath": "C:\\Users\\ctw00503\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\src\\Generic.Repository.Test\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\guilh\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\ctw00503\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -30,8 +30,8 @@
         "frameworks": {
           "netcoreapp2.2": {
             "projectReferences": {
-              "c:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj": {
-                "projectPath": "c:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj"
+              "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj": {
+                "projectPath": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj"
               }
             }
           }
@@ -76,20 +76,20 @@
         }
       }
     },
-    "c:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj": {
+    "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj",
+        "projectUniqueName": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj",
         "projectName": "Generic.Repository",
-        "projectPath": "c:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj",
-        "packagesPath": "C:\\Users\\guilh\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\src\\Generic.Repository\\obj\\",
+        "projectPath": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj",
+        "packagesPath": "C:\\Users\\ctw00503\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\src\\Generic.Repository\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\guilh\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\ctw00503\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [

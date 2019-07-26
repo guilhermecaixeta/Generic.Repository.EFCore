@@ -6,11 +6,14 @@ namespace Generic.Repository.Test.Data
     public class DbInMemoryContext<T> : DbContext
     where T : class
     {
-        DbSet<T> value {get; set;}
-        public DbInMemoryContext(DbContextOptions options) : base(options){}
-        
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseInMemoryDatabase("DBInMemory");
-        
+        DbSet<T> Value {get; set;}
+
+        public DbInMemoryContext()
+        { }
+
+        public DbInMemoryContext(DbContextOptions<DbInMemoryContext<T>> options)
+            : base(options)
+        { }
+
     }
 }
