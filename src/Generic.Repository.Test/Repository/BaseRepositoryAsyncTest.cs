@@ -35,8 +35,8 @@ namespace Generic.Repository.Test.Repository
             value.Name = "Test_2";
             return value;
         }
-        protected override Expression<Func<SimpleObject, bool>> ExpressionGeneric(SimpleObject value) =>
-        (SimpleObject x) => x.Id == value.Id;
+        protected override Expression<Func<SimpleObject, bool>> ExpressionGeneric(SimpleObject value) 
+            => GetExpression(x => x.Id == value.Id);
 
         internal override IPageConfig GetPageConfig()
         => new PageConfig() { order = "Name", page = 0, size = 5, sort = "ASC" };
@@ -45,7 +45,9 @@ namespace Generic.Repository.Test.Repository
         => new SimpleObjectFilter() { Name = "aaa" };
 
         internal override Expression<Func<SimpleObject, bool>> ExpressionGeneric()
-        => (SimpleObject x) => x.Id > 5;
+        => GetExpression(x => "aaa".Contains(x.Name));
+        private Expression<Func<SimpleObject, bool>> GetExpression(
+            Expression<Func<SimpleObject, bool>> expression) => expression;
 
         protected override IEnumerable<SimpleObject> GetListSimpleObject()
         => new List<SimpleObject>() {

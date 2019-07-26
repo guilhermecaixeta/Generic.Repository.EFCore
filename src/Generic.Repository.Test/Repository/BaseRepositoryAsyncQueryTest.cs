@@ -40,7 +40,7 @@ namespace Generic.Repository.Test.Repository
             var list = await _repository.GetAllByAsync(ExpressionGeneric(), true);
             var result = list.Count;
             Assert.IsNotNull(list);
-            Assert.AreEqual(count2, result);
+            Assert.AreEqual(count3, result);
         }
 
         [Test]
@@ -72,7 +72,7 @@ namespace Generic.Repository.Test.Repository
             var page = await _repository.GetPageAsync(GetPageConfig(), true);
 
             Assert.IsNotNull(page);
-            Assert.AreEqual(count2, page.TotalElements);
+            Assert.AreEqual(count2, page.Content.Count);
         }
 
         [Test]
@@ -83,7 +83,7 @@ namespace Generic.Repository.Test.Repository
             var page = await _repository.GetPageAsync(GetPageConfig(), ExpressionGeneric(), true);
 
             Assert.IsNotNull(page);
-            Assert.AreEqual(count2, page.TotalElements);
+            Assert.AreEqual(count3, page.Content.Count);
         }
 
         [Test]
@@ -94,7 +94,7 @@ namespace Generic.Repository.Test.Repository
             var page = await _repository.GetPageAsync(GetPageConfig(), GetFilter(), true);
 
             Assert.IsNotNull(page);
-            Assert.AreEqual(count3, page.TotalElements);
+            Assert.AreEqual(count3, page.Content.Count);
         }
 
         private void SetEnvironment()

@@ -17,4 +17,8 @@
     <ProjectReference Include="..\Generic.Repository\Generic.Repository.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Cache\" />
+  </ItemGroup>
+
 </Project>
