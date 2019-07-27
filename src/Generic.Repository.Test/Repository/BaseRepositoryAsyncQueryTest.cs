@@ -1,13 +1,13 @@
-﻿using Generic.Repository.Models.Filter;
-using Generic.Repository.Models.Page.PageConfig;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-
-namespace Generic.Repository.Test.Repository
+﻿namespace Generic.Repository.Test.Repository
 {
+    using Generic.Repository.Models.Filter;
+    using Generic.Repository.Models.Page.PageConfig;
+    using NUnit.Framework;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq.Expressions;
+    using System.Threading.Tasks;
+
     [TestFixture]
     public abstract class BaseRepositoryAsyncQueryTest<TValue, TFilter>
         : BaseRespositoryExceptionTest<TValue, TFilter>
@@ -17,9 +17,6 @@ namespace Generic.Repository.Test.Repository
         protected int count;
         protected int count2;
         protected int count3;
-
-        public BaseRepositoryAsyncQueryTest()
-        { }
 
         protected abstract IEnumerable<TValue> GetListSimpleObject();
 

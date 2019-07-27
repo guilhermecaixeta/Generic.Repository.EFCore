@@ -3,6 +3,7 @@ using Generic.Repository.Enums;
 
 namespace Generic.Repository.Attributes
 {
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
     public class LambdaAttribute : Attribute
     {
         public LambdaAttribute()

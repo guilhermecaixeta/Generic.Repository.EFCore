@@ -90,7 +90,11 @@ namespace Generic.Repository.Extension.Filter
         /// <param name="prop">Property to will be used to make an expression</param>
         /// <param name="value">Value to will be used to make an expression</param>
         /// <returns></returns>
-        private static Expression SetExpressionType(this LambdaMethod type, ParameterExpression parameter, PropertyInfo prop, object value)
+        private static Expression SetExpressionType(
+            this LambdaMethod type, 
+            ParameterExpression parameter, 
+            PropertyInfo prop, 
+            object value)
         {
             Expression lambda = null;
             switch (type)
@@ -148,7 +152,7 @@ namespace Generic.Repository.Extension.Filter
             Expression<Func<TValue, bool>> predicateMerge)
         where TValue : class
         {
-            Expression lambda = null;
+            Expression lambda;
             if (typeMerge == LambdaMerge.And)
             {
                 lambda = Expression.AndAlso(

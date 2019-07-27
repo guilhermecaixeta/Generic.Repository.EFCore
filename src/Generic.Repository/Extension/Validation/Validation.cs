@@ -58,14 +58,6 @@ namespace Generic.Repository.Extension.Validation
                : true;
 
         /// <summary>
-        /// Validate if operation is valid
-        /// </summary>
-        /// <param name="isValid"></param>
-        /// <param name="message"></param>
-        /// <returns></returns>
-        public static bool OperationIsValid(this bool isValid, string message) => !isValid ? throw new OperationCanceledException(MessageError(message)) : true;
-
-        /// <summary>
         /// Handle argument null exception to user.
         /// </summary>
         /// <param name="message"></param>

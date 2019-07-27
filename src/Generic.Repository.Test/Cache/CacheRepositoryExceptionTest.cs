@@ -1,9 +1,9 @@
-﻿using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-
-namespace Generic.Repository.Test.Cache
+﻿namespace Generic.Repository.Test.Cache
 {
+    using NUnit.Framework;
+    using System;
+    using System.Collections.Generic;
+
     [TestFixture]
     public abstract class CacheRepositoryExceptionTest<T>
         : CacheRepositoryInsertTest<T>
@@ -46,7 +46,7 @@ namespace Generic.Repository.Test.Cache
         }
 
         [Test]
-        public void Get_Dictionary_Attribute()
+        public void Get_Exception_Dictionary_Attribute()
         {
             InitCache();
             Assert.Throws<KeyNotFoundException>(() => cache.GetMethodGet("ABCDE", nameProperty));

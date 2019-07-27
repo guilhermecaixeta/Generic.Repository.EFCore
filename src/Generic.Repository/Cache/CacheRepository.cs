@@ -37,7 +37,7 @@ namespace Generic.Repository.Cache
                 Count();
                 if (size == 0)
                 {
-                    throw new NullReferenceException(nameof(Cache));
+                    throw new Exception("List size can be 0! Verify the namespace and assembly names.");
                 }
                 InitCache(size);
             }

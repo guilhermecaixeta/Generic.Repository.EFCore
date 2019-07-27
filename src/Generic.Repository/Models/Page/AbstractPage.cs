@@ -41,7 +41,7 @@ namespace Generic.Repository.Models.Page
             _cacheRepository = cacheRepository;
             _mapperTo = mapperTo;
             _count = listEntities.Count();
-            ValidateCtor(_count, listEntities, config);
+            ValidateCtor(_count, config);
             _config = config;
             _listEntities = listEntities;
             _pageStatsInOne = pageStartInOne;
@@ -51,12 +51,12 @@ namespace Generic.Repository.Models.Page
         }
         #endregion
 
-        private static void ValidateCtor(int count, IQueryable<TValue> listEntities, IPageConfig config)
+        private static void ValidateCtor(int count, IPageConfig config)
         {
             config.IsNull(nameof(ValidateCtor), nameof(config));
             if (count < 1)
             {
-                Validation.HandleNullError($"ClassName: {nameof(ValidateCtor)} {Environment.NewLine}Message: The {nameof(listEntities)} is empty!");
+                Validation.HandleNullError($"ClassName: {nameof(ValidateCtor)} {Environment.NewLine}Message: The listEntities is empty!");
             }
         }
 

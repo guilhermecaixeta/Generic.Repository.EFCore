@@ -1,15 +1,15 @@
-using Generic.Repository.Models.Filter;
-using NUnit.Framework;
-using System;
-
 namespace Generic.Repository.Test.Repository
 {
+    using Generic.Repository.Models.Filter;
+    using NUnit.Framework;
+    using System;
+
     [TestFixture]
     public abstract class BaseRespositoryExceptionTest<TValue, TFilter> : BaseRepositoryAsyncCommandTest<TValue, TFilter>
         where TValue : class
         where TFilter : class, IFilter
     {
-        private readonly TValue value = null;
+        private readonly TValue value;
 
         [Test]
         public void Create_Null_Value()

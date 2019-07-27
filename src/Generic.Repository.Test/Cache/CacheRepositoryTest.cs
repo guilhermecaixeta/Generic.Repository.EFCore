@@ -1,12 +1,12 @@
-using Generic.Repository.Attributes;
-using Generic.Repository.Cache;
-using NUnit.Framework;
-
 namespace Generic.Repository.Test.Cache
 {
+    using Generic.Repository.Attributes;
+    using Generic.Repository.Cache;
+    using NUnit.Framework;
+
     public class SimpleObject
     {
-        [Lambda(MethodOption= Enums.LambdaMethod.Equals)]
+        [Lambda(MethodOption = Enums.LambdaMethod.Equals)]
         public int Id { get; set; }
     }
 

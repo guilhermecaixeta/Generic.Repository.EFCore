@@ -1,8 +1,8 @@
-using Generic.Repository.Cache;
-using NUnit.Framework;
-
 namespace Generic.Repository.Test.Cache
 {
+    using Generic.Repository.Cache;
+    using NUnit.Framework;
+
     [TestFixture]
     public abstract class CacheRepositoryInsertTest<T>
     where T : class
