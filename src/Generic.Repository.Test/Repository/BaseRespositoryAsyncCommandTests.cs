@@ -15,7 +15,7 @@ namespace Generic.Repository.Test.Repository
         where TValue : class
         where TFilter : class, IFilter
     {
-        protected readonly CacheRepository cache = new CacheRepository(new CacheRepositoryFacade());
+        protected readonly CacheRepository cache = new CacheRepository();
 
         protected readonly DbContext dbContext = new DbInMemoryContext<TValue>(GetOptions());
 

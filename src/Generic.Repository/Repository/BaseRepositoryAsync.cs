@@ -224,8 +224,8 @@ namespace Generic.Repository.Repository
 
         protected void StartCache()
         {
-            _cacheService.SaveOnCacheIfNonExists<TValue>();
-            _cacheService.SaveOnCacheIfNonExists<TFilter>();
+            _cacheService.Add<TValue>();
+            _cacheService.Add<TFilter>();
         }
 
         protected void SetState(EntityState state, TValue item) => _context.Attach(item).State = state;

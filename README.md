@@ -43,7 +43,7 @@ New features and fixs:
         {
            //You can pass empty parameter on here!!! EX: Commom.SetSizeByLengthProperties("", "");
          Commom.SetSizeByLengthProperties("AssemblyName", "Namespace of Entity; Namespace of Filters");
-         Commom.SaveOnCacheIfNonExists<TypeEntity>();
+         Commom.Add<TypeEntity>();
          ... rest your code...
  ```
 

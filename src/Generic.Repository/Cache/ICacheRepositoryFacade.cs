@@ -1,9 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace Generic.Repository.Cache
 {
-    public interface ICacheRepositoryFacade
+    internal interface ICacheRepositoryFacade
     {
         Func<object, object> CreateFunction<TValue>(PropertyInfo property);
 
@@ -12,5 +13,7 @@ namespace Generic.Repository.Cache
         Action<object, object> CreateAction<TValue>(PropertyInfo property);
 
         Action<object, object> CreateActionGeneric<TValue, TInput>(MethodInfo setter);
+
+        R GetData<R>(IDictionary<string, R> dictionary, string key);
     }
 }

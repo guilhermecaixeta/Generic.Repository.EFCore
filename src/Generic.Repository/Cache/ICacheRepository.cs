@@ -15,18 +15,26 @@ namespace Generic.Repository.Cache
         CustomAttributeTypedArgument GetAttribute(string objectKey, string propertieKey, string customAttirbuteKey);
         IDictionary<string, CustomAttributeTypedArgument> GetDictionaryAttribute(string objectKey, string propertieKey);
         IDictionary<string, Dictionary<string, CustomAttributeTypedArgument>> GetDictionaryAttribute(string objectKey);
-        MethodInfo GetMethod(Type key);
-        IDictionary<Type, MethodInfo> GetDictionaryMethod();
 
-        void SaveOnCacheIfNonExists<TValue>();
+        void Add<TValue>();
 
-        void SaveOnCacheIfNonExists<TValue>(bool saveAttribute);
+        void Add<TValue>(bool saveAttribute);
 
-        void SaveOnCacheIfNonExists<TValue>(bool saveAttribute, bool saveGet);
+        void Add<TValue>(bool saveAttribute, bool saveGet);
 
-        void SaveOnCacheIfNonExists<TValue>(bool saveAttribute, bool saveGet, bool saveSet);
+        void Add<TValue>(bool saveAttribute, bool saveGet, bool saveSet);
 
-        void SaveOnCacheIfNonExists<TValue>(bool saveAttribute, bool saveGet, bool saveSet, bool saveProperties);
+        void Add<TValue>(bool saveAttribute, bool saveGet, bool saveSet, bool saveProperties);
+
+        bool HasMethodSet();
+        
+        bool HasMethodGet();
+        
+        bool HasProperty();
+        
+        bool HasAttribute();
+
+        void ClearCache();
 
     }
 }

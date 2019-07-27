@@ -1,10 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Generic.Repository.Extension.Validation;
 
 namespace Generic.Repository.Cache
 {
-    public class CacheRepositoryFacade : ICacheRepositoryFacade
+    internal class CacheRepositoryFacade : ICacheRepositoryFacade
     {
         public Func<object, object> CreateFunction<TValue>(PropertyInfo property)
         {
@@ -18,7 +19,7 @@ namespace Generic.Repository.Cache
         public Func<object, object> CreateFunctionGeneric<TValue, TReturn>(MethodInfo getter)
         {
             Func<TValue, TReturn> getterTypedDelegate = (Func<TValue, TReturn>)Delegate.CreateDelegate(typeof(Func<TValue, TReturn>), getter);
-             Func<object, object> getterDelegate = ((object instance) => getterTypedDelegate((TValue)instance));
+            Func<object, object> getterDelegate = ((object instance) => getterTypedDelegate((TValue)instance));
             return getterDelegate;
         }
 
@@ -46,6 +47,19 @@ namespace Generic.Repository.Cache
             var genericHelper = genericMethod.MakeGenericMethod(typeof(TValue), property.PropertyType);
 
             return genericHelper.Invoke(this, new object[] { method });
+        }
+
+        public R GetData<R>(IDictionary<string, R> dictionary, string key)
+        {
+            if (string.IsNullOrEmpty(key) || string.IsNullOrWhiteSpace(key))
+            {
+                throw new ArgumentNullException($"FIELD> {nameof(key)} METHOD> {nameof(GetData)}");
+            }
+            if (dictionary.TryGetValue(key, out var result))
+            {
+                return result;
+            }
+            else throw new KeyNotFoundException($"FIELD> {nameof(key)} VALUE> {key} METHOD> {nameof(GetData)}");
         }
     }
 }

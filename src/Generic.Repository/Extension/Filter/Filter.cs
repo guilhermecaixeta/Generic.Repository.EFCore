@@ -37,12 +37,6 @@ namespace Generic.Repository.Extension.Filter
             LambdaMethod methodOption;
 
             cacheRepository.
-            SaveOnCacheIfNonExists<TFilter>(
-                true,
-                true,
-                false,
-                false);
-            cacheRepository.
             GetDictionaryMethodGet(typeNameTFilter).
             ToList().
             ForEach(propertyTFilter =>
