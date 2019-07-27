@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Generic.Repository.Extension.Commom;
+using Generic.Repository.Cache;
 using Generic.Repository.Extension.Validation;
 using Generic.Repository.Models.Page.PageConfig;
 
@@ -11,6 +11,8 @@ namespace Generic.Repository.Models.Page
     where TValue : class
     where TResult : class
     {
+        private readonly ICacheRepository _cacheRepository;
+
         #region Default Parameters
         protected readonly Func<IEnumerable<TValue>, IEnumerable<TResult>> _mapperTo;
         protected readonly bool _pageStatsInOne;
@@ -25,11 +27,21 @@ namespace Generic.Repository.Models.Page
         #endregion
 
         #region Ctor
-        protected AbstractPage(IQueryable<TValue> listEntities, Func<IEnumerable<TValue>, IEnumerable<TResult>> mapperTo, IPageConfig config, bool pageStartInOne, string defaultSort, string defaultOrder, int defaultSize)
+        protected AbstractPage(
+            ICacheRepository cacheRepository,
+            IQueryable<TValue> listEntities,
+            Func<IEnumerable<TValue>, IEnumerable<TResult>> mapperTo,
+            IPageConfig config,
+            bool pageStartInOne,
+            string defaultSort,
+            string defaultOrder,
+            int defaultSize
+        )
         {
+            _cacheRepository = cacheRepository;
             _mapperTo = mapperTo;
             _count = listEntities.Count();
-            ValidateCtor(_count, listEntities, config);
+            ValidateCtor(_count, config);
             _config = config;
             _listEntities = listEntities;
             _pageStatsInOne = pageStartInOne;
@@ -39,14 +51,15 @@ namespace Generic.Repository.Models.Page
         }
         #endregion
 
-        private static void ValidateCtor(int count, IQueryable<TValue> listEntities, IPageConfig config)
+        private static void ValidateCtor(int count, IPageConfig config)
         {
             config.IsNull(nameof(ValidateCtor), nameof(config));
             if (count < 1)
             {
-                Validation.HandleNullError($"ClassName: {nameof(ValidateCtor)} {Environment.NewLine}Message: The {nameof(listEntities)} is empty!");
+                Validation.HandleNullError($"ClassName: {nameof(ValidateCtor)} {Environment.NewLine}Message: The listEntities is empty!");
             }
         }
+
         public bool Equals(TResult other)
         {
             other.IsNull(nameof(Equals), nameof(other));
@@ -94,8 +107,19 @@ namespace Generic.Repository.Models.Page
 
         protected IQueryable<TValue> GetItems()
         {
-            IQueryable<TValue> dataList = !Sort.Equals("ASC") ? _listEntities.OrderByDescending(x => Commom.CacheGet[typeof(TValue).Name][Order](x)) : _listEntities.OrderBy(x => Commom.CacheGet[typeof(TValue).Name][Order](x));
-            return dataList.Skip(NumberPage * Size).Take(Size);
+            IQueryable<TValue> dataList = !Sort.ToLower().Equals("asc") ?
+            _listEntities.
+            OrderByDescending(x => 
+                _cacheRepository.
+                GetMethodGet(typeof(TValue).Name, Order)(x)) 
+            :
+            _listEntities.
+            OrderBy(x => 
+                _cacheRepository.
+                GetMethodGet(typeof(TValue).Name, Order)(x)) ;
+            return dataList.
+            Skip(NumberPage * Size).
+            Take(Size);
         }
     }
 
@@ -103,7 +127,24 @@ namespace Generic.Repository.Models.Page
     where TValue : class
     {
         #region Ctor
-        protected AbstractPage(IQueryable<TValue> listEntities, IPageConfig config, bool pageStartInOne, string defaultSort, string defaultOrder, int defaultSize) : base(listEntities, null, config, pageStartInOne, defaultSort, defaultOrder, defaultSize) { }
+        protected AbstractPage(
+            ICacheRepository cacheRepository,
+            IQueryable<TValue> listEntities,
+            IPageConfig config, bool pageStartInOne,
+            string defaultSort, string defaultOrder,
+            int defaultSize
+        ) :
+        base(
+            cacheRepository,
+            listEntities,
+            null,
+            config,
+            pageStartInOne,
+            defaultSort,
+            defaultOrder,
+            defaultSize
+        )
+        { }
 
         #endregion
 

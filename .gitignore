@@ -2,3 +2,11 @@
 \.vscode/
 
 src/Generic\.Repository/obj/
+
+src/Generic\.Repository/bin/
+
+src/Generic\.Repository\.Test/bin/
+
+src/Generic\.Repository\.Test/obj/
+
+\.vs/
