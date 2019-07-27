@@ -170,7 +170,7 @@ namespace Generic.Repository.Extension.Filter
 
         private static bool ValidateProperty(object obj)
         => obj != null && 
-                (!obj.ToString().Equals(DateTime.MinValue.ToString()) || 
+                (!obj.ToString().Equals(DateTime.MinValue.ToString()) && 
                 !obj.ToString().Equals(DateTime.MaxValue.ToString()));
     }
 }
