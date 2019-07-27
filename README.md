@@ -93,34 +93,7 @@ namespace Models.Filter
 }
 ```
 
-#### Step 2.1 If you will use IFilter implementation
-Whith this implementation you don't need create a lambda in your filter.
-This attribute says how your filter will be aplied on every request.
-
-```
-namespace Models.Filter
-{
-    public class CustomerFilter : IFilter
-    {
-        [Lambda(MethodOption = LambdaMethod.Contains, MergeOption = LambdaMerge.Or)]
-        [FromQuery(Name = "Email")]
-        public string Email { get; set; }
-
-        [Lambda(MethodOption = LambdaMethod.Contains, MergeOption = LambdaMerge.Or)]
-        [FromQuery(Name = "Name")]
-        public string Name { get; set; }
-        
-        ///Between date
-        [Lambda(NameProperty = "Birthday", MethodOption = LambdaMethod.GreaterThanOrEqual, MergeOption = LambdaMerge.Or)]
-        public DateTime BirthdayMax { get; set; }
-        [Lambda(NameProperty = "Birthday", MethodOption = LambdaMethod.GreaterThanOrEqual)]
-        public DateTime BirthdayMin { get; set; }
-
-    }
-}
-```
-
-Fast attributes explanation:
+#### Fast attributes explanation:
 * MethodOption, this say how method you will use to generate a lambda.-- Sample using lambda, x => name.Contais(x.name);
 * MergeOption, says how you will merge each lambda attribute. -- Example: x => email.Contains(x.email) || nome.Contains(x.name);
 * NameProperty, name property on entity which refers column in database;
