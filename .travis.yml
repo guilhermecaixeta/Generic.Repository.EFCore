@@ -1,7 +1,8 @@
 language: csharp
+os: linux
 mono: latest
 sudo: required
-dist: xenial
+dist: trusty
 dotnet: 2.2
 script:
     - dotnet restore
@@ -10,6 +11,9 @@ script:
     - dotnet test
 global:
     - DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
-    - DOTNET_CLI_TELEMETRY_OPTOUT=1
+    - DOTNET_CLI_TELEMETRY_OPTOUT=true
+
+# You must run this command to give Travis permissions to execute the build.sh shell script:
+# git update-index --chmod=+x build.sh
 script:
     - ./build.sh
