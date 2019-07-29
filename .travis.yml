@@ -1,13 +1,15 @@
 language: csharp
-mono: none
+mono: latest
 sudo: required
 dist: xenial
 dotnet: 2.2
 script:
     - dotnet restore
     - dotnet build
-    - cd src/Generic.Repository.Test
+    - cd tests/Generic.Repository.Test
     - dotnet test
 global:
     - DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
     - DOTNET_CLI_TELEMETRY_OPTOUT=1
+script:
+    - ./build.sh
