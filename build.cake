@@ -56,8 +56,11 @@ Task("Test")
 
 Task("Create-Nuget-Pack")
 .IsDependentOn("Test")
+.WithCriteria(ShouldRunRelease())
 .Does(() =>
 {
+    var version = GetPackageVersion();
+
     foreach (var project in GetFiles("./src/**/*.csproj"))
     {
         DotNetCorePack(
@@ -65,16 +68,18 @@ Task("Create-Nuget-Pack")
             new DotNetCorePackSettings()
             {
                 Configuration = configuration,
-                OutputDirectory = artifactDirectory
+                OutputDirectory = artifactDirectory,
+                ArgumentCustomization= args => args.Append($"/p:Version={version}");
             });
     }
 });
 
 Task("Push-Nuget-Package")
 .IsDependentOn("Create-Nuget-Pack")
+.WithCriteria(ShouldRunRelease())
 .Does(() =>
 {
-    var apiKey = "oy2pixvzsxxiu7hyftiqrbis4ezwf5duvavmnqcev7rvre"; //EnvironmentVariable("apiKey");
+    var apiKey = EnvironmentVariable("NUGET_API_KEY");
     
     foreach (var package in GetFiles($"{artifactDirectory}/*.nupkg"))
     {
@@ -90,3 +95,18 @@ Task("Push-Nuget-Package")
 /* BEGIN - RUN */
 RunTarget(target);
 /* END - RUN */
+
+/* BEGIN - METHODS */
+private bool ShouldRunRelease() => AppVeyor.IsRunningOnAppVeyor && AppVeyor.Environment.Repository.Tag.IsTag;
+
+private string GetPackageVersion()
+{
+    var gitVersion = GitVersion(new GitVersionSettings {
+        RepositoryPath = "."
+    });
+
+    Information($"Git Semantic Version: {JsonConvert.SerializeObject(gitVersion)}");
+    
+    return gitVersion.NuGetVersionV2;
+}
+/* END */

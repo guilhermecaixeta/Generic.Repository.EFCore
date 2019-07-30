@@ -8,7 +8,7 @@ environment:
     secure: hQ5LogWZGZTKK4u/AlC/X4ThwiCq0JbYNxuOCVMFWzRJwH8VSYHuVry/At69M1kH
 build_script:
 - ps: .\build.ps1
-test: off
+test: on
 artifacts:
 - path: .\artifacts\**\*.nupkg
   name: NuGet

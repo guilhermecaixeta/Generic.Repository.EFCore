@@ -20,10 +20,15 @@ addons:
     token:
       secure: sonarQube
 
+before_install:
+  - git fetch --unshallow # Travis always does a shallow clone, but GitVersion needs the full history including branches and tags
+  - git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+  - git fetch origin      
+
 script:
 # You must run this command to give Travis permissions to execute the build.sh shell script:
 # git update-index --chmod=+x build.sh    
-    - ./build.sh
+    # - ./build.sh
     - dotnet restore
     - dotnet build
     - cd tests/Generic.Repository.Test
