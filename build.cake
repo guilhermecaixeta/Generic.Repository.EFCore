@@ -71,7 +71,7 @@ Task("Create-Nuget-Pack")
 });
 
 Task("Push-Nuget-Package")
-.IsDependentOn("Create-Nuget-Package")
+.IsDependentOn("Create-Nuget-Pack")
 .Does(() =>
 {
     var apiKey = "oy2pixvzsxxiu7hyftiqrbis4ezwf5duvavmnqcev7rvre"; //EnvironmentVariable("apiKey");
@@ -88,5 +88,5 @@ Task("Push-Nuget-Package")
 /* END - Tasks */
 
 /* BEGIN - RUN */
-RunTarget(target).IsDependentOn("Push-Nuget-Package");
+RunTarget(target);
 /* END - RUN */

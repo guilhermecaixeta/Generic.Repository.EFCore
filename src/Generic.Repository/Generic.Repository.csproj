@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Copyright />
     <RepositoryUrl>https://github.com/guilhermecaixeta/Generic.Repository.EFCore</RepositoryUrl>
     <PackageTags>Generics Repository, Async, Pagination, reactive programmation, crud, solid, filter</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
@@ -15,7 +14,6 @@ Fix bugs, fix cache use and add new features.</PackageReleaseNotes>
     <Authors>GuiCaixeta</Authors>
     <Product>Generic.RepositoryAsync.EFCore</Product>
     <Description>Generic repository, implemented using the best of programmation.</Description>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Version>1.0.1</Version>
   </PropertyGroup>
 
