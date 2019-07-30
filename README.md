@@ -6,7 +6,7 @@ Code Quality - Master/Developer
 Travis CI - Master/Developer
 [![Build Status](https://travis-ci.org/guilhermecaixeta/Generic.Repository.EFCore.svg?branch=master)](https://travis-ci.org/guilhermecaixeta/Generic.Repository.EFCore)
 Nuget
-https://www.nuget.org/packages/Generic.RepositoryAsync.EFCore
+[![NuGet](https://img.shields.io/nuget/v/Generic.RepositoryAsync.EFCore.svg)](https://www.nuget.org/packages/Generic.RepositoryAsync.EFCore)
 
 ## This version is final.
 
