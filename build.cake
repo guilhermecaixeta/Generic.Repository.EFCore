@@ -1,5 +1,11 @@
+// Install modules
+#module nuget:?package=Cake.DotNetTool.Module&version=0.3.0
+// Install Tools
 #tool "nuget:?package=GitVersion.CommandLine"
+// Install Addin's
 #addin nuget:?package=Newtonsoft.Json
+// Load Scripts
+#load "./build/parameters.cake"
 
 using Newtonsoft.Json;
 
@@ -7,22 +13,26 @@ using Newtonsoft.Json;
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
 var artifactDirectory = MakeAbsolute(Directory("./artifacts"));
+BuildParameters parameters = BuildParameters.GetParameters(Context);
+
 /* END - Parameters */
 
 /* BEGIN - Setup */
 Setup(context =>
 {
-     CleanDirectory(artifactsDirectory);
+    CleanDirectory(artifactDirectory);
+    CleanDirectories("./src/**/obj");
 });
 /* END */
 
 /* BEGIN - Tasks */
-Task("Default").IsDependentOn("Push-Nuget-Package");
+Task("Default")
+.IsDependentOn("Push-Nuget-Package");
 
 Task("Build").
     Does(() => 
     {
-        foreach (var item in GetFiles("./src/**/*.csproj"))
+        foreach (var project in GetFiles("./src/Generic.Repository.EFCore.sln"))
         {
             DotNetCoreBuild(
                 project.GetDirectory().FullPath,
@@ -59,7 +69,7 @@ Task("Create-Nuget-Pack")
             new DotNetCorePackSettings()
             {
                 Configuration = configuration,
-                OutputDirectory = artifactsDirectory
+                OutputDirectory = artifactDirectory
             });
     }
 });

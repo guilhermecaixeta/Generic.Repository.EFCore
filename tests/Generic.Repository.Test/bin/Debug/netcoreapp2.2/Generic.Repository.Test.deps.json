@@ -1,14 +1,14 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.2",
-    "signature": "708ce76280d5250ccb8f1cdc62564a15fac879ca"
+    "signature": "aa34e7e5afd67d0e96f2e81ba820e8cf8c5f4898"
   },
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v2.2": {
       "Generic.Repository.Test/1.0.0": {
         "dependencies": {
-          "Generic.Repository": "1.0.0",
+          "Generic.RepositoryAsync.EFCore": "1.0.1",
           "Microsoft.EntityFrameworkCore.InMemory": "2.2.6",
           "Microsoft.NET.Test.Sdk": "15.9.0",
           "NUnit3TestAdapter": "3.11.0",
@@ -18,6 +18,7 @@
           "Generic.Repository.Test.dll": {}
         }
       },
+      "coveralls.io/1.4.2": {},
       "Microsoft.CodeCoverage/15.9.0": {
         "runtime": {
           "lib/netcoreapp1.0/Microsoft.VisualStudio.CodeCoverage.Shim.dll": {
@@ -1237,9 +1238,10 @@
           }
         }
       },
-      "Generic.Repository/1.0.0": {
+      "Generic.RepositoryAsync.EFCore/1.0.1": {
         "dependencies": {
-          "Microsoft.EntityFrameworkCore": "2.2.6"
+          "Microsoft.EntityFrameworkCore": "2.2.6",
+          "coveralls.io": "1.4.2"
         },
         "runtime": {
           "Generic.Repository.dll": {}
@@ -1252,6 +1254,13 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "coveralls.io/1.4.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-V8id+G8NdmmFKXbbxk/zqVGXZnuSrzOkcF9GhOLhNOHCG9kC4qiQLvod+kGrtpQyzyzySIyLdI18H5eGA08ZDA==",
+      "path": "coveralls.io/1.4.2",
+      "hashPath": "coveralls.io.1.4.2.nupkg.sha512"
     },
     "Microsoft.CodeCoverage/15.9.0": {
       "type": "package",
@@ -1904,7 +1913,7 @@
       "path": "system.xml.xpath.xmldocument/4.3.0",
       "hashPath": "system.xml.xpath.xmldocument.4.3.0.nupkg.sha512"
     },
-    "Generic.Repository/1.0.0": {
+    "Generic.RepositoryAsync.EFCore/1.0.1": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

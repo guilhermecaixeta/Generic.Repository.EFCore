@@ -2,6 +2,9 @@
   "version": 3,
   "targets": {
     ".NETCoreApp,Version=v2.2": {
+      "coveralls.io/1.4.2": {
+        "type": "package"
+      },
       "Microsoft.CodeCoverage/15.9.0": {
         "type": "package",
         "compile": {
@@ -1901,22 +1904,50 @@
           "lib/netstandard1.3/System.Xml.XPath.XmlDocument.dll": {}
         }
       },
-      "Generic.Repository/1.0.0": {
+      "Generic.RepositoryAsync.EFCore/1.0.1": {
         "type": "project",
         "framework": ".NETStandard,Version=v2.0",
         "dependencies": {
-          "Microsoft.EntityFrameworkCore": "2.2.4"
+          "Microsoft.EntityFrameworkCore": "2.2.4",
+          "coveralls.io": "1.4.2"
         },
         "compile": {
-          "bin/placeholder/Generic.Repository.dll": {}
+          "bin/placeholder/Generic.RepositoryAsync.EFCore.dll": {}
         },
         "runtime": {
-          "bin/placeholder/Generic.Repository.dll": {}
+          "bin/placeholder/Generic.RepositoryAsync.EFCore.dll": {}
         }
       }
     }
   },
   "libraries": {
+    "coveralls.io/1.4.2": {
+      "sha512": "V8id+G8NdmmFKXbbxk/zqVGXZnuSrzOkcF9GhOLhNOHCG9kC4qiQLvod+kGrtpQyzyzySIyLdI18H5eGA08ZDA==",
+      "type": "package",
+      "path": "coveralls.io/1.4.2",
+      "hasTools": true,
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "coveralls.io.1.4.2.nupkg.sha512",
+        "coveralls.io.nuspec",
+        "tools/CommandLine.dll",
+        "tools/CommandLine.xml",
+        "tools/Coveralls.dll",
+        "tools/Coveralls.pdb",
+        "tools/LibGit2Sharp.dll",
+        "tools/LibGit2Sharp.xml",
+        "tools/NativeBinaries/amd64/git2-e0902fb.dll",
+        "tools/NativeBinaries/amd64/git2-e0902fb.pdb",
+        "tools/NativeBinaries/x86/git2-e0902fb.dll",
+        "tools/NativeBinaries/x86/git2-e0902fb.pdb",
+        "tools/Newtonsoft.Json.dll",
+        "tools/Newtonsoft.Json.xml",
+        "tools/coveralls.net.exe",
+        "tools/coveralls.net.exe.config",
+        "tools/coveralls.net.pdb"
+      ]
+    },
     "Microsoft.CodeCoverage/15.9.0": {
       "sha512": "oherNadUtHKqFQbtdRKXgPvZVWyGkOeS83pFWT864587npS7JIFWIJ/LJV0c25cWNkCytn2S9XGSSkKscnNFAQ==",
       "type": "package",
@@ -6476,7 +6507,7 @@
         "system.xml.xpath.xmldocument.nuspec"
       ]
     },
-    "Generic.Repository/1.0.0": {
+    "Generic.RepositoryAsync.EFCore/1.0.1": {
       "type": "project",
       "path": "../../src/Generic.Repository/Generic.Repository.csproj",
       "msbuildProject": "../../src/Generic.Repository/Generic.Repository.csproj"
@@ -6484,7 +6515,7 @@
   },
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v2.2": [
-      "Generic.Repository >= 1.0.0",
+      "Generic.RepositoryAsync.EFCore >= 1.0.1",
       "Microsoft.EntityFrameworkCore.InMemory >= 2.2.6",
       "Microsoft.NET.Test.Sdk >= 15.9.0",
       "Microsoft.NETCore.App >= 2.2.0",

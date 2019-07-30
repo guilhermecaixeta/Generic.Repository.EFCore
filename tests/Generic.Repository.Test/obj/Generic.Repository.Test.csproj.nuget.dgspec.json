@@ -5,10 +5,10 @@
   },
   "projects": {
     "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj": {
-      "version": "1.0.0",
+      "version": "1.0.1",
       "restore": {
         "projectUniqueName": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj",
-        "projectName": "Generic.Repository",
+        "projectName": "Generic.RepositoryAsync.EFCore",
         "projectPath": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj",
         "packagesPath": "C:\\Users\\ctw00503\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\src\\Generic.Repository\\obj\\",
@@ -50,6 +50,10 @@
               "target": "Package",
               "version": "[2.0.3, )",
               "autoReferenced": true
+            },
+            "coveralls.io": {
+              "target": "Package",
+              "version": "[1.4.2, )"
             }
           },
           "imports": [
