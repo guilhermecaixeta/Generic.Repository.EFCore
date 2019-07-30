@@ -1,24 +1,26 @@
 env:
     - sonarQube
+    
 language: csharp
 os: linux
 mono: latest
 sudo: required
 dist: xenial
 dotnet: 2.2
+
 addons:
-  apt:
-    packages:
-    - gettext
-    - libcurl4-openssl-dev
-    - libicu-dev
-    - libssl-dev
-    - libunwind8
-    - zlib1g
+    apt:
+        packages:
+            - gettext
+            - libcurl4-openssl-dev
+            - libicu-dev
+            - libssl-dev
+            - libunwind8
+            - zlib1g
     sonarcloud:
-    organization: "guilhermecaixeta-github"
-    token:
-      secure: sonarQube
+        organization: "guilhermecaixeta-github"
+        token:
+            secure: sonarQube
 
 before_install:
   - git fetch --unshallow # Travis always does a shallow clone, but GitVersion needs the full history including branches and tags

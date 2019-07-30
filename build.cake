@@ -69,7 +69,7 @@ Task("Create-Nuget-Pack")
             {
                 Configuration = configuration,
                 OutputDirectory = artifactDirectory,
-                ArgumentCustomization= args => args.Append($"/p:Version={version}");
+                ArgumentCustomization= args => args.Append($"/p:Version={version}")
             });
     }
 });
