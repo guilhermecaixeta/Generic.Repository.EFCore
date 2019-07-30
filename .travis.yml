@@ -14,10 +14,6 @@ addons:
     - libunwind8
     - zlib1g
 script:
-    - dotnet restore
-    - dotnet build
-    - cd tests/Generic.Repository.Test
-    - dotnet test
 # You must run this command to give Travis permissions to execute the build.sh shell script:
 # git update-index --chmod=+x build.sh    
     - ./build.sh
