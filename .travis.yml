@@ -1,3 +1,5 @@
+env:
+    - sonarQube=sonarQube
 language: csharp
 os: linux
 mono: none
