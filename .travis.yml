@@ -21,15 +21,4 @@ script:
     - ./build.sh
 global:
     - DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
-    - DOTNET_CLI_TELEMETRY_OPTOUT=true
-
-
- addons:
-  sonarcloud:
-    organization: ""
-    token:
-      secure: sonarQube # encrypted value of your token
-
-script:
-  # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
-  - sonar-scanner  
+    - DOTNET_CLI_TELEMETRY_OPTOUT=true 
