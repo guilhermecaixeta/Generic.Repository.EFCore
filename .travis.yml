@@ -2,7 +2,7 @@ env:
     - sonarQube=sonarQube
 language: csharp
 os: linux
-mono: none
+mono: latest
 sudo: required
 dist: xenial
 dotnet: 2.2
@@ -15,10 +15,11 @@ addons:
     - libssl-dev
     - libunwind8
     - zlib1g
+
 script:
 # You must run this command to give Travis permissions to execute the build.sh shell script:
 # git update-index --chmod=+x build.sh    
-- chmod +x build.sh
+    - chmod +x build.sh
 
 global:
     - DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
