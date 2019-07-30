@@ -18,14 +18,7 @@ addons:
 script:
 # You must run this command to give Travis permissions to execute the build.sh shell script:
 # git update-index --chmod=+x build.sh    
-    - dotnet restore
-    - dotnet build
-    - cd tests/Generic.Repository.Test
-    - dotnet test
- 
-
-after_script:
-- /build.sh
+- ./build.sh
 
 global:
     - DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
