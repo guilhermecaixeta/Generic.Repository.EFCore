@@ -76,7 +76,7 @@ Task("Push-Nuget-Package")
 {
     var apiKey = "oy2pixvzsxxiu7hyftiqrbis4ezwf5duvavmnqcev7rvre"; //EnvironmentVariable("apiKey");
     
-    foreach (var package in GetFiles($"{artifactsDirectory}/*.nupkg"))
+    foreach (var package in GetFiles($"{artifactDirectory}/*.nupkg"))
     {
         NuGetPush(package, 
             new NuGetPushSettings {
