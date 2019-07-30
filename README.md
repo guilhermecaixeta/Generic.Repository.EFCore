@@ -5,9 +5,10 @@ Code Quality - Master/Developer
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b2b523e13d4b490187071837e8574570)](https://www.codacy.com/app/guilhermecaixeta/Generic.Service.DotNetCore2.2?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=guilhermecaixeta/Generic.Service.DotNetCore2.2&amp;utm_campaign=Badge_Grade)
 Travis CI - Master/Developer
 [![Build Status](https://travis-ci.org/guilhermecaixeta/Generic.Repository.EFCore.svg?branch=master)](https://travis-ci.org/guilhermecaixeta/Generic.Repository.EFCore)
+
 Nuget
-https://img.shields.io/nuget/dt/Generic.RepositoryAsync.EFCore?label=Nuget%20Download&style=plastic
-https://img.shields.io/nuget/v/Generic.RepositoryAsync.EFCore?label=Nuget%20Version
+![Nuget](https://img.shields.io/nuget/v/Generic.RepositoryAsync.EFCore?label=Nuget%20Version%20&style=plastic)
+![Nuget](https://img.shields.io/nuget/dt/Generic.RepositoryAsync.EFCore?label=Nuget%20Downloads)
 
 ## This version is final.
 
