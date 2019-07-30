@@ -4,8 +4,6 @@
 #tool "nuget:?package=GitVersion.CommandLine"
 // Install Addin's
 #addin nuget:?package=Newtonsoft.Json
-// Load Scripts
-#load "./build/parameters.cake"
 
 using Newtonsoft.Json;
 
@@ -13,8 +11,6 @@ using Newtonsoft.Json;
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
 var artifactDirectory = MakeAbsolute(Directory("./artifacts"));
-BuildParameters parameters = BuildParameters.GetParameters(Context);
-
 /* END - Parameters */
 
 /* BEGIN - Setup */
@@ -92,5 +88,5 @@ Task("Push-Nuget-Package")
 /* END - Tasks */
 
 /* BEGIN - RUN */
-RunTarget(target);
+RunTarget(target).IsDependentOn("Push-Nuget-Package");
 /* END - RUN */
