@@ -18,11 +18,20 @@ script:
     - dotnet build
     - cd tests/Generic.Repository.Test
     - dotnet test
+# You must run this command to give Travis permissions to execute the build.sh shell script:
+# git update-index --chmod=+x build.sh    
     - ./build.sh
 global:
     - DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
     - DOTNET_CLI_TELEMETRY_OPTOUT=true
 
-# You must run this command to give Travis permissions to execute the build.sh shell script:
-# git update-index --chmod=+x build.sh
-    
+
+ addons:
+  sonarcloud:
+    organization: "guilhermecaixeta-github"
+    token:
+      secure: "5613f8b94cc0ce1e80736a1378c3ba893dcd8e2e " # encrypted value of your token
+
+script:
+  # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
+  - sonar-scanner  
