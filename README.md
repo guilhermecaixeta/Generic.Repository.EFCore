@@ -7,7 +7,7 @@ Travis CI - Master/Developer
 [![Build Status](https://travis-ci.org/guilhermecaixeta/Generic.Repository.EFCore.svg?branch=master)](https://travis-ci.org/guilhermecaixeta/Generic.Repository.EFCore)
 
 Nuget
-![Nuget](https://img.shields.io/nuget/v/Generic.RepositoryAsync.EFCore?label=Nuget%20Version%20&style=plastic)
+![Nuget](https://img.shields.io/nuget/v/Generic.RepositoryAsync.EFCore?label=Nuget%20Version)
 ![Nuget](https://img.shields.io/nuget/dt/Generic.RepositoryAsync.EFCore?label=Nuget%20Downloads)
 
 ## This version is final.
