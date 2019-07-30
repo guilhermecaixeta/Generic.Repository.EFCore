@@ -79,7 +79,7 @@ Task("Push-Nuget-Package")
 .WithCriteria(ShouldRunRelease())
 .Does(() =>
 {
-    var apiKey = EnvironmentVariable("NUGET_API_KEY");
+    var apiKey = EnvironmentVariable("NUGET_KEY");
     
     foreach (var package in GetFiles($"{artifactDirectory}/*.nupkg"))
     {
