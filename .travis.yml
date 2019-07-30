@@ -1,5 +1,5 @@
 env:
-    - sonarQube=sonarQube
+    - sonarQube
 language: csharp
 os: linux
 mono: latest
@@ -15,6 +15,10 @@ addons:
     - libssl-dev
     - libunwind8
     - zlib1g
+    sonarcloud:
+    organization: "guilhermecaixeta-github"
+    token:
+      secure: sonarQube
 
 script:
 # You must run this command to give Travis permissions to execute the build.sh shell script:
