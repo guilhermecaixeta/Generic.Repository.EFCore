@@ -9,8 +9,8 @@ Appveyor
 [![Build status](https://ci.appveyor.com/api/projects/status/bv400l6e1wpd1de9?svg=true)](https://ci.appveyor.com/project/guilhermecaixeta/generic-repository-efcore)
 
 Nuget
-![Nuget](https://img.shields.io/nuget/v/Generic.RepositoryAsync.EFCore?label=Nuget%20Version)
-![Nuget](https://img.shields.io/nuget/dt/Generic.RepositoryAsync.EFCore?label=Nuget%20Downloads)
+![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/Generic.RepositoryAsync.EFCore?label=Nuget%20Version)
+![Nuget](https://img.shields.io/nuget/dt/Generic.RepositoryAsync.EFCore?label=Nuget%20Download)
 
 ## This version is final.
 
