@@ -4,7 +4,6 @@ pull_requests:
 environment:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
-environment:
   NUGET_KEY:
     secure: a9U4XFGlqlSIqadwjg+Yj5h5IgAnwaPUEpMORCt9qYi8RJaNQwG5Cs11p6q1GF5G
 build_script:
