@@ -31,9 +31,7 @@ namespace Generic.Repository.Cache
                 var size = Assembly.
                 Load(AssemblyName).
                 GetTypes().
-                Where(x => Namespace.
-                Split(';').
-                Contains(x.Namespace)).
+                Where(x => Namespace.Split(';').Contains(x.Namespace)).
                 Count();
                 if (size == 0)
                 {
