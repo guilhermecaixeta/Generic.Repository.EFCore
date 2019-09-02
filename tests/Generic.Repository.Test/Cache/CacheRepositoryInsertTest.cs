@@ -4,102 +4,91 @@ namespace Generic.Repository.Test.Cache
     using NUnit.Framework;
 
     [TestFixture]
-    public abstract class CacheRepositoryInsertTest<T>
+    public abstract class CacheRepositoryInsertTest<T> : CacheConfigurationTest<T>
     where T : class
     {
-        protected ICacheRepository cache;
-        protected string nameProperty;
-        protected string nameAttribute;
+
 
         [Test]
-        public void Add_Valid_Class_And_Verify_If_Has_Value()
+        public void ValidateValues_ValidValue()
         {
-            cache.Add<T>();
-            Assert.IsTrue(cache.HasMethodSet());
-            Assert.IsTrue(cache.HasMethodGet());
-            Assert.IsTrue(cache.HasAttribute());
-            Assert.IsTrue(cache.HasProperty());
+            Assert.IsTrue(Cache.HasMethodSet());
+            Assert.IsTrue(Cache.HasMethodGet());
+            Assert.IsTrue(Cache.HasAttribute());
+            Assert.IsTrue(Cache.HasProperty());
         }
 
         [Test]
-        public void Get_Dictionary_Method_Set()
+        public void GetDictionaryMethodSet_ValidValue()
         {
-            InitCache();
-            var methodSet = cache.GetDictionaryMethodSet(typeof(T).Name);
+            var methodSet = Cache.GetDictionaryMethodSet(typeof(T).Name);
             Assert.IsNotNull(methodSet);
         }
 
         [Test]
-        public void Get_Dictionary_Method_Get()
+        public void GetDictionaryMethodGet_ValidValue()
         {
-            InitCache();
-            var methodGet = cache.GetDictionaryMethodGet(typeof(T).Name);
+            var methodGet = Cache.GetDictionaryMethodGet(typeof(T).Name);
             Assert.IsNotNull(methodGet);
         }
 
         [Test]
-        public void Get_Method_Set()
+        public void GetMethodSet_ValidValue()
         {
-            InitCache();
-            var methodSet = cache.GetMethodSet(typeof(T).Name, nameProperty);
+            var methodSet = Cache.GetMethodSet(typeof(T).Name, NameProperty);
             Assert.IsNotNull(methodSet);
         }
 
         [Test]
-        public void Get_Method_Get()
+        public void GetMethodGet_ValidValue()
         {
-            InitCache();
-            var methodGet = cache.GetMethodGet(typeof(T).Name, nameProperty);
+            var methodGet = Cache.GetMethodGet(typeof(T).Name, NameProperty);
             Assert.IsNotNull(methodGet);
         }
 
         [Test]
-        public void Get_Dictionary_Attributes()
+        public void GetDictionaryAttributes_ValidValue()
         {
-            InitCache();
-            var attr = cache.GetDictionaryAttribute(typeof(T).Name);
+            var attr = Cache.GetDictionaryAttribute(typeof(T).Name);
             Assert.IsNotNull(attr);
         }
 
         [Test]
-        public void Get_Dictionary_Attribute()
+        public void GetDictionaryAttribute_ValidValue()
         {
-            InitCache();
-            var attr = cache.GetDictionaryAttribute(typeof(T).Name, nameProperty);
+            var attr = Cache.GetDictionaryAttribute(typeof(T).Name, NameProperty);
             Assert.IsNotNull(attr);
         }
 
         [Test]
-        public void Get_Attribute()
+        public void GetAttribute_ValidValue()
         {
-            InitCache();
-            var attr = cache.GetAttribute(typeof(T).Name, nameProperty, nameAttribute);
+            var attr = Cache.GetAttribute(typeof(T).Name, NameProperty, NameAttribute);
             Assert.IsNotNull(attr);
         }
 
         [Test]
-        public void Get_Dictionary_Properties()
+        public void GetDictionaryProperties_ValidValue()
         {
-            InitCache();
-            var attr = cache.GetDictionaryProperties(typeof(T).Name);
+            var attr = Cache.GetDictionaryProperties(typeof(T).Name);
             Assert.IsNotNull(attr);
         }
 
         [Test]
-        public void Get_Property()
+        public void GetProperty_ValidValue()
         {
-            InitCache();
-            var attr = cache.GetProperty(typeof(T).Name, nameProperty);
+            var attr = Cache.GetProperty(typeof(T).Name, NameProperty);
             Assert.IsNotNull(attr);
         }
 
         [Test]
-        public void Clear_Cache()
+        public void ClearCache_Valid()
         {
-            cache.ClearCache();
-            Assert.IsFalse(cache.HasMethodGet());
+            Cache.ClearCache();
+            Assert.IsFalse(Cache.HasMethodGet());
+            Assert.IsFalse(Cache.HasMethodGet());
+            Assert.IsFalse(Cache.HasAttribute());
+            Assert.IsFalse(Cache.HasProperty());
         }
-
-        protected void InitCache() => cache.Add<T>();
     }
 }

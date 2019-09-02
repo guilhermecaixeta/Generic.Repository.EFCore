@@ -27,15 +27,18 @@ namespace Generic.Repository.Cache
         {
             property.IsNull(property.Name, nameof(CreateAction));
             var setter = property.GetSetMethod(true);
-            setter.IsNull($"ClassName: {nameof(CreateAction)} {Environment.NewLine}Message: The property {property.Name} does not have a public setter.");
+            setter.
+                IsNull($"ClassName: {nameof(CreateAction)} {Environment.NewLine}Message: The property {property.Name} does not have a public setter.");
 
-            return (Action<object, object>)ExtractMethod<TValue>(setter, property, "CreateActionGeneric");
+            var result = (Action<object, object>) ExtractMethod<TValue>(setter, property, "CreateActionGeneric");
+
+            return result;
         }
 
         public Action<object, object> CreateActionGeneric<TValue, TInput>(MethodInfo setter)
         {
             Action<TValue, TInput> setterTypedDelegate = (Action<TValue, TInput>)Delegate.CreateDelegate(typeof(Action<TValue, TInput>), setter);
-            Action<object, object> setterDelegate = (object instance, object value) => { setterTypedDelegate((TValue)instance, (TInput)value); };
+            Action<object, object> setterDelegate = (object instance, object value) => setterTypedDelegate((TValue)instance, (TInput)value);
             return setterDelegate;
         }
 
@@ -59,7 +62,7 @@ namespace Generic.Repository.Cache
             {
                 return result;
             }
-            else throw new KeyNotFoundException($"FIELD> {nameof(key)} VALUE> {key} METHOD> {nameof(GetData)}");
+            throw new KeyNotFoundException($"FIELD> {nameof(key)} VALUE> {key} METHOD> {nameof(GetData)}");
         }
     }
 }

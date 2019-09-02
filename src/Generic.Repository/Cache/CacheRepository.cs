@@ -24,9 +24,7 @@ namespace Generic.Repository.Cache
             string Namespace)
         {
             CacheFacade = new CacheRepositoryFacade();
-            if (
-            !string.IsNullOrEmpty(AssemblyName) &&
-            !string.IsNullOrEmpty(Namespace))
+            if (!string.IsNullOrEmpty(AssemblyName) && !string.IsNullOrEmpty(Namespace))
             {
                 var size = Assembly.
                 Load(AssemblyName).
@@ -35,7 +33,7 @@ namespace Generic.Repository.Cache
                 Count();
                 if (size == 0)
                 {
-                    throw new Exception("List size can be 0! Verify the namespace and assembly names.");
+                    throw new Exception("List size can be 0 (Zero)! Verify the namespace and assembly names.");
                 }
                 InitCache(size);
             }
@@ -47,8 +45,10 @@ namespace Generic.Repository.Cache
         {
             var dicResult = CacheFacade.
             GetData<Dictionary<string, Func<object, object>>>(CacheGet, objectKey);
+
             var result = CacheFacade.
             GetData<Func<object, object>>(dicResult, propertieKey);
+
             return result;
         }
 
@@ -62,12 +62,13 @@ namespace Generic.Repository.Cache
 
         public Action<object, object> GetMethodSet(
             string objectKey,
-            string propertieKey)
+            string propertyKey)
         {
             var dicResult = CacheFacade.
             GetData<Dictionary<string, Action<object, object>>>(CacheSet, objectKey);
+
             var result = CacheFacade.
-            GetData<Action<object, object>>(dicResult, propertieKey);
+            GetData<Action<object, object>>(dicResult, propertyKey);
             return result;
         }
 
@@ -79,28 +80,31 @@ namespace Generic.Repository.Cache
 
         public CustomAttributeTypedArgument GetAttribute(
             string objectKey,
-            string propertieKey,
-            string customAttirbuteKey)
+            string propertyKey,
+            string customAttributeKey)
         {
             var dictionaryI = CacheFacade
             .GetData<Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>>(
                 CacheAttribute,
                 objectKey);
+
             var dictionaryII = CacheFacade
             .GetData<Dictionary<string, CustomAttributeTypedArgument>>(
                 dictionaryI,
-                propertieKey);
+                propertyKey);
+
             var result = CacheFacade
             .GetData<CustomAttributeTypedArgument>(
                 dictionaryII,
-                customAttirbuteKey);
+                customAttributeKey);
+
             return result;
         }
 
-        public IDictionary<string, CustomAttributeTypedArgument> GetDictionaryAttribute(string objectKey, string propertieKey)
+        public IDictionary<string, CustomAttributeTypedArgument> GetDictionaryAttribute(string objectKey, string propertyKey)
         {
             var dictionaryI = CacheFacade.GetData<Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>>(CacheAttribute, objectKey);
-            var result = CacheFacade.GetData<Dictionary<string, CustomAttributeTypedArgument>>(dictionaryI, propertieKey);
+            var result = CacheFacade.GetData<Dictionary<string, CustomAttributeTypedArgument>>(dictionaryI, propertyKey);
             return result;
         }
 
@@ -110,10 +114,10 @@ namespace Generic.Repository.Cache
             return result;
         }
 
-        public PropertyInfo GetProperty(string objectKey, string propertieKey)
+        public PropertyInfo GetProperty(string objectKey, string propertyKey)
         {
             var dictionary = CacheFacade.GetData<Dictionary<string, PropertyInfo>>(CacheProperties, objectKey);
-            var result = CacheFacade.GetData<PropertyInfo>(dictionary, propertieKey);
+            var result = CacheFacade.GetData<PropertyInfo>(dictionary, propertyKey);
             return result;
         }
 
@@ -177,8 +181,11 @@ namespace Generic.Repository.Cache
 
         private void CachingAttribute(PropertyInfo propertyInfo, string typeName)
         {
-            string propetyName = propertyInfo.Name;
-            CacheAttribute[typeName].Add(propetyName, propertyInfo.GetCustomAttributesData().SelectMany(x => x.NamedArguments).ToDictionary(x => x.MemberName, x => x.TypedValue));
+            var propertyName = propertyInfo.Name;
+            CacheAttribute[typeName].Add(propertyName, propertyInfo.
+                GetCustomAttributesData().
+                SelectMany(x => x.NamedArguments).
+                ToDictionary(x => x.MemberName, x => x.TypedValue));
         }
 
         private void InitCache()

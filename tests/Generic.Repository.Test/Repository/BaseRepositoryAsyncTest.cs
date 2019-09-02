@@ -60,35 +60,34 @@ namespace Generic.Repository.Test.Repository
         protected override FakeObject CreateFakeValue() =>
             new FakeObject { Name = GetFakeName() };
 
-        protected override FakeObject UpdateFakeValue(FakeObject value)s
+        protected override FakeObject UpdateFakeValue(FakeObject value)
         {
             var name = GetFakeName();
-            if (!name.Equals(value.Name))
-            {
-                value.Name = name;
-            }
-            else
+
+            if (name.Equals(value.Name))
             {
                 UpdateFakeValue(value);
-}
+            }
+
+            value.Name = name;
             return value;
         }
 
-        protected override Expression<Func<FakeObject, bool>> GetFakeExpression(FakeObject value)
-            => GetExpression(x => x.Id == value.Id);
+        protected override Expression<Func<FakeObject, bool>> GetFakeExpression(FakeObject value) => 
+            GetExpression(x => x.Id == value.Id);
 
-private Expression<Func<FakeObject, bool>> GetExpression(
-    Expression<Func<FakeObject, bool>> expression) => expression;
+        private Expression<Func<FakeObject, bool>> GetExpression(
+            Expression<Func<FakeObject, bool>> expression) => expression;
 
-private static string GetFakeName()
-{
-    var random = new Random();
+        private static string GetFakeName()
+        {
+            var random = new Random();
 
-    const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
-    return new string(Enumerable.Repeat(chars, 3)
-      .Select(s => s[random.Next(s.Length)]).ToArray());
-}
+            return new string(Enumerable.Repeat(chars, 3)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
 
     }
 }

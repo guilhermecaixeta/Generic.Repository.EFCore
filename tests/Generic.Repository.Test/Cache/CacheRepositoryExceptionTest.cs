@@ -11,45 +11,39 @@
     {
 
         [Test]
-        public void Get_Exception_Dictionary_Method_Set()
+        public void GetDictionaryMethodSet_NullValueException()
         {
-            InitCache();
-            Assert.Throws<ArgumentNullException>(() => cache.GetDictionaryMethodSet(null));
+            Assert.Throws<ArgumentNullException>(() => Cache.GetDictionaryMethodSet(null));
         }
 
         [Test]
-        public void Get_Exception_Dictionary_Method_Get()
+        public void GetDictionaryMethod_EmptyValueException()
         {
-            InitCache();
-            Assert.Throws<ArgumentNullException>(() => cache.GetDictionaryMethodGet(""));
+            Assert.Throws<ArgumentNullException>(() => Cache.GetDictionaryMethodGet(""));
         }
 
         [Test]
-        public void Get_Exception_Method_Set()
+        public void GetMethodSet_NullValueException()
         {
-            InitCache();
-            Assert.Throws<ArgumentNullException>(() => cache.GetMethodSet(null, nameProperty));
+            Assert.Throws<ArgumentNullException>(() => Cache.GetMethodSet(null, NameProperty));
         }
 
         [Test]
-        public void Get_Exception_Method_Get()
+        public void GetMethodGet_EmptyValueException()
         {
-            InitCache();
-            Assert.Throws<ArgumentNullException>(() => cache.GetMethodGet(typeof(T).Name, ""));
+            Assert.Throws<ArgumentNullException>(() => Cache.GetMethodGet(typeof(T).Name, ""));
         }
 
         [Test]
-        public void Get_Exception_Dictionary_Attributes()
+        public void GetDictionaryAttributes_PropertyKeyNotFoundException()
         {
-            InitCache();
-            Assert.Throws<KeyNotFoundException>(() => cache.GetMethodGet(typeof(T).Name, "ABDC"));
+            Assert.Throws<KeyNotFoundException>(() => Cache.GetMethodGet(typeof(T).Name, "ABDC"));
         }
 
         [Test]
-        public void Get_Exception_Dictionary_Attribute()
+        public void GetDictionaryAttribute_ObjectKeyNotFoundException()
         {
-            InitCache();
-            Assert.Throws<KeyNotFoundException>(() => cache.GetMethodGet("ABCDE", nameProperty));
+            Assert.Throws<KeyNotFoundException>(() => Cache.GetMethodGet("ABCDE", NameProperty));
         }
     }
 }

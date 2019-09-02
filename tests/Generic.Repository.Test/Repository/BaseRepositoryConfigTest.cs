@@ -11,33 +11,31 @@
         where TValue : class
         where TFilter : class, IFilter
     {
-        protected readonly CacheRepository cache = new CacheRepository();
+        protected readonly CacheRepository Cache = new CacheRepository();
 
-        protected BaseRepositoryAsync<TValue, TFilter> _repository;
+        protected BaseRepositoryAsync<TValue, TFilter> Repository;
 
-        private DbContext dbContext;
+        private DbContext _dbContext;
 
         [SetUp]
         public void BaseUp()
         {
-            dbContext = new DbInMemoryContext<TValue>(GetOptions());
-            _repository = GetFakeRepository();
+            var contextOptions = GetDbContextOptionsFake();
+            _dbContext = new DbInMemoryContext<TValue>(contextOptions);
+            Repository = GetRepositoryFake();
         }
 
         [TearDown]
-        public void BaseTearDown()
-        {
-            DeleteFakeBase();
-        }
+        public void BaseTearDown() =>
+            _dbContext.Database.EnsureDeleted();
 
-        private BaseRepositoryAsync<TValue, TFilter> GetFakeRepository()
-        => new BaseRepositoryAsync<TValue, TFilter>(cache, dbContext);
+        private BaseRepositoryAsync<TValue, TFilter> GetRepositoryFake() =>
+            new BaseRepositoryAsync<TValue, TFilter>(Cache, _dbContext);
 
-        private static DbContextOptions<DbInMemoryContext<TValue>> GetOptions() =>
+        private static DbContextOptions<DbInMemoryContext<TValue>> GetDbContextOptionsFake() =>
             new DbContextOptionsBuilder<DbInMemoryContext<TValue>>()
                 .UseInMemoryDatabase(databaseName: "MemoryBase")
                 .Options;
 
-        private void DeleteFakeBase() => dbContext.Database.EnsureDeleted();
     }
 }

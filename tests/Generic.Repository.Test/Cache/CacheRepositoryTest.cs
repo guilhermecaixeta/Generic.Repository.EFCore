@@ -1,23 +1,23 @@
 namespace Generic.Repository.Test.Cache
 {
     using Generic.Repository.Attributes;
-    using Generic.Repository.Cache;
     using NUnit.Framework;
 
-    public class SimpleObject
+    public class FakeObject
     {
         [Lambda(MethodOption = Enums.LambdaMethod.Equals)]
         public int Id { get; set; }
     }
 
     [TestFixture]
-    public class CacheRepositoryTest : CacheRepositoryExceptionTest<SimpleObject>
+    public class CacheRepositoryTest : CacheRepositoryExceptionTest<FakeObject>
     {
-        public CacheRepositoryTest()
+
+        [SetUp]
+        public void CacheSetUp()
         {
-            cache = new CacheRepository();
-            nameProperty = "Id";
-            nameAttribute = "MethodOption";
+            NameProperty = nameof(FakeObject.Id);
+            NameAttribute = nameof(LambdaAttribute.MethodOption);
         }
     }
 }

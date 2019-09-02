@@ -11,40 +11,52 @@ namespace Generic.Repository.Test.Repository
         where TValue : class
         where TFilter : class, IFilter
     {
-        public BaseRepositoryAsyncCommandTest() { }
 
         [Test]
-        public async Task Create_Valid_Value_And_CountAsync()
+        public async Task CreateValueAndGetSingleAsync_ValidValue()
         {
             var value = CreateFakeValue();
-            value = await _repository.CreateAsync(value);
-            var result = await _repository.GetSingleByAsync(GetFakeExpression(value), false);
+            value = await Repository.CreateAsync(value).
+                ConfigureAwait(false);
+
+            var result = await Repository.
+                GetSingleByAsync(GetFakeExpression(value), false).
+                ConfigureAwait(false);
 
             Assert.AreEqual(value, result);
         }
 
         [Test]
-        public async Task Update_Valid_Value_And_Get_SingleAsync()
+        public async Task UpdateValueAndGetFirstAsync__ValidValue()
         {
             var value = CreateFakeValue();
 
-            value = await _repository.CreateAsync(value).ConfigureAwait(false);
+            value = await Repository.CreateAsync(value).
+                ConfigureAwait(false);
 
-            var valueOutdated = await _repository.GetFirstByAsync(GetFakeExpression(value), true).ConfigureAwait(false);
+            var valueOutdated = await Repository.
+                GetFirstByAsync(GetFakeExpression(value), true).
+                ConfigureAwait(false);
 
-            await _repository.UpdateAsync(UpdateFakeValue(value)).ConfigureAwait(false);
+            await Repository.UpdateAsync(UpdateFakeValue(value)).
+                ConfigureAwait(false);
 
             Assert.AreNotEqual(value, valueOutdated);
         }
 
         [Test]
-        public async Task Delete_ValueAsync()
+        public async Task DeleteValueAsync__ValidValue()
         {
             var value = CreateFakeValue();
-            value = await _repository.CreateAsync(value).ConfigureAwait(false);
-            await _repository.DeleteAsync(value).ConfigureAwait(false);
+            value = await Repository.CreateAsync(value).
+                ConfigureAwait(false);
 
-            var result = await _repository.GetFirstByAsync(GetFakeExpression(value), false).ConfigureAwait(false);
+            await Repository.DeleteAsync(value).
+                ConfigureAwait(false);
+
+            var result = await Repository.
+                GetFirstByAsync(GetFakeExpression(value), false).
+                ConfigureAwait(false);
 
             Assert.AreEqual(null, result);
         }
