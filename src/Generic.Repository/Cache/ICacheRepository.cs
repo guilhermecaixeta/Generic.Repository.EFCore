@@ -27,11 +27,11 @@ namespace Generic.Repository.Cache
         void Add<TValue>(bool saveAttribute, bool saveGet, bool saveSet, bool saveProperties);
 
         bool HasMethodSet();
-        
+
         bool HasMethodGet();
-        
+
         bool HasProperty();
-        
+
         bool HasAttribute();
 
         void ClearCache();

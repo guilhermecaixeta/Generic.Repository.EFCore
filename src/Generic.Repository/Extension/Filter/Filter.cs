@@ -1,12 +1,12 @@
+using Generic.Repository.Cache;
+using Generic.Repository.Enums;
+using Generic.Repository.Extension.Validation;
+using Generic.Repository.Models.Filter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using Generic.Repository.Cache;
-using Generic.Repository.Enums;
-using Generic.Repository.Extension.Validation;
-using Generic.Repository.Models.Filter;
 
 namespace Generic.Repository.Extension.Filter
 {
@@ -91,9 +91,9 @@ namespace Generic.Repository.Extension.Filter
         /// <param name="value">Value to will be used to make an expression</param>
         /// <returns></returns>
         private static Expression SetExpressionType(
-            this LambdaMethod type, 
-            ParameterExpression parameter, 
-            PropertyInfo prop, 
+            this LambdaMethod type,
+            ParameterExpression parameter,
+            PropertyInfo prop,
             object value)
         {
             Expression lambda = null;
@@ -115,8 +115,8 @@ namespace Generic.Repository.Extension.Filter
                 case LambdaMethod.LessThan:
                     if (prop.GetType()
                     .IsNotString(
-                        nameof(SetExpressionType), 
-                        prop.Name, 
+                        nameof(SetExpressionType),
+                        prop.Name,
                         LambdaMethod.LessThan.ToString()))
                     {
                         lambda = Expression.LessThan(Expression.Property(parameter, prop), Expression.Constant(value));
@@ -140,15 +140,15 @@ namespace Generic.Repository.Extension.Filter
         }
 
         private static Expression<Func<TValue, bool>> MergeExpressions<TValue>(
-            this Expression lambda, 
+            this Expression lambda,
             ParameterExpression parameter)
-            where TValue : class => 
+            where TValue : class =>
                 Expression.Lambda<Func<TValue, bool>>(lambda, parameter);
 
         private static Expression<Func<TValue, bool>> MergeExpressions<TValue>(
-            this Expression<Func<TValue, bool>> predicate, 
-            LambdaMerge typeMerge, 
-            ParameterExpression parameter, 
+            this Expression<Func<TValue, bool>> predicate,
+            LambdaMerge typeMerge,
+            ParameterExpression parameter,
             Expression<Func<TValue, bool>> predicateMerge)
         where TValue : class
         {
@@ -169,8 +169,8 @@ namespace Generic.Repository.Extension.Filter
         }
 
         private static bool ValidateProperty(object obj)
-        => obj != null && 
-                (!obj.ToString().Equals(DateTime.MinValue.ToString()) && 
+        => obj != null &&
+                (!obj.ToString().Equals(DateTime.MinValue.ToString()) &&
                 !obj.ToString().Equals(DateTime.MaxValue.ToString()));
     }
 }

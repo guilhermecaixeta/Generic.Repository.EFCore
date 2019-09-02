@@ -1,5 +1,5 @@
-using System;
 using Generic.Repository.Extension.Validation;
+using System;
 
 namespace Generic.Repository.Models.Page.PageConfig
 {

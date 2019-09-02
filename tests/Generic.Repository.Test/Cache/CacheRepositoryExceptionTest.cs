@@ -7,14 +7,14 @@
     [TestFixture]
     public abstract class CacheRepositoryExceptionTest<T>
         : CacheRepositoryInsertTest<T>
-        where T: class
+        where T : class
     {
 
         [Test]
         public void Get_Exception_Dictionary_Method_Set()
         {
             InitCache();
-           Assert.Throws<ArgumentNullException>(() => cache.GetDictionaryMethodSet(null));
+            Assert.Throws<ArgumentNullException>(() => cache.GetDictionaryMethodSet(null));
         }
 
         [Test]

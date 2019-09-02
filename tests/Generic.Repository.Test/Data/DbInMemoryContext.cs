@@ -1,4 +1,3 @@
-using System;
 using Microsoft.EntityFrameworkCore;
 
 namespace Generic.Repository.Test.Data
@@ -6,7 +5,7 @@ namespace Generic.Repository.Test.Data
     public class DbInMemoryContext<T> : DbContext
     where T : class
     {
-        DbSet<T> Value {get; set;}
+        DbSet<T> Value { get; set; }
 
         public DbInMemoryContext()
         { }

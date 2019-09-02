@@ -1,9 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Generic.Repository.Cache;
 using Generic.Repository.Models.Page;
 using Generic.Repository.Models.Page.PageConfig;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Generic.Repository.Extension.Page
 {
@@ -25,11 +25,11 @@ namespace Generic.Repository.Extension.Page
             this IQueryable<TValue> listEntities,
             ICacheRepository cacheRepository,
             IPageConfig config)
-        where TValue : class => 
+        where TValue : class =>
         ToPage(
             listEntities,
             cacheRepository,
-            config, 
+            config,
             false);
 
         /// <summary>
@@ -41,16 +41,16 @@ namespace Generic.Repository.Extension.Page
         /// <typeparam name="TValue"></typeparam>
         /// <returns></returns>
         public static IPage<TValue> ToPage<TValue>(
-            this IQueryable<TValue> listEntities, 
+            this IQueryable<TValue> listEntities,
             ICacheRepository cacheRepository,
-            IPageConfig config, 
+            IPageConfig config,
             bool pageStartInOne)
-        where TValue : class => 
+        where TValue : class =>
         ToPage(
-            listEntities, 
+            listEntities,
             cacheRepository,
-            config, 
-            pageStartInOne, 
+            config,
+            pageStartInOne,
             "ASC");
 
         /// <summary>
@@ -63,18 +63,18 @@ namespace Generic.Repository.Extension.Page
         /// <typeparam name="TValue"></typeparam>
         /// <returns></returns>
         public static IPage<TValue> ToPage<TValue>(
-            this IQueryable<TValue> listEntities, 
+            this IQueryable<TValue> listEntities,
             ICacheRepository cacheRepository,
-            IPageConfig config, 
-            bool pageStartInOne, 
+            IPageConfig config,
+            bool pageStartInOne,
             string defaultSort)
-        where TValue : class => 
+        where TValue : class =>
         ToPage(
             listEntities,
-            cacheRepository, 
-            config, 
-            pageStartInOne, 
-            defaultSort, 
+            cacheRepository,
+            config,
+            pageStartInOne,
+            defaultSort,
             "Id");
 
         /// <summary>
@@ -89,19 +89,19 @@ namespace Generic.Repository.Extension.Page
         /// <returns></returns>
         public static IPage<TValue> ToPage<TValue>(
             this IQueryable<TValue> listEntities,
-            ICacheRepository cacheRepository, 
+            ICacheRepository cacheRepository,
             IPageConfig config,
-             bool pageStartInOne, 
-             string defaultSort, 
+             bool pageStartInOne,
+             string defaultSort,
              string defaultOrder)
-        where TValue : class => 
+        where TValue : class =>
         ToPage(
-            listEntities, 
+            listEntities,
             cacheRepository,
-            config, 
-            pageStartInOne, 
-            defaultSort, 
-            defaultOrder, 
+            config,
+            pageStartInOne,
+            defaultSort,
+            defaultOrder,
             10);
 
         /// <summary>
@@ -150,12 +150,12 @@ namespace Generic.Repository.Extension.Page
             Func<IEnumerable<TValue>, IEnumerable<TResult>> mapperTo,
             IPageConfig config)
         where TValue : class
-        where TResult : class => 
+        where TResult : class =>
         ToPage(
             listEntities,
-            cacheRepository, 
-            mapperTo, 
-            config, 
+            cacheRepository,
+            mapperTo,
+            config,
             false);
 
         /// <summary>
@@ -225,23 +225,23 @@ namespace Generic.Repository.Extension.Page
         /// <typeparam name="TResult">Return type</typeparam>
         /// <returns></returns>
         public static IPage<TResult> ToPage<TValue, TResult>(
-            this IQueryable<TValue> listEntities, 
+            this IQueryable<TValue> listEntities,
             ICacheRepository cacheRepository,
-            Func<IEnumerable<TValue>, IEnumerable<TResult>> mapperTo, 
-            IPageConfig config, 
-            bool pageStartInOne, 
-            string defaultSort, 
+            Func<IEnumerable<TValue>, IEnumerable<TResult>> mapperTo,
+            IPageConfig config,
+            bool pageStartInOne,
+            string defaultSort,
             string defaultOrder)
         where TValue : class
-        where TResult : class => 
+        where TResult : class =>
         ToPage(
             listEntities,
-            cacheRepository, 
-            mapperTo, 
-            config, 
-            pageStartInOne, 
-            defaultSort, 
-            defaultOrder, 
+            cacheRepository,
+            mapperTo,
+            config,
+            pageStartInOne,
+            defaultSort,
+            defaultOrder,
             10);
 
         /// <summary>
@@ -258,22 +258,22 @@ namespace Generic.Repository.Extension.Page
         /// <returns></returns>
         public static IPage<TResult> ToPage<TValue, TResult>(
             this IQueryable<TValue> listEntities,
-            ICacheRepository cacheRepository, 
-            Func<IEnumerable<TValue>, IEnumerable<TResult>> mapperTo, 
-            IPageConfig config, 
-            bool pageStartInOne, 
-            string defaultSort, 
-            string defaultOrder, 
+            ICacheRepository cacheRepository,
+            Func<IEnumerable<TValue>, IEnumerable<TResult>> mapperTo,
+            IPageConfig config,
+            bool pageStartInOne,
+            string defaultSort,
+            string defaultOrder,
             int defaultSize)
         where TValue : class
         where TResult : class => new Page<TValue, TResult>(
             cacheRepository,
             listEntities,
-            mapperTo, 
-            config, 
-            pageStartInOne, 
-            defaultSort, 
-            defaultOrder, 
+            mapperTo,
+            config,
+            pageStartInOne,
+            defaultSort,
+            defaultOrder,
             defaultSize);
         #endregion
 

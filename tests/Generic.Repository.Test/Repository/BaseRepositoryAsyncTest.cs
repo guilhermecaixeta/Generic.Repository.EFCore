@@ -22,38 +22,25 @@ namespace Generic.Repository.Test.Repository
     }
 
     [TestFixture]
-    public class BaseRepositoryAsyncTest : BaseRepositoryAsyncQueryTest<FakeObject, FakeFilter>
+    public class BaseRepositoryAsyncTest :
+        BaseRepositoryAsyncQueryTest<FakeObject, FakeFilter>
     {
-        private string fakeSearchValue;
+        private string _fakeSearchValue;
         public BaseRepositoryAsyncTest()
         {
-            count = 10;
-            count2 = 5;
-            count3 = 1;
+            ComparableListLength = 10;
+            ComparablePageLength = 5;
+            ComparablePageFilterResult = 1;
         }
 
-        protected override FakeObject CreateFakeValue() => new FakeObject { Name = "Test_1" };
+        internal override IPageConfig GetFakePageConfig()
+            => new PageConfig { order = "Name", page = 0, size = 5, sort = "ASC" };
 
-        protected override FakeObject UpdateFakeValue(FakeObject value)
-        {
-            value.Name = "Test_2";
-            return value;
-        }
+        internal override FakeFilter GetFakeFilter()
+        => new FakeFilter { Name = _fakeSearchValue };
 
-        protected override Expression<Func<FakeObject, bool>> ExpressionGeneric(FakeObject value)
-            => GetExpression(x => x.Id == value.Id);
-
-        internal override IPageConfig GetPageConfig()
-        => new PageConfig { order = "Name", page = 0, size = 5, sort = "ASC" };
-
-        internal override FakeFilter GetFilter()
-        => new FakeFilter { Name = fakeSearchValue };
-
-        internal override Expression<Func<FakeObject, bool>> ExpressionGeneric()
-        => GetExpression(x => fakeSearchValue.Contains(x.Name));
-
-        private Expression<Func<FakeObject, bool>> GetExpression(
-            Expression<Func<FakeObject, bool>> expression) => expression;
+        internal override Expression<Func<FakeObject, bool>> GetFakeExpression()
+        => GetExpression(x => _fakeSearchValue.Contains(x.Name));
 
         internal override IEnumerable<FakeObject> GetListFake()
         {
@@ -63,25 +50,45 @@ namespace Generic.Repository.Test.Repository
                 var name = GetFakeName();
                 if (!checkout)
                 {
-                    fakeSearchValue = name;
+                    _fakeSearchValue = name;
                     checkout = true;
                 }
                 yield return new FakeObject { Name = name };
             }
         }
 
-        private string GetFakeName()
+        protected override FakeObject CreateFakeValue() =>
+            new FakeObject { Name = GetFakeName() };
+
+        protected override FakeObject UpdateFakeValue(FakeObject value)s
         {
-            var random = new Random();
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-            return new string(Enumerable.Repeat(chars, 3)
-              .Select(s => s[random.Next(s.Length)]).ToArray());
+            var name = GetFakeName();
+            if (!name.Equals(value.Name))
+            {
+                value.Name = name;
+            }
+            else
+            {
+                UpdateFakeValue(value);
+}
+            return value;
         }
 
-        internal override void SaveList(IEnumerable<FakeObject> list)
-        {
-            _repository.CreateAsync(list).Wait();
-        }
+        protected override Expression<Func<FakeObject, bool>> GetFakeExpression(FakeObject value)
+            => GetExpression(x => x.Id == value.Id);
+
+private Expression<Func<FakeObject, bool>> GetExpression(
+    Expression<Func<FakeObject, bool>> expression) => expression;
+
+private static string GetFakeName()
+{
+    var random = new Random();
+
+    const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+    return new string(Enumerable.Repeat(chars, 3)
+      .Select(s => s[random.Next(s.Length)]).ToArray());
+}
 
     }
 }

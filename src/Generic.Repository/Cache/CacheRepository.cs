@@ -20,12 +20,12 @@ namespace Generic.Repository.Cache
         }
 
         public CacheRepository(
-            string AssemblyName, 
+            string AssemblyName,
             string Namespace)
         {
             CacheFacade = new CacheRepositoryFacade();
             if (
-            !string.IsNullOrEmpty(AssemblyName) && 
+            !string.IsNullOrEmpty(AssemblyName) &&
             !string.IsNullOrEmpty(Namespace))
             {
                 var size = Assembly.
@@ -42,7 +42,7 @@ namespace Generic.Repository.Cache
         }
 
         public Func<object, object> GetMethodGet(
-            string objectKey, 
+            string objectKey,
             string propertieKey)
         {
             var dicResult = CacheFacade.
@@ -61,7 +61,7 @@ namespace Generic.Repository.Cache
         }
 
         public Action<object, object> GetMethodSet(
-            string objectKey, 
+            string objectKey,
             string propertieKey)
         {
             var dicResult = CacheFacade.
@@ -78,21 +78,21 @@ namespace Generic.Repository.Cache
         }
 
         public CustomAttributeTypedArgument GetAttribute(
-            string objectKey, 
-            string propertieKey, 
+            string objectKey,
+            string propertieKey,
             string customAttirbuteKey)
         {
             var dictionaryI = CacheFacade
             .GetData<Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>>(
-                CacheAttribute, 
+                CacheAttribute,
                 objectKey);
             var dictionaryII = CacheFacade
             .GetData<Dictionary<string, CustomAttributeTypedArgument>>(
-                dictionaryI, 
+                dictionaryI,
                 propertieKey);
             var result = CacheFacade
             .GetData<CustomAttributeTypedArgument>(
-                dictionaryII, 
+                dictionaryII,
                 customAttirbuteKey);
             return result;
         }
@@ -170,7 +170,8 @@ namespace Generic.Repository.Cache
 
         public bool HasAttribute() => CacheAttribute.Any();
 
-        public void ClearCache() {
+        public void ClearCache()
+        {
             InitCache();
         }
 

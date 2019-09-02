@@ -1,7 +1,7 @@
+using Generic.Repository.Extension.Validation;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Generic.Repository.Extension.Validation;
 
 namespace Generic.Repository.Cache
 {

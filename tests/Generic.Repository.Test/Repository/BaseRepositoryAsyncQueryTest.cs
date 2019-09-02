@@ -14,15 +14,17 @@
         where TValue : class
         where TFilter : class, IFilter
     {
-        protected int count;
-        protected int count2;
-        protected int count3;
+        protected int ComparableListLength;
+
+        protected int ComparablePageLength;
+
+        protected int ComparablePageFilterResult;
 
         [SetUp]
-        public void FakeQueryDataUp()
+        public async Task FakeQueryDataUp()
         {
-            var data = GetListFake();
-            SaveList(data);
+            var mockList = GetListFake();
+            await _repository.CreateAsync(mockList);
         }
 
         [Test]
@@ -31,31 +33,32 @@
             var list = await _repository.GetAllAsync(true);
 
             Assert.IsNotNull(list);
-            Assert.AreEqual(count, list.Count);
+            Assert.AreEqual(ComparableListLength, list.Count);
         }
 
         [Test]
         public async Task Get_All_By_DataAsync()
         {
-            var list = await _repository.GetAllByAsync(ExpressionGeneric(), true);
+            var list = await _repository.GetAllByAsync(GetFakeExpression(), true);
             var result = list.Count;
             Assert.IsNotNull(list);
-            Assert.AreEqual(count3, result);
+            Assert.AreEqual(ComparablePageFilterResult, result);
         }
 
         [Test]
         public async Task Filter_All_DataAsync()
         {
-            var list = await _repository.FilterAllAsync(GetFilter(), true);
+            var list = await _repository.FilterAllAsync(GetFakeFilter(), true);
 
             Assert.IsNotNull(list);
-            Assert.AreEqual(count3, list.Count);
+
+            Assert.AreEqual(ComparablePageFilterResult, list.Count);
         }
 
         [Test]
         public async Task First_DataAsync()
         {
-            var value = await _repository.GetFirstByAsync(ExpressionGeneric(), true);
+            var value = await _repository.GetFirstByAsync(GetFakeExpression(), true);
 
             Assert.IsNotNull(value);
         }
@@ -63,34 +66,33 @@
         [Test]
         public async Task Page_All_DataAsync()
         {
-            var page = await _repository.GetPageAsync(GetPageConfig(), true);
+            var page = await _repository.GetPageAsync(GetFakePageConfig(), true);
 
             Assert.IsNotNull(page.Content);
-            Assert.AreEqual(count2, page.Content.Count);
+            Assert.AreEqual(ComparablePageLength, page.Content.Count);
         }
 
         [Test]
         public async Task Page_All_Expression_DataAsync()
         {
-            var page = await _repository.GetPageAsync(GetPageConfig(), ExpressionGeneric(), true);
+            var page = await _repository.GetPageAsync(GetFakePageConfig(), GetFakeExpression(), true);
 
             Assert.IsNotNull(page);
-            Assert.AreEqual(count3, page.Content.Count);
+            Assert.AreEqual(ComparablePageFilterResult, page.Content.Count);
         }
 
         [Test]
         public async Task Page_All_Filter_DataAsync()
         {
-            var page = await _repository.GetPageAsync(GetPageConfig(), GetFilter(), true);
+            var page = await _repository.GetPageAsync(GetFakePageConfig(), GetFakeFilter(), true);
 
             Assert.IsNotNull(page.Content);
-            Assert.AreEqual(count3, page.Content.Count);
+            Assert.AreEqual(ComparablePageFilterResult, page.Content.Count);
         }
 
         internal abstract IEnumerable<TValue> GetListFake();
-        internal abstract IPageConfig GetPageConfig();
-        internal abstract TFilter GetFilter();
-        internal abstract Expression<Func<TValue, bool>> ExpressionGeneric();
-        internal abstract void SaveList(IEnumerable<TValue> list);
+        internal abstract IPageConfig GetFakePageConfig();
+        internal abstract TFilter GetFakeFilter();
+        internal abstract Expression<Func<TValue, bool>> GetFakeExpression();
     }
 }

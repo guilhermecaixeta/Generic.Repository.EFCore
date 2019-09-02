@@ -1,9 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Generic.Repository.Cache;
 using Generic.Repository.Extension.Validation;
 using Generic.Repository.Models.Page.PageConfig;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Generic.Repository.Models.Page
 {
@@ -109,14 +109,14 @@ namespace Generic.Repository.Models.Page
         {
             IQueryable<TValue> dataList = !Sort.ToLower().Equals("asc") ?
             _listEntities.
-            OrderByDescending(x => 
+            OrderByDescending(x =>
                 _cacheRepository.
-                GetMethodGet(typeof(TValue).Name, Order)(x)) 
+                GetMethodGet(typeof(TValue).Name, Order)(x))
             :
             _listEntities.
-            OrderBy(x => 
+            OrderBy(x =>
                 _cacheRepository.
-                GetMethodGet(typeof(TValue).Name, Order)(x)) ;
+                GetMethodGet(typeof(TValue).Name, Order)(x));
             return dataList.
             Skip(NumberPage * Size).
             Take(Size);

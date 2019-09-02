@@ -16,8 +16,8 @@ namespace Generic.Repository.Test.Cache
         public CacheRepositoryTest()
         {
             cache = new CacheRepository();
-            nameProperty="Id";
-            nameAttribute="MethodOption";
+            nameProperty = "Id";
+            nameAttribute = "MethodOption";
         }
     }
 }

@@ -1,5 +1,5 @@
-using System;
 using Generic.Repository.Enums;
+using System;
 
 namespace Generic.Repository.Attributes
 {
