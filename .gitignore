@@ -10,3 +10,5 @@ src/Generic\.Repository\.Test/bin/
 src/Generic\.Repository\.Test/obj/
 
 \.vs/
+
+tools/
