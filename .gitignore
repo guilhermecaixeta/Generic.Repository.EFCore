@@ -12,3 +12,5 @@ src/Generic\.Repository\.Test/obj/
 \.vs/
 
 tools/
+
+tests/Generic.Repository.Test/
