@@ -1,5 +1,5 @@
+using Generic.Repository.Extension.Error;
 using System;
-using Generic.Repository.Extension.Validation;
 
 namespace Generic.Repository.Models.Page.PageConfig
 {
@@ -12,7 +12,7 @@ namespace Generic.Repository.Models.Page.PageConfig
 
         public bool Equals(PageConfig other)
         {
-            other.IsNull(nameof(Equals), nameof(other));
+            other.ThrowErrorNullValue(nameof(Equals), nameof(other));
             return other.Equals(this);
         }
     }

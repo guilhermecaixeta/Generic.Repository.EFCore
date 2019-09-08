@@ -1,13 +1,37 @@
+env:
+    - sonarQube
+    
 language: csharp
-mono: none
+os: linux
+mono: latest
 sudo: required
 dist: xenial
 dotnet: 2.2
+
+addons:
+    apt:
+        packages:
+            - gettext
+            - libcurl4-openssl-dev
+            - libicu-dev
+            - libssl-dev
+            - libunwind8
+            - zlib1g
+
+before_install:
+  - git fetch --unshallow # Travis always does a shallow clone, but GitVersion needs the full history including branches and tags
+  - git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+  - git fetch origin      
+
 script:
+# You must run this command to give Travis permissions to execute the build.sh shell script:
+# git update-index --chmod=+x build.sh    
+    # - ./build.sh
     - dotnet restore
     - dotnet build
-    - cd src/Generic.Repository.Test
+    - cd tests/Generic.Repository.Test
     - dotnet test
+
 global:
     - DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
-    - DOTNET_CLI_TELEMETRY_OPTOUT=1
+    - DOTNET_CLI_TELEMETRY_OPTOUT=true 

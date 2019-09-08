@@ -13,4 +13,8 @@ src/Generic\.Repository\.Test/obj/
 
 tools/
 
-tests/Generic.Repository.Test/
+tests/Generic\.Repository\.Test/obj/
+
+tests/Generic\.Repository\.Test/bin/
+
+artifacts/

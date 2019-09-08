@@ -1,10 +1,7 @@
-﻿using Generic.Repository.Attributes;
-
-namespace Generic.Repository.Test.Cache
+﻿namespace Generic.Repository.Test.Cache
 {
     using Generic.Repository.Cache;
     using NUnit.Framework;
-
 
     public abstract class CacheConfigurationTest<T>
         where T : class

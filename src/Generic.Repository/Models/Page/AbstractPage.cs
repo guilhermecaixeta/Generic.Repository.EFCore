@@ -1,9 +1,9 @@
+using Generic.Repository.Cache;
+using Generic.Repository.Extension.Error;
+using Generic.Repository.Models.Page.PageConfig;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Generic.Repository.Cache;
-using Generic.Repository.Extension.Validation;
-using Generic.Repository.Models.Page.PageConfig;
 
 namespace Generic.Repository.Models.Page
 {
@@ -20,6 +20,7 @@ namespace Generic.Repository.Models.Page
         protected readonly string _defaultOrder;
         protected readonly int _defaultSize;
         #endregion
+
         #region Parameters Ctor
         protected readonly IPageConfig _config;
         protected readonly IQueryable<TValue> _listEntities;
@@ -41,7 +42,7 @@ namespace Generic.Repository.Models.Page
             _cacheRepository = cacheRepository;
             _mapperTo = mapperTo;
             _count = listEntities.Count();
-            ValidateCtor(_count, config);
+            IsPageConfigValid(config);
             _config = config;
             _listEntities = listEntities;
             _pageStatsInOne = pageStartInOne;
@@ -51,18 +52,14 @@ namespace Generic.Repository.Models.Page
         }
         #endregion
 
-        private static void ValidateCtor(int count, IPageConfig config)
+        private static void IsPageConfigValid(IPageConfig config)
         {
-            config.IsNull(nameof(ValidateCtor), nameof(config));
-            if (count < 1)
-            {
-                Validation.HandleNullError($"ClassName: {nameof(ValidateCtor)} {Environment.NewLine}Message: The listEntities is empty!");
-            }
+            config.ThrowErrorNullValue(nameof(config), nameof(IsPageConfigValid));
         }
 
         public bool Equals(TResult other)
         {
-            other.IsNull(nameof(Equals), nameof(other));
+            other.ThrowErrorNullValue(nameof(other), nameof(Equals));
             return other == this;
         }
 
@@ -70,7 +67,7 @@ namespace Generic.Repository.Models.Page
         {
             get
             {
-                _mapperTo.IsNull(nameof(AbstractPage<TValue, TResult>), nameof(_mapperTo));
+                _mapperTo.ThrowErrorNullValue(nameof(_mapperTo), nameof(AbstractPage<TValue, TResult>));
                 return _mapperTo(GetItems()).ToList();
             }
         }
@@ -109,14 +106,14 @@ namespace Generic.Repository.Models.Page
         {
             IQueryable<TValue> dataList = !Sort.ToLower().Equals("asc") ?
             _listEntities.
-            OrderByDescending(x => 
+            OrderByDescending(x =>
                 _cacheRepository.
-                GetMethodGet(typeof(TValue).Name, Order)(x)) 
+                GetMethodGet(typeof(TValue).Name, Order)(x))
             :
             _listEntities.
-            OrderBy(x => 
+            OrderBy(x =>
                 _cacheRepository.
-                GetMethodGet(typeof(TValue).Name, Order)(x)) ;
+                GetMethodGet(typeof(TValue).Name, Order)(x));
             return dataList.
             Skip(NumberPage * Size).
             Take(Size);

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Generic.Repository.Extension.Error;
 using Generic.Repository.Extension.Validation;
 
 namespace Generic.Repository.Cache
@@ -9,9 +10,9 @@ namespace Generic.Repository.Cache
     {
         public Func<object, object> CreateFunction<TValue>(PropertyInfo property)
         {
-            property.IsNull(property.Name, nameof(CreateFunction));
+            property.IsNull();
             var getter = property.GetGetMethod(true);
-            getter.IsNull($"ClassName: {nameof(CreateFunction)} {Environment.NewLine}Message: The property {property.Name} does not have a public accessor.");
+            getter.IsNull();
 
             return (Func<object, object>)ExtractMethod<TValue>(getter, property, "CreateFunctionGeneric");
         }
@@ -25,9 +26,9 @@ namespace Generic.Repository.Cache
 
         public Action<object, object> CreateAction<TValue>(PropertyInfo property)
         {
-            property.IsNull(property.Name, nameof(CreateAction));
+            property.ThrowErrorNullValue(nameof(property), nameof(ExtractMethod));
             var setter = property.GetSetMethod(true);
-            setter.IsNull($"ClassName: {nameof(CreateAction)} {Environment.NewLine}Message: The property {property.Name} does not have a public setter.");
+            setter.ThrowErrorNullValue(nameof(setter), nameof(ExtractMethod)); ;
 
             return (Action<object, object>)ExtractMethod<TValue>(setter, property, "CreateActionGeneric");
         }
@@ -41,7 +42,7 @@ namespace Generic.Repository.Cache
 
         private object ExtractMethod<TValue>(MethodInfo method, PropertyInfo property, string nameMethod)
         {
-            method.IsNull(nameof(ExtractMethod), nameof(method));
+            method.ThrowErrorNullValue(nameof(method), nameof(ExtractMethod));
             var type = typeof(ICacheRepositoryFacade);
             var genericMethod = type.GetMethod(nameMethod);
             var genericHelper = genericMethod.MakeGenericMethod(typeof(TValue), property.PropertyType);

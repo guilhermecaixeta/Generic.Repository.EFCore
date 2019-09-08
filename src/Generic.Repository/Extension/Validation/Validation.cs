@@ -16,6 +16,6 @@ namespace Generic.Repository.Extension.Validation
 
         internal static bool IsType<T>(this object obj) => obj is T;
 
-        internal static bool HasAny(this object obj) => obj is IEnumerable ? ((IEnumerable)obj).Any() : false;
+        internal static bool HasAny(this object obj) => !obj.IsNull() && obj is IEnumerable? ((IEnumerable)obj).Any() : false;
     }
 }

@@ -5,6 +5,12 @@ Code Quality - Master/Developer
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b2b523e13d4b490187071837e8574570)](https://www.codacy.com/app/guilhermecaixeta/Generic.Service.DotNetCore2.2?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=guilhermecaixeta/Generic.Service.DotNetCore2.2&amp;utm_campaign=Badge_Grade)
 Travis CI - Master/Developer
 [![Build Status](https://travis-ci.org/guilhermecaixeta/Generic.Repository.EFCore.svg?branch=master)](https://travis-ci.org/guilhermecaixeta/Generic.Repository.EFCore)
+Appveyor
+[![Build status](https://ci.appveyor.com/api/projects/status/bv400l6e1wpd1de9?svg=true)](https://ci.appveyor.com/project/guilhermecaixeta/generic-repository-efcore)
+
+Nuget
+![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/Generic.RepositoryAsync.EFCore?label=Nuget%20Version)
+![Nuget](https://img.shields.io/nuget/dt/Generic.RepositoryAsync.EFCore?label=Nuget%20Download)
 
 ## This version is final.
 
@@ -93,34 +99,7 @@ namespace Models.Filter
 }
 ```
 
-#### Step 2.1 If you will use IFilter implementation
-Whith this implementation you don't need create a lambda in your filter.
-This attribute says how your filter will be aplied on every request.
-
-```
-namespace Models.Filter
-{
-    public class CustomerFilter : IFilter
-    {
-        [Lambda(MethodOption = LambdaMethod.Contains, MergeOption = LambdaMerge.Or)]
-        [FromQuery(Name = "Email")]
-        public string Email { get; set; }
-
-        [Lambda(MethodOption = LambdaMethod.Contains, MergeOption = LambdaMerge.Or)]
-        [FromQuery(Name = "Name")]
-        public string Name { get; set; }
-        
-        ///Between date
-        [Lambda(NameProperty = "Birthday", MethodOption = LambdaMethod.GreaterThanOrEqual, MergeOption = LambdaMerge.Or)]
-        public DateTime BirthdayMax { get; set; }
-        [Lambda(NameProperty = "Birthday", MethodOption = LambdaMethod.GreaterThanOrEqual)]
-        public DateTime BirthdayMin { get; set; }
-
-    }
-}
-```
-
-Fast attributes explanation:
+#### Fast attributes explanation:
 * MethodOption, this say how method you will use to generate a lambda.-- Sample using lambda, x => name.Contais(x.name);
 * MergeOption, says how you will merge each lambda attribute. -- Example: x => email.Contains(x.email) || nome.Contains(x.name);
 * NameProperty, name property on entity which refers column in database;
