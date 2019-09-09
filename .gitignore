@@ -18,3 +18,5 @@ tests/Generic\.Repository\.Test/obj/
 tests/Generic\.Repository\.Test/bin/
 
 artifacts/
+
+TestResults/

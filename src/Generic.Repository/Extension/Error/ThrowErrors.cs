@@ -11,12 +11,12 @@ namespace Generic.Repository.Extension.Error
         /// <param name="attributeName">Name of the attribute.</param>
         /// <param name="methodName">Name of the method.</param>
         /// <exception cref="ArgumentNullException">Attribute&gt; {attributeName} MethodName&gt; {methodName}</exception>
-        public static void ThrowErrorNullValue(this object obj, string attributeName, string methodName)
+        public static void ThrowErrorNullValue(this object obj, string nameParameter, string nameMethod)
         {
             var result = obj.IsNull();
             if (result)
             {
-                throw new ArgumentNullException($"Attribute> {attributeName} MethodName> {methodName}");
+                throw new ArgumentNullException($"{nameParameter} MethodName > {nameMethod}");
             }
         }
 
@@ -25,12 +25,12 @@ namespace Generic.Repository.Extension.Error
         /// <param name="obj">The object.</param>
         /// <param name="methodName">Name of the method.</param>
         /// <exception cref="ArgumentNullException">MethodName &gt; {methodName}</exception>
-        public static void ThrowErrorNullOrEmptyList<T>(this IEnumerable<T> obj, string methodName)
+        public static void ThrowErrorNullOrEmptyList<T>(this IEnumerable<T> obj, string nameParameter, string nameMethod)
         {
             var result = obj.HasAny();
-            if (result)
+            if (!result)
             {
-                throw new ArgumentNullException($"MethodName > {methodName}");
+                throw new ArgumentNullException($"{nameParameter} MethodName > {nameMethod}");
             }
         }
     }

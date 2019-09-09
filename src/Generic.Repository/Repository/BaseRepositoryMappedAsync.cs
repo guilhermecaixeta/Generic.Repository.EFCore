@@ -1,7 +1,7 @@
 ﻿using Generic.Repository.Cache;
 using Generic.Repository.Extension.Error;
-using Generic.Repository.Extension.Filter;
 using Generic.Repository.Extension.Page;
+using Generic.Repository.Extension.Validation;
 using Generic.Repository.Models.Filter;
 using Generic.Repository.Models.Page;
 using Generic.Repository.Models.Page.PageConfig;
@@ -35,6 +35,7 @@ namespace Generic.Repository.Repository
                 this.mapperData = mapperData;
             }
         }
+
         public BaseRepositoryAsync(
             ICacheRepository cacheRepository,
             DbContext context,
@@ -56,7 +57,7 @@ namespace Generic.Repository.Repository
             Func<IEnumerable<TValue>, IEnumerable<TResult>> mapperListFunc,
             Func<TValue, TResult> mapperDataFunc)
         {
-            mapperListFunc.ThrowErrorNullValue(nameof(mapperListFunc),nameof(IsValidCtor));
+            mapperListFunc.ThrowErrorNullValue(nameof(mapperListFunc), nameof(IsValidCtor));
             mapperDataFunc.ThrowErrorNullValue(nameof(mapperDataFunc), nameof(IsValidCtor));
 
             return true;
@@ -74,33 +75,29 @@ namespace Generic.Repository.Repository
 
         public new virtual async Task<IReadOnlyList<TResult>> GetAllByAsync(
             Expression<Func<TValue, bool>> predicate,
-            bool enableAsNoTracking) =>
-                predicate != null
-                ?
-                mapperList(
-                    await GetAllQueryable(enableAsNoTracking).
-                    Where(predicate).
-                    ToListAsync()).
-                ToList()
-                 :
-                 mapperList(
-                    await GetAllQueryable(enableAsNoTracking).
-                    ToListAsync()).
-                 ToList();
+            bool enableAsNoTracking)
+        {
+            var queryList = GetAllQueryable(enableAsNoTracking);
+            var list = await queryList.ToListAsync();
 
+            if (!predicate.IsNull())
+            {
+                list = await queryList.Where(predicate).ToListAsync();
+            }
+
+            return mapperList(list).ToList();
+        }
         public new virtual async Task<IReadOnlyList<TResult>> FilterAllAsync(
             TFilter filter,
             bool enableAsNoTracking) =>
-            await GetAllByAsync(
-                filter.
-                GeneratePredicate<TValue, TFilter>(CacheService),
-                enableAsNoTracking);
+                await GetAllByAsync(GetExpressionByFilter(filter), enableAsNoTracking);
 
         public new virtual async Task<TResult> GetSingleByAsync(
             Expression<Func<TValue, bool>> predicate,
             bool enableAsNoTracking)
         {
-            predicate.ThrowErrorNullValue(nameof(predicate), nameof(GetSingleByAsync));
+            ThrowErrorNullValue(predicate, nameof(predicate), nameof(GetSingleByAsync));
+
             var value = await GetAllQueryable(enableAsNoTracking).SingleOrDefaultAsync(predicate);
             return mapperData(value);
         }
@@ -109,7 +106,7 @@ namespace Generic.Repository.Repository
             Expression<Func<TValue, bool>> predicate,
             bool enableAsNoTracking)
         {
-            predicate.ThrowErrorNullValue(nameof(predicate), nameof(GetSingleByAsync));
+            ThrowErrorNullValue(predicate, nameof(predicate), nameof(GetFirstByAsync));
             var value = await GetAllQueryable(enableAsNoTracking).FirstOrDefaultAsync(predicate);
             return mapperData(value);
         }
@@ -117,36 +114,29 @@ namespace Generic.Repository.Repository
         public new virtual async Task<IPage<TResult>> GetPageAsync(
             IPageConfig config,
             bool enableAsNoTracking) =>
-            await Task.
-            Run(() =>
-                GetAllQueryable(enableAsNoTracking).
-                ToPage<TValue, TResult>(
-                    CacheService,
-                    mapperList,
-                    config));
+                await Task.Run(() =>
+                    GetPage(GetAllQueryable(enableAsNoTracking), config));
 
         public new virtual async Task<IPage<TResult>> GetPageAsync(
             IPageConfig config,
             TFilter filter,
             bool enableAsNoTracking) =>
-                await Task.
-                Run(() =>
-                GetAllQueryable(enableAsNoTracking).
-                ToPage<TValue, TResult>(
-                    CacheService,
-                    mapperList,
-                    config));
+                await Task.Run(() =>
+                    GetPage(GetAllQueryable(enableAsNoTracking).Where(GetExpressionByFilter(filter)), config));
 
         public new virtual async Task<IPage<TResult>> GetPageAsync(
             IPageConfig config,
             Expression<Func<TValue, bool>> predicate,
             bool enableAsNoTracking) =>
                 await Task.Run(() =>
-                    GetAllQueryable(enableAsNoTracking).
-                    ToPage<TValue, TResult>(
-                        CacheService,
-                        mapperList,
-                        config));
+                    GetPage(GetAllQueryable(enableAsNoTracking).Where(predicate), config));
+
+        #endregion
+
+        #region Private Methods
+
+        private IPage<TResult> GetPage(IQueryable<TValue> query, IPageConfig config) =>
+                query.ToPage(CacheService, mapperList, config);
         #endregion
 
     }

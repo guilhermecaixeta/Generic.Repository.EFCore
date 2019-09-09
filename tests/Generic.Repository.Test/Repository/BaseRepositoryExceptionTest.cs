@@ -3,6 +3,8 @@ namespace Generic.Repository.Test.Repository
     using Generic.Repository.Models.Filter;
     using NUnit.Framework;
     using System;
+    using System.Collections.Generic;
+    using System.Linq.Expressions;
 
     [TestFixture]
     public abstract class BaseRepositoryExceptionTest<TValue, TFilter> : BaseRepositoryAsyncQueryTest<TValue, TFilter>
@@ -16,6 +18,20 @@ namespace Generic.Repository.Test.Repository
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
                 await Repository.CreateAsync(_value);
+            });
+
+        [Test]
+        public void CreateList_NullList() =>
+            Assert.ThrowsAsync<ArgumentNullException>(async () =>
+            {
+                await Repository.CreateAsync((IEnumerable<TValue>)null);
+            });
+
+        [Test]
+        public void CreateList_EmptyList() =>
+            Assert.ThrowsAsync<ArgumentNullException>(async () =>
+            {
+                await Repository.CreateAsync(new List<TValue>());
             });
 
         [Test]
@@ -33,6 +49,20 @@ namespace Generic.Repository.Test.Repository
             });
 
         [Test]
+        public void DeleteList_NullList() =>
+            Assert.ThrowsAsync<ArgumentNullException>(async () =>
+            {
+                await Repository.DeleteAsync((IEnumerable<TValue>)null);
+            });
+
+        [Test]
+        public void DeleteList_EmptyList() =>
+            Assert.ThrowsAsync<ArgumentNullException>(async () =>
+            {
+                await Repository.DeleteAsync(new List<TValue>());
+            });
+
+        [Test]
         public void GetPage_NullConfig() =>
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
@@ -43,18 +73,14 @@ namespace Generic.Repository.Test.Repository
         public void GetPage_NullPredicate() =>
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
-                var expression = GetFakeExpression();
-                expression = null;
-                await Repository.GetPageAsync(GetPageConfigFake(), expression, true);
+                await Repository.GetPageAsync(GetPageConfigFake(), (Expression<Func<TValue, bool>>)null, true);
             });
 
         [Test]
         public void GetPage_NullFilter() =>
             Assert.ThrowsAsync<NullReferenceException>(async () =>
             {
-                var filter = GetFilterFake();
-                filter = null;
-                await Repository.GetPageAsync(GetPageConfigFake(), filter, true);
+                await Repository.GetPageAsync(GetPageConfigFake(), (TFilter)null, true);
             });
 
         [Test]

@@ -100,7 +100,6 @@
             Assert.AreEqual(0, page.TotalPage);
         }
 
-        internal abstract IEnumerable<TValue> GetListFake();
         internal abstract IPageConfig GetPageConfigFake();
         internal abstract TFilter GetFilterFake();
         internal abstract Expression<Func<TValue, bool>> GetFakeExpression();
