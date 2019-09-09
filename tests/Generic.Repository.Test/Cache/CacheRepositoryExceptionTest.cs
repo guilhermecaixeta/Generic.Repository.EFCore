@@ -9,6 +9,9 @@
         : CacheRepositoryInsertTest<T>
         where T : class
     {
+        private const string SomeKey = "ABDC";
+
+        private readonly string EmptyValue = string.Empty;
 
         [Test]
         public void GetDictionaryMethodSet_NullValueException()
@@ -19,7 +22,7 @@
         [Test]
         public void GetDictionaryMethod_EmptyValueException()
         {
-            Assert.Throws<ArgumentNullException>(() => Cache.GetDictionaryMethodGet(""));
+            Assert.Throws<ArgumentNullException>(() => Cache.GetDictionaryMethodGet(EmptyValue));
         }
 
         [Test]
@@ -31,19 +34,19 @@
         [Test]
         public void GetMethodGet_EmptyValueException()
         {
-            Assert.Throws<ArgumentNullException>(() => Cache.GetMethodGet(typeof(T).Name, ""));
+            Assert.Throws<ArgumentNullException>(() => Cache.GetMethodGet(NameType, EmptyValue));
         }
 
         [Test]
         public void GetDictionaryAttributes_PropertyKeyNotFoundException()
         {
-            Assert.Throws<KeyNotFoundException>(() => Cache.GetMethodGet(typeof(T).Name, "ABDC"));
+            Assert.Throws<KeyNotFoundException>(() => Cache.GetMethodGet(NameType, SomeKey));
         }
 
         [Test]
         public void GetDictionaryAttribute_ObjectKeyNotFoundException()
         {
-            Assert.Throws<KeyNotFoundException>(() => Cache.GetMethodGet("ABCDE", NameProperty));
+            Assert.Throws<KeyNotFoundException>(() => Cache.GetMethodGet(SomeKey, NameProperty));
         }
     }
 }

@@ -23,9 +23,10 @@ namespace Generic.Repository.Test.Repository
 
     [TestFixture]
     public class BaseRepositoryAsyncTest :
-        BaseRepositoryAsyncQueryTest<FakeObject, FakeFilter>
+        BaseRepositoryExceptionTest<FakeObject, FakeFilter>
     {
         private string _fakeSearchValue;
+
         public BaseRepositoryAsyncTest()
         {
             ComparableListLength = 10;
@@ -33,10 +34,16 @@ namespace Generic.Repository.Test.Repository
             ComparablePageFilterResult = 1;
         }
 
-        internal override IPageConfig GetFakePageConfig()
-            => new PageConfig { order = "Name", page = 0, size = 5, sort = "ASC" };
+        internal override IPageConfig GetPageConfigFake()
+            => new PageConfig
+            {
+                order = "Name",
+                page = 0,
+                size = 5,
+                sort = "ASC"
+            };
 
-        internal override FakeFilter GetFakeFilter()
+        internal override FakeFilter GetFilterFake()
         => new FakeFilter { Name = _fakeSearchValue };
 
         internal override Expression<Func<FakeObject, bool>> GetFakeExpression()
@@ -73,7 +80,7 @@ namespace Generic.Repository.Test.Repository
             return value;
         }
 
-        protected override Expression<Func<FakeObject, bool>> GetFakeExpression(FakeObject value) => 
+        protected override Expression<Func<FakeObject, bool>> GetFakeExpression(FakeObject value) =>
             GetExpression(x => x.Id == value.Id);
 
         private Expression<Func<FakeObject, bool>> GetExpression(

@@ -10,7 +10,7 @@
 
     [TestFixture]
     public abstract class BaseRepositoryAsyncQueryTest<TValue, TFilter>
-        : BaseRepositoryExceptionTest<TValue, TFilter>
+        : BaseRepositoryAsyncCommandTest<TValue, TFilter>
         where TValue : class
         where TFilter : class, IFilter
     {
@@ -48,7 +48,7 @@
         [Test]
         public async Task FilterAllAsync_DataValid()
         {
-            var list = await Repository.FilterAllAsync(GetFakeFilter(), true);
+            var list = await Repository.FilterAllAsync(GetFilterFake(), true);
 
             Assert.IsNotNull(list);
 
@@ -66,7 +66,7 @@
         [Test]
         public async Task PageAllAsync_DataValid()
         {
-            var page = await Repository.GetPageAsync(GetFakePageConfig(), true);
+            var page = await Repository.GetPageAsync(GetPageConfigFake(), true);
 
             Assert.IsNotNull(page.Content);
             Assert.AreEqual(ComparablePageLength, page.Content.Count);
@@ -75,7 +75,7 @@
         [Test]
         public async Task PageAll_FilterByExpressionAsync__DataValid()
         {
-            var page = await Repository.GetPageAsync(GetFakePageConfig(), GetFakeExpression(), true);
+            var page = await Repository.GetPageAsync(GetPageConfigFake(), GetFakeExpression(), true);
 
             Assert.IsNotNull(page);
             Assert.AreEqual(ComparablePageFilterResult, page.Content.Count);
@@ -84,15 +84,25 @@
         [Test]
         public async Task PageAll_FilterByFilterDefaultAsync_DataValid()
         {
-            var page = await Repository.GetPageAsync(GetFakePageConfig(), GetFakeFilter(), true);
+            var page = await Repository.GetPageAsync(GetPageConfigFake(), GetFilterFake(), true);
 
             Assert.IsNotNull(page.Content);
             Assert.AreEqual(ComparablePageFilterResult, page.Content.Count);
         }
 
+        [Test]
+        public async Task PageAll_NoData()
+        {
+            BaseTearDown();
+            var page = await Repository.GetPageAsync(GetPageConfigFake(), GetFilterFake(), true);
+
+            Assert.AreEqual(new List<TValue>(), page.Content);
+            Assert.AreEqual(0, page.TotalPage);
+        }
+
         internal abstract IEnumerable<TValue> GetListFake();
-        internal abstract IPageConfig GetFakePageConfig();
-        internal abstract TFilter GetFakeFilter();
+        internal abstract IPageConfig GetPageConfigFake();
+        internal abstract TFilter GetFilterFake();
         internal abstract Expression<Func<TValue, bool>> GetFakeExpression();
     }
 }

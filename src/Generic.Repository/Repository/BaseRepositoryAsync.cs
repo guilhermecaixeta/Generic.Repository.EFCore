@@ -2,6 +2,7 @@ using Generic.Repository.Cache;
 using Generic.Repository.Extension.Error;
 using Generic.Repository.Extension.Filter;
 using Generic.Repository.Extension.Page;
+using Generic.Repository.Extension.Validation;
 using Generic.Repository.Models.Filter;
 using Generic.Repository.Models.Page;
 using Generic.Repository.Models.Page.PageConfig;
@@ -218,11 +219,15 @@ namespace Generic.Repository.Repository
 
         #region Protected Methods
         protected IQueryable<TValue> SetIncludes(IQueryable<TValue> query) =>
-        includesString != null && includesString.Any() ?
-                includesString.Aggregate(query, (current, include) =>
-                current.Include(include)) : includesExp != null && includesExp.Any() ?
-                includesExp.Aggregate(query, (current, include) =>
-                current.Include(include)) : query;
+        !includesString.IsNull() && includesString.Any() ?
+                includesString.
+                    Aggregate(query, (current, include) =>
+                current.Include(include)) : 
+                includesExp != null && includesExp.Any() ?
+                includesExp.
+                    Aggregate(query, (current, include) =>
+                    current.Include(include)) :
+                query;
 
         protected IQueryable<TValue> GetAllQueryable(bool enableAsNoTracking)
         {

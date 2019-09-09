@@ -9,6 +9,7 @@
         protected ICacheRepository Cache;
         protected string NameProperty;
         protected string NameAttribute;
+        protected readonly string NameType = typeof(T).Name;
 
         [SetUp]
         public void CacheUp()
