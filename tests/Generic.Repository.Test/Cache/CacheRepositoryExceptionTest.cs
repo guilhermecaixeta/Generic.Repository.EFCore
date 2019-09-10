@@ -11,7 +11,7 @@
     {
         private const string SomeKey = "ABDC";
 
-        private readonly string EmptyValue = string.Empty;
+        private readonly string _emptyValue = string.Empty;
 
         [Test]
         public void GetDictionaryMethodSet_NullValueException()
@@ -22,7 +22,7 @@
         [Test]
         public void GetDictionaryMethod_EmptyValueException()
         {
-            Assert.Throws<ArgumentNullException>(() => Cache.GetDictionaryMethodGet(EmptyValue));
+            Assert.Throws<ArgumentNullException>(() => Cache.GetDictionaryMethodGet(_emptyValue));
         }
 
         [Test]
@@ -34,7 +34,7 @@
         [Test]
         public void GetMethodGet_EmptyValueException()
         {
-            Assert.Throws<ArgumentNullException>(() => Cache.GetMethodGet(NameType, EmptyValue));
+            Assert.Throws<ArgumentNullException>(() => Cache.GetMethodGet(NameType, _emptyValue));
         }
 
         [Test]

@@ -5,7 +5,6 @@ using Generic.Repository.Extension.Filter.Facade;
 using Generic.Repository.Extension.Validation;
 using Generic.Repository.Models.Filter;
 using System;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -42,12 +41,10 @@ namespace Generic.Repository.Extension.Filter
             var valueT = typeof(TValue).Name;
             var mergeOption = LambdaMerge.And;
 
-            cacheRepository.
-            GetDictionaryMethodGet(filterT).
-            ToList().
-            ForEach(methodGetFilter =>
+            var methodGetDictionary = cacheRepository.GetDictionaryMethodGet(filterT);
+
+            foreach (var methodGetFilter in methodGetDictionary)
             {
-                Expression expression = null;
                 var key = methodGetFilter.Key;
                 var value = methodGetFilter.Value(filter);
 
@@ -55,36 +52,32 @@ namespace Generic.Repository.Extension.Filter
                 {
                     var attributeCached = cacheRepository.GetDictionaryAttribute(filterT);
 
-                    if (attributeCached.TryGetValue(key, out var attributes))
+                    if (!attributeCached.TryGetValue(key, out var attributes))
                     {
-                        attributes.TryGetValue(MethodOption, out var attributeMethod);
-
-                        attributeMethod.ThrowErrorNullValue(nameof(attributeMethod), nameof(GeneratePredicate));
-
-                        var methodOption = (LambdaMethod)attributeMethod.Value;
-
-                        attributes.TryGetValue(NameProperty, out var attributeName);
-
-                        var property = cacheRepository.
-                            GetProperty(valueT, (string)attributeName.Value ?? key);
-
-                        expression = methodOption.
-                            CreateExpressionPerType(param, property, value);
-
-                        expression.
-                            ThrowErrorNullValue(nameof(expression), nameof(GeneratePredicate));
-
-                        predicate = ExpressionMergeFacade.
-                            CreateExpression(predicate, expression, param, mergeOption);
-
-                        attributes.TryGetValue(MergeOption, out var attributeMerge);
-
-                        mergeOption = !attributeMerge.Value.IsNull() ?
-                            (LambdaMerge)attributeMerge.Value : LambdaMerge.And;
-
+                        return null;
                     }
+
+                    attributes.TryGetValue(MethodOption, out var attributeMethod);
+
+                    attributeMethod.ThrowErrorNullValue(nameof(attributeMethod), nameof(GeneratePredicate));
+
+                    var methodOption = (LambdaMethod)attributeMethod.Value;
+
+                    attributes.TryGetValue(NameProperty, out var attributeName);
+
+                    var property = cacheRepository.GetProperty(valueT, (string)attributeName.Value ?? key);
+
+                    var expression = methodOption.CreateExpressionPerType(param, property, value);
+
+                    expression.ThrowErrorNullValue(nameof(expression), nameof(GeneratePredicate));
+
+                    predicate = ExpressionMergeFacade.CreateExpression(predicate, expression, param, mergeOption);
+
+                    attributes.TryGetValue(MergeOption, out var attributeMerge);
+
+                    mergeOption = !attributeMerge.Value.IsNull() ? (LambdaMerge)attributeMerge.Value : LambdaMerge.And;
                 }
-            });
+            }
             return predicate;
         }
 
@@ -93,7 +86,7 @@ namespace Generic.Repository.Extension.Filter
         /// </summary>
         /// <param name="type">Type expression to create</param>
         /// <param name="parameter">Parameter to will be used to make an expression</param>
-        /// <param name="prop">Property to will be used to make an expression</param>
+        /// <param name="property">Property to will be used to make an expression</param>
         /// <param name="value">Value to will be used to make an expression</param>
         /// <returns></returns>
         private static Expression CreateExpressionPerType(
@@ -102,6 +95,8 @@ namespace Generic.Repository.Extension.Filter
             PropertyInfo property,
             object value)
         {
+            parameter.ThrowErrorNullValue(nameof(parameter), nameof(CreateExpressionPerType));
+
             var memberExpression = Expression.Property(parameter, property);
             var constant = Expression.Constant(value);
 

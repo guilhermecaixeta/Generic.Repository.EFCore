@@ -54,7 +54,7 @@ namespace Generic.Repository.Cache
         {
             if (string.IsNullOrEmpty(key) || string.IsNullOrWhiteSpace(key))
             {
-                throw new ArgumentNullException($"FIELD> {nameof(key)} METHOD> {nameof(GetData)}");
+                throw new ArgumentNullException($"FIELD> {nameof(key)} VALUE> {key} METHOD> {nameof(GetData)}");
             }
             if (dictionary.TryGetValue(key, out var result))
             {

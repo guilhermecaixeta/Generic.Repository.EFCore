@@ -1,17 +1,18 @@
-﻿namespace Generic.Repository.Test.Repository
-{
-    using Generic.Repository.Models.Filter;
-    using Generic.Repository.Models.Page.PageConfig;
-    using NUnit.Framework;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq.Expressions;
-    using System.Threading.Tasks;
+﻿using Generic.Repository.Models.Filter;
+using Generic.Repository.Models.Page.PageConfig;
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 
+namespace Generic.Repository.Test.Repository
+{
     [TestFixture]
-    public abstract class BaseRepositoryAsyncQueryTest<TValue, TFilter>
-        : BaseRepositoryAsyncCommandTest<TValue, TFilter>
+    public abstract class BaseRepositoryMapAsyncQueryTest<TValue, TResult, TFilter>
+        : BaseRepositoryMapConfigTest<TValue, TResult, TFilter>
         where TValue : class
+        where TResult : class
         where TFilter : class, IFilter
     {
         private const int Zero = 0;
@@ -118,10 +119,12 @@
             Assert.AreEqual(Zero, page.TotalPage);
         }
 
-        internal abstract IPageConfig GetPageConfigFake();
+        protected abstract IPageConfig GetPageConfigFake();
 
-        internal abstract TFilter GetFilterFake();
+        protected abstract TFilter GetFilterFake();
 
-        internal abstract Expression<Func<TValue, bool>> GetFakeExpression();
+        protected abstract IEnumerable<TValue> GetListFake();
+
+        protected abstract Expression<Func<TValue, bool>> GetFakeExpression();
     }
 }
