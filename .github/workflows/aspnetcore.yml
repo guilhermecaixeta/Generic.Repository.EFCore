@@ -27,9 +27,7 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         version: ${{ matrix.core_version }}
-    
     - if: !contains(matrix.os, 'windows-latest')
       run: ./build.sh
-   
    - if: contains(matrix.os, 'windows-latest')
       run: ./build.ps1
