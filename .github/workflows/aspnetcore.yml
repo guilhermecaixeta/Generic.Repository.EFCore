@@ -6,14 +6,19 @@ on:
     branches:
     - master
     - develop
-
+    tags:
+    - '*.*.*'
+  pull_request:
 jobs:
   build:
-    name: Test on OS ${{ matrix.os }} - .Net Core Version: ${{ matrix.core_version}}
-    runs-on: ${{ matrix.os }}
     strategy:
-      matrix:
-        core_version: [2.2.108]
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+    matrix:
+      core_version: [2.2.108]
+      os: [ubuntu-latest, windows-latest, macOS-latest]
+    name: Test on net core ${{ matrix.core_version }} and ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     steps:
-      run: ./build.sh
+      - uses: actions/checkout@v1
+    with:
+        version: ${{ matrix.core_version }}
+      - run: ./build.sh
