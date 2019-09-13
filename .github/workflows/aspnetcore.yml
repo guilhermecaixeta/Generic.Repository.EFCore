@@ -22,6 +22,6 @@ jobs:
     - run: dotnet --info
     - uses: actions/checkout@v1
     - if: contains(matrix.os, 'windows')
-      run: build.ps1
+      run: ./build.ps1
     - if: contains(matrix.os, 'macOS') || contains(matrix.os, 'ubuntu')
       run: ./build.sh
