@@ -21,7 +21,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     
     steps:
-    - uses: actions/checkout@0182c7f8908eaba9db4d6b8a02c9ad4865d8bf64
+    - run: dotnet --info
+    - uses: actions/checkout@v1
     - if: !contains(matrix.os, 'windows-latest')
       run: ./build.sh
    - if: contains(matrix.os, 'windows-latest')
