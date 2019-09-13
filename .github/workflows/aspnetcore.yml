@@ -23,9 +23,6 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Net Core ${{ matrix.core_version }} Build Automation
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: ${{ matrix.core_version }}
     - if: !contains(matrix.os, 'windows-latest')
       run: ./build.sh
    - if: contains(matrix.os, 'windows-latest')
