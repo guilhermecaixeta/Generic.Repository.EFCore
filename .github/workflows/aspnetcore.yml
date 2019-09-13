@@ -17,13 +17,11 @@ jobs:
         os: [ubuntu-latest, windows-latest, macOS-latest]
     
     name: Test on net core ${{ matrix.core_version }} and ${{ matrix.os }}
-    
     runs-on: ${{ matrix.os }}
-    
     steps:
     - run: dotnet --info
-    - uses: actions/checkout@af513c7a016048ae468971c52ed77d9562c7c819
-    - if: !contains(matrix.os, 'windows-latest')
+    - uses: actions/checkout@v1
+    - if: contains(matrix.os, 'windows')
+      run: build.ps1
+    - if: contains(matrix.os, 'macOS') || contains(matrix.os, 'ubuntu')
       run: ./build.sh
-   - if: contains(matrix.os, 'windows-latest')
-      run: ./build.ps1
