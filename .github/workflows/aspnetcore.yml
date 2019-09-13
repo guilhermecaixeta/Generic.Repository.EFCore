@@ -21,7 +21,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@master
     - if: !contains(matrix.os, 'windows-latest')
       run: ./build.sh
    - if: contains(matrix.os, 'windows-latest')
