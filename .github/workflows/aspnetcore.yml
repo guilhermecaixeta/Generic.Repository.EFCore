@@ -19,6 +19,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v1
-    with:
-        version: ${{ matrix.core_version }}
+      - with:
+          version: ${{ matrix.core_version }}
       - run: ./build.sh
