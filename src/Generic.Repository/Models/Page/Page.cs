@@ -1,8 +1,8 @@
+using Generic.Repository.Cache;
+using Generic.Repository.Models.Page.PageConfig;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Generic.Repository.Cache;
-using Generic.Repository.Models.Page.PageConfig;
 
 namespace Generic.Repository.Models.Page
 {

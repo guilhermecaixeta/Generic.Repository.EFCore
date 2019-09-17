@@ -1,5 +1,3 @@
-using System;
-
 namespace Generic.Repository.Enums
 {
     public enum LambdaMethod

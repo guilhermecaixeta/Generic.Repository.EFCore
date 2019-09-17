@@ -1,11 +1,11 @@
+using Generic.Repository.Models.Filter;
+using Generic.Repository.Models.Page;
+using Generic.Repository.Models.Page.PageConfig;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Generic.Repository.Models.Filter;
-using Generic.Repository.Models.Page;
-using Generic.Repository.Models.Page.PageConfig;
 
 namespace Generic.Repository.Repository
 {

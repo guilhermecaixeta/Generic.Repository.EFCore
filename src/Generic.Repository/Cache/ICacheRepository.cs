@@ -6,14 +6,22 @@ namespace Generic.Repository.Cache
 {
     public interface ICacheRepository
     {
-        Func<object, object> GetMethodGet(string objectKey, string propertieKey);
+        Func<object, object> GetMethodGet(string objectKey, string propertyKey);
+
         IDictionary<string, Func<object, object>> GetDictionaryMethodGet(string objectKey);
-        Action<object, object> GetMethodSet(string objectKey, string propertieKey);
+
+        Action<object, object> GetMethodSet(string objectKey, string propertyKey);
+
         IDictionary<string, Action<object, object>> GetDictionaryMethodSet(string objectKey);
-        PropertyInfo GetProperty(string objectKey, string propertieKey);
+
+        PropertyInfo GetProperty(string objectKey, string propertyKey);
+
         IDictionary<string, PropertyInfo> GetDictionaryProperties(string objectKey);
-        CustomAttributeTypedArgument GetAttribute(string objectKey, string propertieKey, string customAttirbuteKey);
-        IDictionary<string, CustomAttributeTypedArgument> GetDictionaryAttribute(string objectKey, string propertieKey);
+
+        CustomAttributeTypedArgument GetAttribute(string objectKey, string propertyKey, string customAttributeKey);
+
+        IDictionary<string, CustomAttributeTypedArgument> GetDictionaryAttribute(string objectKey, string propertyKey);
+
         IDictionary<string, Dictionary<string, CustomAttributeTypedArgument>> GetDictionaryAttribute(string objectKey);
 
         void Add<TValue>();
@@ -27,11 +35,11 @@ namespace Generic.Repository.Cache
         void Add<TValue>(bool saveAttribute, bool saveGet, bool saveSet, bool saveProperties);
 
         bool HasMethodSet();
-        
+
         bool HasMethodGet();
-        
+
         bool HasProperty();
-        
+
         bool HasAttribute();
 
         void ClearCache();

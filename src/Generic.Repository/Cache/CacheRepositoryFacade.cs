@@ -1,3 +1,4 @@
+using Generic.Repository.Extension.Validation;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -30,13 +31,15 @@ namespace Generic.Repository.Cache
             var setter = property.GetSetMethod(true);
             setter.ThrowErrorNullValue(nameof(setter), nameof(ExtractMethod)); ;
 
-            return (Action<object, object>)ExtractMethod<TValue>(setter, property, "CreateActionGeneric");
+            var result = (Action<object, object>) ExtractMethod<TValue>(setter, property, "CreateActionGeneric");
+
+            return result;
         }
 
         public Action<object, object> CreateActionGeneric<TValue, TInput>(MethodInfo setter)
         {
             Action<TValue, TInput> setterTypedDelegate = (Action<TValue, TInput>)Delegate.CreateDelegate(typeof(Action<TValue, TInput>), setter);
-            Action<object, object> setterDelegate = (object instance, object value) => { setterTypedDelegate((TValue)instance, (TInput)value); };
+            Action<object, object> setterDelegate = (object instance, object value) => setterTypedDelegate((TValue)instance, (TInput)value);
             return setterDelegate;
         }
 
@@ -60,7 +63,7 @@ namespace Generic.Repository.Cache
             {
                 return result;
             }
-            else throw new KeyNotFoundException($"FIELD> {nameof(key)} VALUE> {key} METHOD> {nameof(GetData)}");
+            throw new KeyNotFoundException($"FIELD> {nameof(key)} VALUE> {key} METHOD> {nameof(GetData)}");
         }
     }
 }

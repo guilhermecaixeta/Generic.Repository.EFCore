@@ -1,5 +1,3 @@
-using System;
-
 namespace Generic.Repository.Models.Page.PageConfig
 {
     public interface IPageConfig
