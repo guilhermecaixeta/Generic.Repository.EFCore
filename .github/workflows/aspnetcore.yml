@@ -1,6 +1,4 @@
-
 name: ASP.NET Core CI
-
 on:
   push:
     branches:
@@ -8,18 +6,14 @@ on:
     - develop
     tags:
     - 'v*.*.*'
-  pull_request:
-    branches:
-    - master
-    tags:
-    - 'v*.*.*'    
+  pull_request:   
   jobs:
     build:  
       strategy:
         matrix:
           core_version: [2.2.108]
           os: [ubuntu-latest, windows-latest, macOS-latest]
-      name: Test .net core on ${{ matrix.os }}
+      name: Build on ${{ matrix.os }}
       runs-on: ${{ matrix.os }}
       steps:
       - run: dotnet --info
