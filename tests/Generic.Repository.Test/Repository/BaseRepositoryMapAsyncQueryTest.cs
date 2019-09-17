@@ -92,7 +92,7 @@ namespace Generic.Repository.Test.Repository
         }
 
         [Test]
-        public async Task PageAll_FilterByExpressionAsync__DataValid()
+        public async Task PageAll_FilterByExpressionAsync_DataValid()
         {
             var page = await Repository.GetPageAsync(GetPageConfigFake(), GetFakeExpression(), true);
 

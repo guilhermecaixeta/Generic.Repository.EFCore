@@ -15,6 +15,7 @@ Fix bugs, fix cache use and add new features.</PackageReleaseNotes>
     <Product>Generic.RepositoryAsync.EFCore</Product>
     <Description>Generic repository, implemented using the best of programmation.</Description>
     <Version>1.0.1</Version>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

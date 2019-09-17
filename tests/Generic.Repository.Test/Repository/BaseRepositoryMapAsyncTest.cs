@@ -15,11 +15,11 @@ namespace Generic.Repository.Test.Repository
     public class BaseRepositoryMapAsyncTest :
         BaseRepositoryMapAsyncQueryTest<FakeObject, FakeDTO, FakeFilter>
     {
-        private readonly CommomMethods Commom = new CommomMethods();
+        private readonly CommomMethods _commom = new CommomMethods();
 
         public BaseRepositoryMapAsyncTest()
         {
-            ComparableListLength = Commom.SizeListTest;
+            ComparableListLength = _commom.SizeListTest;
             ComparablePageLength = 5;
             ComparablePageFilterResult = 1;
         }
@@ -32,15 +32,15 @@ namespace Generic.Repository.Test.Repository
 
 
         protected override IPageConfig GetPageConfigFake() =>
-            Commom.GetPageConfigFake();
+            _commom.GetPageConfigFake();
 
         protected override FakeFilter GetFilterFake() =>
-            Commom.GetFilterFake();
+            _commom.GetFilterFake();
 
         protected override IEnumerable<FakeObject> GetListFake() =>
-            Commom.GetListFake();
+            _commom.GetListFake();
 
         protected override Expression<Func<FakeObject, bool>> GetFakeExpression() =>
-            Commom.GetFakeExpression();
+            _commom.GetFakeExpression();
     }
 }
