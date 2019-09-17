@@ -13,6 +13,11 @@ namespace Generic.Repository.Test.Repository
     {
         private readonly TValue _value;
 
+        protected BaseRepositoryExceptionTest()
+        {
+            _value = null;
+        }
+
         [Test]
         public void Create_NullValue() =>
             Assert.ThrowsAsync<ArgumentNullException>(async () =>

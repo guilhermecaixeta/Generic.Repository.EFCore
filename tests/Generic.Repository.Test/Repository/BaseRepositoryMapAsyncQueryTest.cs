@@ -116,6 +116,7 @@ namespace Generic.Repository.Test.Repository
             var page = await Repository.GetPageAsync(GetPageConfigFake(), GetFilterFake(), true);
 
             Assert.AreEqual(new List<TValue>(), page.Content);
+
             Assert.AreEqual(Zero, page.TotalPage);
         }
 
