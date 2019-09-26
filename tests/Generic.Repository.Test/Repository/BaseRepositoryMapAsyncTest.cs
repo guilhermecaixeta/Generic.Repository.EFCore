@@ -1,16 +1,16 @@
-﻿using Generic.Repository.Models.Page.PageConfig;
-using Generic.Repository.Test.Model;
-using Generic.Repository.Test.Model.DTO;
-using Generic.Repository.Test.Model.Filter;
-using Generic.Repository.Test.Repository.Commom;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-
-namespace Generic.Repository.Test.Repository
+﻿namespace Generic.Repository.Test.Repository
 {
+    using Generic.Repository.Models.Page.PageConfig;
+    using Generic.Repository.Test.Model;
+    using Generic.Repository.Test.Model.DTO;
+    using Generic.Repository.Test.Model.Filter;
+    using Generic.Repository.Test.Repository.Commom;
+    using NUnit.Framework;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Linq.Expressions;
+
     [TestFixture]
     public class BaseRepositoryMapAsyncTest :
         BaseRepositoryMapAsyncQueryTest<FakeObject, FakeDTO, FakeFilter>

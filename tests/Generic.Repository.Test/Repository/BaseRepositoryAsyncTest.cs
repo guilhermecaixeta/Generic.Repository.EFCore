@@ -1,7 +1,6 @@
-using Generic.Repository.Test.Repository.Commom;
-
 namespace Generic.Repository.Test.Repository
 {
+    using Generic.Repository.Test.Repository.Commom;
     using Generic.Repository.Models.Page.PageConfig;
     using Generic.Repository.Test.Model;
     using Generic.Repository.Test.Model.Filter;
