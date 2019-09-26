@@ -11,6 +11,15 @@ Nuget
 ![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/Generic.RepositoryAsync.EFCore?label=Nuget%20Version)
 ![Nuget](https://img.shields.io/nuget/dt/Generic.RepositoryAsync.EFCore?label=Nuget%20Download)
 
+## Summary
+ 1. [Overview](https://github.com/guilhermecaixeta/Generic.Repository.EFCore#Overview)
+ 2. [Version](https://github.com/guilhermecaixeta/Generic.Repository.EFCore#Version)
+ 3. [Documentation](https://github.com/guilhermecaixeta/Generic.Repository.EFCore#Doc)
+    - [Step 1](https://github.com/guilhermecaixeta/Generic.Repository.EFCore#Step-1)
+    - [Step 2](https://github.com/guilhermecaixeta/Generic.Repository.EFCore#Step-2)
+      - [Step 2.1](https://github.com/guilhermecaixeta/Generic.Repository.EFCore#Step-2.1)
+    - [Step 3](https://github.com/guilhermecaixeta/Generic.Repository.EFCore#Step-3)
+ 
 # Overview
 A Generic Repository Async developed using EFCore 2.2.4.
 This project has objective to made a CRUD more easily.
@@ -25,7 +34,7 @@ Principles used:
 This project is builded in *.net core* and has the dependencies below:
    * Microsoft.EntityFrameworkCore (>= 2.2.4) 
 
-# About Versions
+# Version
 * V.1.0.0 - (DEPRECATED)
 * V.1.0.1 - Release
   Features and fixs:
@@ -37,8 +46,8 @@ This project is builded in *.net core* and has the dependencies below:
   Features and fixs;
   (To be writed)
 
-### DOCS
- To use this package is necessary make this steps:
+# DOC
+ Here is describe how you need to use this library on your code. 
 
 ### Step 1
 On startup project yor will add cache and the repo.
@@ -76,7 +85,8 @@ On startup project yor will add cache and the repo.
 ```
 
 #### Step 2.1 If you will use IFilter implementation
-Whith this implementation you don't need create a lambda in your filter.
+Using this package you don't need create a functions to filter data in DB.
+You just need implement the Interface IFilter and applying the attribute Lambda in every object what you need filter.
 This attribute says how your filter will be aplied on every request.
 ```
 namespace Models.Filter
