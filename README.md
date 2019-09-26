@@ -1,10 +1,9 @@
-# Generic.Repository.EFCore
-This is a Generic Repository Async make using EFCore 2.2.4
-
 Code Quality - Master/Developer
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b2b523e13d4b490187071837e8574570)](https://www.codacy.com/app/guilhermecaixeta/Generic.Service.DotNetCore2.2?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=guilhermecaixeta/Generic.Service.DotNetCore2.2&amp;utm_campaign=Badge_Grade)
+
 Travis CI - Master/Developer
 [![Build Status](https://travis-ci.org/guilhermecaixeta/Generic.Repository.EFCore.svg?branch=master)](https://travis-ci.org/guilhermecaixeta/Generic.Repository.EFCore)
+
 Appveyor
 [![Build status](https://ci.appveyor.com/api/projects/status/bv400l6e1wpd1de9?svg=true)](https://ci.appveyor.com/project/guilhermecaixeta/generic-repository-efcore)
 
@@ -12,35 +11,37 @@ Nuget
 ![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/Generic.RepositoryAsync.EFCore?label=Nuget%20Version)
 ![Nuget](https://img.shields.io/nuget/dt/Generic.RepositoryAsync.EFCore?label=Nuget%20Download)
 
-## This version is final.
-
+# Overview
+A Generic Repository Async developed using EFCore 2.2.4.
 This project has objective to made a CRUD more easily.
 Adding an extra layer of abstraction in application.
 This project has building using the best programmation pratices.
 
 Principles used:
    * Reactive progammation;
-   * *DRY* principle;
-   * *SOLID* principles.
+   * *D.R.Y* principle;
+   * *S.O.L.I.D* principles.
 
-This project is builded in *asp.net standard* and has the dependencies below:
-   * Microsoft.EntityFrameworkCore (>= 2.2.4)
+This project is builded in *.net core* and has the dependencies below:
+   * Microsoft.EntityFrameworkCore (>= 2.2.4) 
 
-### V.1.0.0(DEPRECATED)
-This version is a pilot.
+# About Versions
+* V.1.0.0 - (DEPRECATED)
+* V.1.0.1 - Release
+  Features and fixs:
+    * Fix include validation;
+    * Add GetPageAsync on Repository;
+    * Add unity test; 
+    * Add possibility to return data mapped, adding the method responsible for mapping on the constructor*.
+ * (Coming soon) V.1.0.2
+  Features and fixs;
+  (To be writed)
 
-### V.1.0.1 - OFICIAL
-New features and fixs:
-* Fix include validation;
-* Add GetPageAsync on Repository;
-* Add unity test; 
-* Add possibility to return data mapped, adding the method responsible for mapping on the constructor*.
-
- ## DOCS
+### DOCS
  To use this package is necessary make this steps:
 
- ### Step 1
- On startup project yor will add this
+### Step 1
+On startup project yor will add cache and the repo.
 
  ```
   public void ConfigureServices(IServiceCollection services)
@@ -51,7 +52,8 @@ New features and fixs:
  ```
  
 
- ### Step 2
+### Step 2
+
 ```
    //Create your own repository, like this sample:
    //Interface
@@ -99,15 +101,13 @@ namespace Models.Filter
 }
 ```
 
-#### Fast attributes explanation:
+#### Attribue description:
 * MethodOption, this say how method you will use to generate a lambda.-- Sample using lambda, x => name.Contais(x.name);
 * MergeOption, says how you will merge each lambda attribute. -- Example: x => email.Contains(x.email) || nome.Contains(x.name);
 * NameProperty, name property on entity which refers column in database;
 
- ### Step 3
- Now you need add your repository on your Controller....
- P.S.: This is a sample, if you want you can add repository on your Service layer and add your Service in your Controller, this is a simple sample.
-
+### Step 3
+Now you need add your repository on your Controller....
 ```
     [ApiController]
     [Route("api/[controller]")]
