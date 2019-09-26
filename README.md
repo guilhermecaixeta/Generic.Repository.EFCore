@@ -102,9 +102,11 @@ namespace Models.Filter
 ```
 
 #### Attribue description:
-* MethodOption, this say how method you will use to generate a lambda.-- Sample using lambda, x => name.Contais(x.name);
-* MergeOption, says how you will merge each lambda attribute. -- Example: x => email.Contains(x.email) || nome.Contains(x.name);
-* NameProperty, name property on entity which refers column in database;
+| Name Attribute | Description | Attribute | Example |
+|----------------|-------------|-----------|---------|
+| MethodOption | This say how method you will use to generate a lambda. |  LambdaMethod.Contains | x => name.Contais(x.name) |
+| MergeOption  | Tell how you will join each lambda. | MergeOption = LambdaMerge.Or | x => email.Contains(x.email) || nome.Contains(x.name) |
+| NameProperty | Name of property from the entity wich be referenced | |
 
 ### Step 3
 Now you need add your repository on your Controller....
