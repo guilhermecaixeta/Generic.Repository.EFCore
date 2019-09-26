@@ -19,6 +19,7 @@ Nuget
     - [Step 2](https://github.com/guilhermecaixeta/Generic.Repository.EFCore#Step-2)
       - [Step 2.1](https://github.com/guilhermecaixeta/Generic.Repository.EFCore#Step-21)
     - [Step 3](https://github.com/guilhermecaixeta/Generic.Repository.EFCore#Step-3)
+ 4. [About](https://github.com/guilhermecaixeta/Generic.Repository.EFCore#about-this-project)
  
 # Overview
 A Generic Repository Async developed using EFCore 2.2.4.
