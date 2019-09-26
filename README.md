@@ -17,7 +17,7 @@ Nuget
  3. [Documentation](https://github.com/guilhermecaixeta/Generic.Repository.EFCore#Doc)
     - [Step 1](https://github.com/guilhermecaixeta/Generic.Repository.EFCore#Step-1)
     - [Step 2](https://github.com/guilhermecaixeta/Generic.Repository.EFCore#Step-2)
-      - [Step 2.1](https://github.com/guilhermecaixeta/Generic.Repository.EFCore#Step-2.1)
+      - [Step 2.1](https://github.com/guilhermecaixeta/Generic.Repository.EFCore#Step-21)
     - [Step 3](https://github.com/guilhermecaixeta/Generic.Repository.EFCore#Step-3)
  
 # Overview
@@ -84,7 +84,7 @@ On startup project yor will add cache and the repo.
    }
 ```
 
-#### Step 2.1 If you will use IFilter implementation
+#### Step 2.1
 Using this package you don't need create a functions to filter data in DB.
 You just need implement the Interface IFilter and applying the attribute Lambda in every object what you need filter.
 This attribute says how your filter will be aplied on every request.
