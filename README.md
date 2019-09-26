@@ -173,3 +173,10 @@ Now you need add your repository on your Controller....
 
 ```
 
+# About this project
+This project born as a study project, but I have been transform in something more "professional". Because this, that's project still in improvement constantly. I saw this wich an way to learn new things and apliyng then more profissionaly.
+
+If you want see some Issue please open a issue, this is a way to improve my skills and help a little the comunity around the .Net.
+
+# GitHub.Io
+[GitHub.Io](https://guilhermecaixeta.github.io/Generic.Repository.EFCore/)
