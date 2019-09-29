@@ -1,3 +1,4 @@
+using Generic.Repository.Extension.Filter.Facade;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,10 +8,18 @@ namespace Generic.Repository.Cache
 {
     public class CacheRepository : ICacheRepository
     {
+        private int Size { get; set; }
+
         private IDictionary<string, Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>> CacheAttribute { get; set; }
+
+        private IDictionary<string, Dictionary<string, ExpressionUpdatingFacade>> CacheExpression { get; set; }
+
         private IDictionary<string, Dictionary<string, Func<object, object>>> CacheGet { get; set; }
+
         private IDictionary<string, Dictionary<string, Action<object, object>>> CacheSet { get; set; }
+
         private IDictionary<string, Dictionary<string, PropertyInfo>> CacheProperties { get; set; }
+
         private ICacheRepositoryFacade CacheFacade { get; }
 
         public CacheRepository()
@@ -26,17 +35,28 @@ namespace Generic.Repository.Cache
             CacheFacade = new CacheRepositoryFacade();
             if (!string.IsNullOrEmpty(AssemblyName) && !string.IsNullOrEmpty(Namespace))
             {
-                var size = Assembly.
+                Size = Assembly.
                 Load(AssemblyName).
                 GetTypes().
                 Where(x => Namespace.Split(';').Contains(x.Namespace)).
                 Count();
-                if (size == 0)
+                if (Size > 0)
                 {
-                    throw new Exception("List size can be 0 (Zero)! Verify the namespace and assembly names.");
+                    InitCache(Size);
                 }
-                InitCache(size);
+                InitCache();
             }
+        }
+
+        public ExpressionUpdatingFacade GetExpression(string objectKey, string propertieKey)
+        {
+            if (!CacheExpression.Any())
+            {
+                return null;
+            }
+            var dictionary = CacheFacade.GetData(CacheExpression, objectKey);
+            var result = CacheFacade.GetData(dictionary, propertieKey);
+            return result;
         }
 
         public Func<object, object> GetMethodGet(
@@ -44,10 +64,10 @@ namespace Generic.Repository.Cache
             string propertieKey)
         {
             var dicResult = CacheFacade.
-            GetData<Dictionary<string, Func<object, object>>>(CacheGet, objectKey);
+            GetData(CacheGet, objectKey);
 
             var result = CacheFacade.
-            GetData<Func<object, object>>(dicResult, propertieKey);
+            GetData(dicResult, propertieKey);
 
             return result;
         }
@@ -56,7 +76,7 @@ namespace Generic.Repository.Cache
             string objectKey)
         {
             var dictionary = CacheFacade.
-            GetData<Dictionary<string, Func<object, object>>>(CacheGet, objectKey);
+            GetData(CacheGet, objectKey);
             return dictionary;
         }
 
@@ -103,27 +123,27 @@ namespace Generic.Repository.Cache
 
         public IDictionary<string, CustomAttributeTypedArgument> GetDictionaryAttribute(string objectKey, string propertyKey)
         {
-            var dictionaryI = CacheFacade.GetData<Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>>(CacheAttribute, objectKey);
-            var result = CacheFacade.GetData<Dictionary<string, CustomAttributeTypedArgument>>(dictionaryI, propertyKey);
+            var dictionaryI = CacheFacade.GetData(CacheAttribute, objectKey);
+            var result = CacheFacade.GetData(dictionaryI, propertyKey);
             return result;
         }
 
         public IDictionary<string, Dictionary<string, CustomAttributeTypedArgument>> GetDictionaryAttribute(string objectKey)
         {
-            var result = CacheFacade.GetData<Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>>(CacheAttribute, objectKey);
+            var result = CacheFacade.GetData(CacheAttribute, objectKey);
             return result;
         }
 
         public PropertyInfo GetProperty(string objectKey, string propertyKey)
         {
-            var dictionary = CacheFacade.GetData<Dictionary<string, PropertyInfo>>(CacheProperties, objectKey);
-            var result = CacheFacade.GetData<PropertyInfo>(dictionary, propertyKey);
+            var dictionary = CacheFacade.GetData(CacheProperties, objectKey);
+            var result = CacheFacade.GetData(dictionary, propertyKey);
             return result;
         }
 
         public IDictionary<string, PropertyInfo> GetDictionaryProperties(string objectKey)
         {
-            var result = CacheFacade.GetData<Dictionary<string, PropertyInfo>>(CacheProperties, objectKey);
+            var result = CacheFacade.GetData(CacheProperties, objectKey);
             return result;
         }
 
@@ -166,6 +186,13 @@ namespace Generic.Repository.Cache
             }
         }
 
+        public void AddExpression(string key, string propertieKey, ExpressionUpdatingFacade expressionUpdating)
+        {
+            var dictionary = new Dictionary<string, ExpressionUpdatingFacade> { { propertieKey, expressionUpdating } };
+
+            CacheExpression.Add(key, dictionary);
+        }
+
         public bool HasMethodSet() => CacheSet.Any();
 
         public bool HasMethodGet() => CacheGet.Any();
@@ -193,6 +220,7 @@ namespace Generic.Repository.Cache
             CacheProperties = new Dictionary<string, Dictionary<string, PropertyInfo>>();
             CacheGet = new Dictionary<string, Dictionary<string, Func<object, object>>>();
             CacheSet = new Dictionary<string, Dictionary<string, Action<object, object>>>();
+            CacheExpression = new Dictionary<string, Dictionary<string, ExpressionUpdatingFacade>>();
             CacheAttribute = new Dictionary<string, Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>>();
         }
 
@@ -201,6 +229,7 @@ namespace Generic.Repository.Cache
             CacheProperties = new Dictionary<string, Dictionary<string, PropertyInfo>>(size);
             CacheGet = new Dictionary<string, Dictionary<string, Func<object, object>>>(size);
             CacheSet = new Dictionary<string, Dictionary<string, Action<object, object>>>(size);
+            CacheExpression = new Dictionary<string, Dictionary<string, ExpressionUpdatingFacade>>();
             CacheAttribute = new Dictionary<string, Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>>(size);
         }
     }

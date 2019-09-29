@@ -130,11 +130,9 @@ namespace Generic.Repository.Repository
             bool enableAsNoTracking) =>
                 await Task.Run(() =>
                     GetPage(GetAllQueryable(enableAsNoTracking).Where(predicate), config));
-
         #endregion
 
         #region Private Methods
-
         private IPage<TResult> GetPage(IQueryable<TValue> query, IPageConfig config) =>
                 query.ToPage(CacheService, mapperList, config);
         #endregion

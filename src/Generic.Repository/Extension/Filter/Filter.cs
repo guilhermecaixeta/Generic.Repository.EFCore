@@ -48,34 +48,55 @@ namespace Generic.Repository.Extension.Filter
                 var key = methodGetFilter.Key;
                 var value = methodGetFilter.Value(filter);
 
-                if (value.IsDateTimeDiffMaxMinValue() || value.IsStringNonNullOrEmpty())
+                if (IsValidValue(value))
                 {
-                    var attributeCached = cacheRepository.GetDictionaryAttribute(filterT);
+                    var expressionUpdating = cacheRepository.GetExpression(filterT, key);
 
-                    if (!attributeCached.TryGetValue(key, out var attributes))
+                    if (expressionUpdating.IsNull())
                     {
-                        return null;
+                        var attributeCached = cacheRepository.GetDictionaryAttribute(filterT);
+
+                        if (!attributeCached.TryGetValue(key, out var attributes))
+                        {
+                            return null;
+                        }
+
+                        attributes.TryGetValue(MethodOption, out var attributeMethod);
+
+                        attributeMethod.ThrowErrorNullValue(nameof(attributeMethod), nameof(GeneratePredicate));
+
+                        var methodOption = (LambdaMethod)attributeMethod.Value;
+
+                        attributes.TryGetValue(NameProperty, out var attributeName);
+
+                        var property = cacheRepository.GetProperty(valueT, (string)attributeName.Value ?? key);
+
+                        var expression = methodOption.CreateExpressionPerType(param, property, value);
+
+                        expression.ThrowErrorNullValue(nameof(expression), nameof(GeneratePredicate));
+
+                        var expressionUpdate = new ExpressionUpdatingFacade(expression);
+
+                        cacheRepository.AddExpression(filterT, key, expressionUpdate);
+
+                        predicate = ExpressionMergeFacade.CreateExpression(predicate, expression, param, mergeOption);
+                        
+                        attributes.TryGetValue(MergeOption, out var attributeMerge);
+
+                        mergeOption = !attributeMerge.Value.IsNull() ? (LambdaMerge)attributeMerge.Value : LambdaMerge.And;
                     }
+                    else
+                    {
+                        var attributes = cacheRepository.GetDictionaryAttribute(filterT, key);
 
-                    attributes.TryGetValue(MethodOption, out var attributeMethod);
+                        var expression = expressionUpdating.SetNewConstantExpression(value);
 
-                    attributeMethod.ThrowErrorNullValue(nameof(attributeMethod), nameof(GeneratePredicate));
+                        predicate = ExpressionMergeFacade.CreateExpression(predicate, expression, param, mergeOption);
+                        
+                        attributes.TryGetValue(MergeOption, out var attributeMerge);
 
-                    var methodOption = (LambdaMethod)attributeMethod.Value;
-
-                    attributes.TryGetValue(NameProperty, out var attributeName);
-
-                    var property = cacheRepository.GetProperty(valueT, (string)attributeName.Value ?? key);
-
-                    var expression = methodOption.CreateExpressionPerType(param, property, value);
-
-                    expression.ThrowErrorNullValue(nameof(expression), nameof(GeneratePredicate));
-
-                    predicate = ExpressionMergeFacade.CreateExpression(predicate, expression, param, mergeOption);
-
-                    attributes.TryGetValue(MergeOption, out var attributeMerge);
-
-                    mergeOption = !attributeMerge.Value.IsNull() ? (LambdaMerge)attributeMerge.Value : LambdaMerge.And;
+                        mergeOption = !attributeMerge.Value.IsNull() ? (LambdaMerge)attributeMerge.Value : LambdaMerge.And;
+                    }
                 }
             }
             return predicate;
@@ -123,5 +144,7 @@ namespace Generic.Repository.Extension.Filter
             }
         }
 
+        private static bool IsValidValue(object value) =>
+            value.IsDateTimeDiffMaxMinValue() || value.IsStringNonNullOrEmpty();
     }
 }

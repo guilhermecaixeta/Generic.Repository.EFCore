@@ -55,5 +55,14 @@ namespace Generic.Repository.Test.Repository
             value.Value = data;
             return value;
         }
+
+        internal override FakeFilter UpdateFilter()
+        {
+            var random = new Random().Next(Commom.SizeListTest);
+
+            var name = Repository.GetFirstByAsync(x => x.Id == random, true).Result.Value;
+            
+            return new FakeFilter { Value = name };
+        }
     }
 }

@@ -1,11 +1,15 @@
+using Generic.Repository.Extension.Filter.Facade;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace Generic.Repository.Cache
 {
     public interface ICacheRepository
     {
+        ExpressionUpdatingFacade GetExpression(string objectKey, string propertyKey);
+
         Func<object, object> GetMethodGet(string objectKey, string propertyKey);
 
         IDictionary<string, Func<object, object>> GetDictionaryMethodGet(string objectKey);
@@ -33,6 +37,8 @@ namespace Generic.Repository.Cache
         void Add<TValue>(bool saveAttribute, bool saveGet, bool saveSet);
 
         void Add<TValue>(bool saveAttribute, bool saveGet, bool saveSet, bool saveProperties);
+
+        void AddExpression(string key, string propertieKey, ExpressionUpdatingFacade expressionUpdating);
 
         bool HasMethodSet();
 

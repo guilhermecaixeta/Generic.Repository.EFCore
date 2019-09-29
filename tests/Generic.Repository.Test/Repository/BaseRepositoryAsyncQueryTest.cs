@@ -2,6 +2,7 @@
 {
     using Generic.Repository.Models.Filter;
     using Generic.Repository.Models.Page.PageConfig;
+    using Generic.Repository.Test.Model.Filter;
     using NUnit.Framework;
     using System;
     using System.Collections.Generic;
@@ -66,11 +67,14 @@
         [Test]
         public async Task FilterAllAsync_DataValid()
         {
-            var list = await Repository.FilterAllAsync(GetFilterFake(), true);
-
+            var filter = GetFilterFake();
+            var list = await Repository.FilterAllAsync(filter, true);
             Assert.IsNotNull(list);
 
             Assert.AreEqual(ComparablePageFilterResult, list.Count);
+
+            filter = UpdateFilter();
+            list = await Repository.FilterAllAsync(filter, true);
         }
 
         [Test]
@@ -117,6 +121,8 @@
             Assert.AreEqual(new List<TValue>(), page.Content);
             Assert.AreEqual(Zero, page.TotalPage);
         }
+
+        internal abstract TFilter UpdateFilter();
 
         internal abstract IPageConfig GetPageConfigFake();
 
