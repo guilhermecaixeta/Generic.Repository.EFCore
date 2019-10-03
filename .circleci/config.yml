@@ -1,0 +1,8 @@
+version: 1
+jobs:
+  build:
+    steps:
+
+      - run:
+          name: First JOB
+          command: ./build
