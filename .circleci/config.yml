@@ -5,4 +5,4 @@ jobs:
     steps:
       - run:
           name: First JOB
-          command: ./build
+          command: ./build.sh
