@@ -1,9 +1,8 @@
 version: 1
-machine: circleci/classic:latest
 jobs:
   build:
+    machine: true
     steps:
-
       - run:
           name: First JOB
           command: ./build
