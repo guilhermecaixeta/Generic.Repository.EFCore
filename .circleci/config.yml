@@ -1,12 +1,17 @@
 version: 1
 jobs:
   build:
+  
+  working_directory: ~/my-project
+  
   branches:
       ignore:
         - develop
         - /feature-.*/
-    machine: true
-    steps:
-      - run:
-          name: First JOB
-          run: ./build.sh
+        
+   machine: true
+   
+   steps:
+     - run:
+         name: First JOB
+         comand: ./build.sh
