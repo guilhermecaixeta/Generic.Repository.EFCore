@@ -1,22 +1,18 @@
-version: 1
+version: 2.0
 jobs:
   build:
-  docker:
-    - image: mcr.microsoft.com/dotnet/core/sdk:2.2 
-  working_directory: ~/my-project
-  
+    docker:
+      - image: mcr.microsoft.com/dotnet/core/sdk:2.2 
   branches:
       ignore:
         - develop
         - /feature-.*/
-           
    steps:
      - checkout
      - run:
          name: Restore
          comand: 
             dotnet restore
-            
      - run:
          name: Build
          comand: 
