@@ -1,11 +1,14 @@
-version: 2.0
-jobs:
+version: 2
   build:
     docker:
-      - image: mcr.microsoft.com/dotnet/core/sdk:2.2 
-   steps:
-     - checkout
-     - run:
-         name: Build
-         command: 
+      - image: mcr.microsoft/dotnet/core/sdk:2.2
+    steps:
+      - checkout
+      - run:
+        - name: Restore
+        - command:
+            dotnet restore
+      - run:
+        - name: Build
+        - command:
             dotnet build
