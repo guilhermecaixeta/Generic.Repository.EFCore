@@ -12,5 +12,11 @@ jobs:
            
    steps:
      - run:
-         name: First JOB
-         comand: ./build.sh
+         name: Restore
+         comand: 
+            dotnet restore
+            
+     - run:
+         name: Build
+         comand: 
+            ./build.sh
