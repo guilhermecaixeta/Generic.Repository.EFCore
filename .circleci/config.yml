@@ -10,10 +10,6 @@ jobs:
    steps:
      - checkout
      - run:
-         name: Restore
-         comand: 
-            dotnet restore
-     - run:
          name: Build
-         comand: 
-            dotnet build
+         command: 
+            ./build.sh
