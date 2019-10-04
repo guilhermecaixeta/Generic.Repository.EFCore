@@ -11,6 +11,7 @@ jobs:
         - /feature-.*/
            
    steps:
+     - checkout
      - run:
          name: Restore
          comand: 
@@ -19,4 +20,4 @@ jobs:
      - run:
          name: Build
          comand: 
-            ./build.sh
+            dotnet build
