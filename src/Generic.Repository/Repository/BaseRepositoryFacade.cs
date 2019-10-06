@@ -17,7 +17,7 @@ namespace Generic.Repository.Repository
         where TValue : class
         where TFilter : class, IFilter
     {
-        private Func<IQueryable<TValue>, IQueryable<TValue>> FuncSetInclude;
+        private Func<IQueryable<TValue>, IQueryable<TValue>> FuncAddIncludes;
 
         private ICacheRepository Cache;
 
@@ -30,14 +30,14 @@ namespace Generic.Repository.Repository
         {
             Cache = cache;
             Context = context;
-            FuncSetInclude = funcSetInclude;
+            FuncAddIncludes = funcSetInclude;
         }
 
         #region public Methods
 
         public IQueryable<TValue> GetAllQueryable(bool enableAsNoTracking)
         {
-            var query = FuncSetInclude(Context.Set<TValue>());
+            var query = FuncAddIncludes(Context.Set<TValue>());
             if (enableAsNoTracking)
             {
                 query = query.AsNoTracking();
@@ -47,8 +47,11 @@ namespace Generic.Repository.Repository
 
         public void StartCache()
         {
-            Cache.Add<TValue>();
-            Cache.Add<TFilter>();
+            Cache.AddGet<TValue>();
+            Cache.AddSet<TValue>();
+            Cache.AddGet<TFilter>();
+            Cache.AddProperty<TValue>();
+            Cache.AddAttribute<TFilter>();
         }
 
         public void SetState(EntityState state, TValue item) =>

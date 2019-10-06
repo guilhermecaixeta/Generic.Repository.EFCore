@@ -1,7 +1,4 @@
 using Generic.Repository.Cache;
-using Generic.Repository.Extension.Error;
-using Generic.Repository.Extension.Filter;
-using Generic.Repository.Extension.Page;
 using Generic.Repository.Extension.Validation;
 using Generic.Repository.Models.Filter;
 using Generic.Repository.Models.Page;
@@ -33,7 +30,7 @@ namespace Generic.Repository.Repository
 
         protected readonly bool UseCommit;
 
-        private readonly BaseRepositoryFacade<TValue, TFilter> repositoryFacade;
+        internal readonly BaseRepositoryFacade<TValue, TFilter> RepositoryFacade;
 
         #endregion
 
@@ -45,8 +42,8 @@ namespace Generic.Repository.Repository
         {
             CacheService = cacheService;
             Context = context;
-            repositoryFacade = new BaseRepositoryFacade<TValue, TFilter>(Context, CacheService, SetIncludes);
-            repositoryFacade.StartCache();
+            RepositoryFacade = new BaseRepositoryFacade<TValue, TFilter>(Context, CacheService, SetIncludes);
+            RepositoryFacade.StartCache();
         }
 
         public BaseRepositoryAsync(
@@ -64,72 +61,78 @@ namespace Generic.Repository.Repository
         #region QUERY
 
         public virtual async Task<IReadOnlyList<TValue>> GetAllAsync(bool enableAsNoTracking) =>
-            await repositoryFacade.GetAllQueryable(enableAsNoTracking).ToListAsync();
+            await RepositoryFacade.GetAllQueryable(enableAsNoTracking).ToListAsync();
 
         public virtual async Task<IReadOnlyList<TValue>> GetAllByAsync(
             Expression<Func<TValue, bool>> predicate,
             bool enableAsNoTracking)
         {
-            repositoryFacade.ThrowErrorNullValue(predicate, nameof(predicate), nameof(GetSingleByAsync));
+            RepositoryFacade.ThrowErrorNullValue(predicate, nameof(predicate), nameof(GetSingleByAsync));
 
-            return await repositoryFacade.GetAllQueryable(enableAsNoTracking).Where(predicate).ToListAsync();
+            return await RepositoryFacade.GetAllQueryable(enableAsNoTracking).Where(predicate).ToListAsync();
         }
 
         public virtual async Task<IReadOnlyList<TValue>> FilterAllAsync(
             TFilter filter,
             bool enableAsNoTracking) =>
-                await GetAllByAsync(repositoryFacade.GetExpressionByFilter(filter), enableAsNoTracking);
+                await GetAllByAsync(RepositoryFacade.GetExpressionByFilter(filter), enableAsNoTracking);
 
         public virtual async Task<TValue> GetSingleByAsync(
             Expression<Func<TValue, bool>> predicate,
             bool enableAsNoTracking)
         {
-            repositoryFacade.ThrowErrorNullValue(predicate, nameof(predicate), nameof(GetSingleByAsync));
+            RepositoryFacade.ThrowErrorNullValue(predicate, nameof(predicate), nameof(GetSingleByAsync));
 
-            return await repositoryFacade.GetAllQueryable(enableAsNoTracking).SingleOrDefaultAsync(predicate);
+            return await RepositoryFacade.GetAllQueryable(enableAsNoTracking).SingleOrDefaultAsync(predicate);
         }
 
         public virtual async Task<TValue> GetFirstByAsync(
             Expression<Func<TValue, bool>> predicate,
             bool enableAsNoTracking)
         {
-            repositoryFacade.ThrowErrorNullValue(predicate, nameof(predicate), nameof(GetFirstByAsync));
+            RepositoryFacade.ThrowErrorNullValue(predicate, nameof(predicate), nameof(GetFirstByAsync));
 
-            return await repositoryFacade.GetAllQueryable(enableAsNoTracking).FirstOrDefaultAsync(predicate);
+            return await RepositoryFacade.GetAllQueryable(enableAsNoTracking).FirstOrDefaultAsync(predicate);
         }
 
         public virtual async Task<IPage<TValue>> GetPageAsync(
             IPageConfig config,
             bool enableAsNoTracking) =>
-                await Task.FromResult(repositoryFacade.GetPage(repositoryFacade.GetAllQueryable(enableAsNoTracking), config));
+                await Task.FromResult(RepositoryFacade.GetPage(RepositoryFacade.GetAllQueryable(enableAsNoTracking), config));
 
         public virtual async Task<IPage<TValue>> GetPageAsync(
             IPageConfig config,
             TFilter filter,
             bool enableAsNoTracking) =>
-                 await Task.FromResult(repositoryFacade.GetPage(
-                     repositoryFacade.GetAllQueryable(enableAsNoTracking).
-                     Where(repositoryFacade.GetExpressionByFilter(filter)),
-                     config));
+                 await Task.Run(() =>
+                 {
+                     var expression = RepositoryFacade.GetExpressionByFilter(filter);
+                     var listToPage = RepositoryFacade.
+                         GetAllQueryable(enableAsNoTracking).
+                         Where(expression);
+                     return RepositoryFacade.GetPage(listToPage, config);
+                 });
 
         public virtual async Task<IPage<TValue>> GetPageAsync(
             IPageConfig config,
             Expression<Func<TValue, bool>> predicate,
             bool enableAsNoTracking) =>
-                await Task.FromResult(repositoryFacade.GetPage(
-                    repositoryFacade.GetAllQueryable(enableAsNoTracking).
-                    Where(predicate),
-                    config));
+                await Task.Run(() =>
+                {
+                    var listToPage = RepositoryFacade.GetAllQueryable(enableAsNoTracking).Where(predicate);
+                    return RepositoryFacade.GetPage(listToPage, config);
+                }).ConfigureAwait(false);
 
         public virtual async Task<int> CountAsync(
             Expression<Func<TValue, bool>> predicate)
         {
-            repositoryFacade.ThrowErrorNullValue(predicate, nameof(predicate), nameof(CountAsync));
+            RepositoryFacade.ThrowErrorNullValue(predicate, nameof(predicate), nameof(CountAsync));
 
-            return await repositoryFacade.GetAllQueryable(true).CountAsync(predicate);
+            return await RepositoryFacade.GetAllQueryable(true).CountAsync(predicate).ConfigureAwait(false);
         }
 
-        public virtual async Task<int> CountAsync() => await repositoryFacade.GetAllQueryable(true).CountAsync();
+        public virtual async Task<int> CountAsync() =>
+            await RepositoryFacade.GetAllQueryable(true).CountAsync().ConfigureAwait(false);
 
         #endregion
 
@@ -145,9 +148,9 @@ namespace Generic.Repository.Repository
         #region COMMAND - (CREAT, UPDATE, DELETE) With CancellationToken
         public virtual async Task<TValue> CreateAsync(TValue entity, CancellationToken token)
         {
-            repositoryFacade.ThrowErrorNullValue(entity, nameof(entity), nameof(CreateAsync));
+            RepositoryFacade.ThrowErrorNullValue(entity, nameof(entity), nameof(CreateAsync));
 
-            repositoryFacade.SetState(EntityState.Added, entity);
+            RepositoryFacade.SetState(EntityState.Added, entity);
             if (!UseCommit)
             {
                 await SaveChangesAsync(token).ConfigureAwait(false);
@@ -159,7 +162,7 @@ namespace Generic.Repository.Repository
             IEnumerable<TValue> entityList,
             CancellationToken token)
         {
-            repositoryFacade.ThrowErrorNullOrEmptyList(entityList, nameof(entityList), nameof(CreateAsync));
+            RepositoryFacade.ThrowErrorNullOrEmptyList(entityList, nameof(entityList), nameof(CreateAsync));
 
             await Context.AddRangeAsync(entityList);
 
@@ -172,9 +175,9 @@ namespace Generic.Repository.Repository
 
         public virtual async Task UpdateAsync(TValue entity, CancellationToken token)
         {
-            repositoryFacade.ThrowErrorNullValue(entity, nameof(entity), nameof(UpdateAsync));
+            RepositoryFacade.ThrowErrorNullValue(entity, nameof(entity), nameof(UpdateAsync));
 
-            repositoryFacade.SetState(EntityState.Modified, entity);
+            RepositoryFacade.SetState(EntityState.Modified, entity);
             if (!UseCommit)
             {
                 await SaveChangesAsync(token).ConfigureAwait(false);
@@ -183,7 +186,7 @@ namespace Generic.Repository.Repository
 
         public virtual async Task UpdateAsync(IEnumerable<TValue> entityList, CancellationToken token)
         {
-            repositoryFacade.ThrowErrorNullOrEmptyList(entityList, nameof(entityList), nameof(UpdateAsync));
+            RepositoryFacade.ThrowErrorNullOrEmptyList(entityList, nameof(entityList), nameof(UpdateAsync));
 
             Context.UpdateRange(entityList);
             if (!UseCommit)
@@ -194,7 +197,7 @@ namespace Generic.Repository.Repository
 
         public virtual async Task DeleteAsync(TValue entity, CancellationToken token)
         {
-            repositoryFacade.ThrowErrorNullValue(entity, nameof(entity), nameof(DeleteAsync));
+            RepositoryFacade.ThrowErrorNullValue(entity, nameof(entity), nameof(DeleteAsync));
 
             Context.Remove(entity);
             if (!UseCommit)
@@ -205,7 +208,7 @@ namespace Generic.Repository.Repository
 
         public virtual async Task DeleteAsync(IEnumerable<TValue> entityList, CancellationToken token)
         {
-            repositoryFacade.ThrowErrorNullOrEmptyList(entityList, nameof(entityList), nameof(DeleteAsync));
+            RepositoryFacade.ThrowErrorNullOrEmptyList(entityList, nameof(entityList), nameof(DeleteAsync));
 
             Context.RemoveRange(entityList);
             if (!UseCommit)
@@ -236,6 +239,7 @@ namespace Generic.Repository.Repository
         #endregion
 
         #region COMMIT
+
         public Task SaveChangesAsync() =>
             SaveChangesAsync(default);
 
@@ -245,14 +249,14 @@ namespace Generic.Repository.Repository
 
         #region Protected Methods
 
-        protected IQueryable<TValue> SetIncludes(IQueryable<TValue> query) =>
+        internal IQueryable<TValue> SetIncludes(IQueryable<TValue> query) =>
             !includesString.IsNull() && includesExp.IsNull() ?
                 includesString.Aggregate(query, (current, include) => current.Include(include)) :
                 !includesExp.IsNull() ?
                 includesExp.Aggregate(query, (current, include) => current.Include(include)) :
                 query;
 
-        protected void InitiateFacade(BaseRepositoryFacade<TValue, TFilter> repositoryFacade)
+        internal void InitiateFacade(BaseRepositoryFacade<TValue, TFilter> repositoryFacade)
         {
             repositoryFacade = new BaseRepositoryFacade<TValue, TFilter>(Context, CacheService, SetIncludes);
             repositoryFacade.StartCache();

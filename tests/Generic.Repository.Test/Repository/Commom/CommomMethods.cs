@@ -12,7 +12,7 @@ namespace Generic.Repository.Test.Repository.Commom
     {
         private string _fakeSearchValue;
 
-        public readonly int SizeListTest = 500;
+        public readonly int SizeListTest = 50;
 
         private const int SizeName = 5;
 

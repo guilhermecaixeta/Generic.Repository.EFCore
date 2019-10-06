@@ -1,4 +1,4 @@
-using Generic.Repository.Extension.Filter.Facade;
+using Generic.Repository.Extension.Error;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +11,6 @@ namespace Generic.Repository.Cache
         private int Size { get; set; }
 
         private IDictionary<string, Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>> CacheAttribute { get; set; }
-
-        private IDictionary<string, Dictionary<string, ExpressionUpdatingFacade>> CacheExpression { get; set; }
 
         private IDictionary<string, Dictionary<string, Func<object, object>>> CacheGet { get; set; }
 
@@ -46,17 +44,6 @@ namespace Generic.Repository.Cache
                 }
                 InitCache();
             }
-        }
-
-        public ExpressionUpdatingFacade GetExpression(string objectKey, string propertieKey)
-        {
-            if (!CacheExpression.Any())
-            {
-                return null;
-            }
-            var dictionary = CacheFacade.GetData(CacheExpression, objectKey);
-            var result = CacheFacade.GetData(dictionary, propertieKey);
-            return result;
         }
 
         public Func<object, object> GetMethodGet(
@@ -147,50 +134,48 @@ namespace Generic.Repository.Cache
             return result;
         }
 
-        public void Add<TValue>() =>
-            Add<TValue>(true, true, true, true);
-
-        public void Add<TValue>(bool saveAttribute) =>
-            Add<TValue>(saveAttribute, true, true, true);
-
-        public void Add<TValue>(bool saveAttribute, bool saveGet) =>
-            Add<TValue>(saveAttribute, saveGet, true, true);
-
-        public void Add<TValue>(bool saveAttribute, bool saveGet, bool saveSet) =>
-            Add<TValue>(saveAttribute, saveGet, saveSet, true);
-
-        public void Add<TValue>(bool saveAttribute, bool saveGet, bool saveSet, bool saveProperties)
+        public void AddGet<TValue>()
         {
-            string typeName = typeof(TValue).Name;
-            PropertyInfo[] properties = typeof(TValue).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+            var values = GetValues<TValue>();
 
-            if (saveGet && !CacheGet.ContainsKey(typeName))
+            if (!CacheGet.ContainsKey(values.typeName))
             {
-                CacheGet.Add(typeName, properties.ToDictionary(g => g.Name, m => CacheFacade.CreateFunction<TValue>(m)));
-            }
-            if (saveSet && !CacheSet.ContainsKey(typeName))
-            {
-                CacheSet.Add(typeName, properties.ToDictionary(s => s.Name, m => CacheFacade.CreateAction<TValue>(m)));
-            }
-            if (saveProperties && !CacheProperties.ContainsKey(typeName))
-            {
-                CacheProperties.Add(typeName, properties.ToDictionary(p => p.Name, p => p));
-            }
-            if (saveAttribute && !CacheAttribute.ContainsKey(typeName))
-            {
-                CacheAttribute.Add(typeName, new Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>(properties.Length));
-                foreach (var property in properties)
-                {
-                    CachingAttribute(property, typeName);
-                }
+                CacheGet.Add(values.typeName, values.properties.ToDictionary(g => g.Name, m => CacheFacade.CreateFunction<TValue>(m)));
             }
         }
 
-        public void AddExpression(string key, string propertieKey, ExpressionUpdatingFacade expressionUpdating)
+        public void AddSet<TValue>()
         {
-            var dictionary = new Dictionary<string, ExpressionUpdatingFacade> { { propertieKey, expressionUpdating } };
+            var values = GetValues<TValue>();
 
-            CacheExpression.Add(key, dictionary);
+            if (!CacheSet.ContainsKey(values.typeName))
+            {
+                CacheSet.Add(values.typeName, values.properties.ToDictionary(s => s.Name, m => CacheFacade.CreateAction<TValue>(m)));
+            }
+        }
+
+        public void AddProperty<TValue>()
+        {
+            var values = GetValues<TValue>();
+
+            if (!CacheProperties.ContainsKey(values.typeName))
+            {
+                CacheProperties.Add(values.typeName, values.properties.ToDictionary(p => p.Name, p => p));
+            }
+        }
+
+        public void AddAttribute<TValue>()
+        {
+            var values = GetValues<TValue>();
+
+            if (!CacheAttribute.ContainsKey(values.typeName))
+            {
+                CacheAttribute.Add(values.typeName, new Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>(values.properties.Length));
+                foreach (var property in values.properties)
+                {
+                    SetCacheAttributes(property, values.typeName);
+                }
+            }
         }
 
         public bool HasMethodSet() => CacheSet.Any();
@@ -203,10 +188,14 @@ namespace Generic.Repository.Cache
 
         public void ClearCache()
         {
+            if (Size > 0)
+            {
+                InitCache(Size);
+            }
             InitCache();
         }
 
-        private void CachingAttribute(PropertyInfo propertyInfo, string typeName)
+        private void SetCacheAttributes(PropertyInfo propertyInfo, string typeName)
         {
             var propertyName = propertyInfo.Name;
             CacheAttribute[typeName].Add(propertyName, propertyInfo.
@@ -220,7 +209,6 @@ namespace Generic.Repository.Cache
             CacheProperties = new Dictionary<string, Dictionary<string, PropertyInfo>>();
             CacheGet = new Dictionary<string, Dictionary<string, Func<object, object>>>();
             CacheSet = new Dictionary<string, Dictionary<string, Action<object, object>>>();
-            CacheExpression = new Dictionary<string, Dictionary<string, ExpressionUpdatingFacade>>();
             CacheAttribute = new Dictionary<string, Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>>();
         }
 
@@ -229,8 +217,18 @@ namespace Generic.Repository.Cache
             CacheProperties = new Dictionary<string, Dictionary<string, PropertyInfo>>(size);
             CacheGet = new Dictionary<string, Dictionary<string, Func<object, object>>>(size);
             CacheSet = new Dictionary<string, Dictionary<string, Action<object, object>>>(size);
-            CacheExpression = new Dictionary<string, Dictionary<string, ExpressionUpdatingFacade>>();
             CacheAttribute = new Dictionary<string, Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>>(size);
+        }
+
+        private (string typeName, PropertyInfo[] properties) GetValues<TValue>()
+        {
+            var typeName = typeof(TValue).Name;
+
+            PropertyInfo[] properties = typeof(TValue).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+
+            properties.ThrowErrorNullOrEmptyList(nameof(properties), string.Empty);
+
+            return (typeName, properties);
         }
     }
 }

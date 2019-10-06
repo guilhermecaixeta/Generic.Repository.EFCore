@@ -16,17 +16,14 @@ namespace Generic.Repository.Test.Repository
         internal abstract IEnumerable<TValue> GetListFake();
 
         [Test]
-        public async Task CreateValueAndGetSingleAsync_ValidValue()
+        public async Task CreateValueAsync_ValidValue()
         {
             var value = CreateFakeValue();
-            value = await Repository.CreateAsync(value).
+            value = await Repository.
+                CreateAsync(value).
                 ConfigureAwait(false);
 
-            var result = await Repository.
-                GetSingleByAsync(GetFakeExpression(value), false).
-                ConfigureAwait(false);
-
-            Assert.AreEqual(value, result);
+            Assert.NotNull(value);
         }
 
         [Test]
@@ -34,14 +31,16 @@ namespace Generic.Repository.Test.Repository
         {
             var value = CreateFakeValue();
 
-            value = await Repository.CreateAsync(value).
+            value = await Repository.
+                CreateAsync(value).
                 ConfigureAwait(false);
 
             var valueOutdated = await Repository.
                 GetFirstByAsync(GetFakeExpression(value), true).
                 ConfigureAwait(false);
 
-            await Repository.UpdateAsync(UpdateFakeValue(value)).
+            await Repository.
+                UpdateAsync(UpdateFakeValue(value)).
                 ConfigureAwait(false);
 
             Assert.AreNotEqual(value, valueOutdated);

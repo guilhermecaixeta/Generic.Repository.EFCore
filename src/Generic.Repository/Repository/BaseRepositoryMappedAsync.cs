@@ -71,13 +71,13 @@ namespace Generic.Repository.Repository
 
         #region QUERY
         public new virtual async Task<IReadOnlyList<TResult>> GetAllAsync(bool enableAsNoTracking)
-            => mapperList(await GetAllQueryable(enableAsNoTracking).ToListAsync()).ToList();
+            => mapperList(await RepositoryFacade.GetAllQueryable(enableAsNoTracking).ToListAsync()).ToList();
 
         public new virtual async Task<IReadOnlyList<TResult>> GetAllByAsync(
             Expression<Func<TValue, bool>> predicate,
             bool enableAsNoTracking)
         {
-            var queryList = GetAllQueryable(enableAsNoTracking);
+            var queryList = RepositoryFacade.GetAllQueryable(enableAsNoTracking);
             var list = await queryList.ToListAsync();
 
             if (!predicate.IsNull())
@@ -90,15 +90,19 @@ namespace Generic.Repository.Repository
         public new virtual async Task<IReadOnlyList<TResult>> FilterAllAsync(
             TFilter filter,
             bool enableAsNoTracking) =>
-                await GetAllByAsync(GetExpressionByFilter(filter), enableAsNoTracking);
+                await GetAllByAsync(RepositoryFacade.GetExpressionByFilter(filter), enableAsNoTracking);
 
         public new virtual async Task<TResult> GetSingleByAsync(
             Expression<Func<TValue, bool>> predicate,
             bool enableAsNoTracking)
         {
-            ThrowErrorNullValue(predicate, nameof(predicate), nameof(GetSingleByAsync));
+            RepositoryFacade.
+                ThrowErrorNullValue(predicate, nameof(predicate), nameof(GetSingleByAsync));
 
-            var value = await GetAllQueryable(enableAsNoTracking).SingleOrDefaultAsync(predicate);
+            var value = await RepositoryFacade.
+                GetAllQueryable(enableAsNoTracking).
+                SingleOrDefaultAsync(predicate);
+            
             return mapperData(value);
         }
 
@@ -106,8 +110,13 @@ namespace Generic.Repository.Repository
             Expression<Func<TValue, bool>> predicate,
             bool enableAsNoTracking)
         {
-            ThrowErrorNullValue(predicate, nameof(predicate), nameof(GetFirstByAsync));
-            var value = await GetAllQueryable(enableAsNoTracking).FirstOrDefaultAsync(predicate);
+            RepositoryFacade.
+                ThrowErrorNullValue(predicate, nameof(predicate), nameof(GetFirstByAsync));
+            
+            var value = await RepositoryFacade.
+                GetAllQueryable(enableAsNoTracking).
+                FirstOrDefaultAsync(predicate);
+            
             return mapperData(value);
         }
 
@@ -115,21 +124,41 @@ namespace Generic.Repository.Repository
             IPageConfig config,
             bool enableAsNoTracking) =>
                 await Task.Run(() =>
-                    GetPage(GetAllQueryable(enableAsNoTracking), config));
+                {
+                    var listToPage = RepositoryFacade.
+                        GetAllQueryable(enableAsNoTracking);
+                    
+                    return GetPage(listToPage, config);
+                });
 
         public new virtual async Task<IPage<TResult>> GetPageAsync(
             IPageConfig config,
             TFilter filter,
             bool enableAsNoTracking) =>
                 await Task.Run(() =>
-                    GetPage(GetAllQueryable(enableAsNoTracking).Where(GetExpressionByFilter(filter)), config));
+                {
+                    var expression = RepositoryFacade.
+                        GetExpressionByFilter(filter);
+                    
+                    var listToPage = RepositoryFacade.
+                        GetAllQueryable(enableAsNoTracking).
+                        Where(expression);
+                    
+                    return GetPage(listToPage, config);
+                });
 
         public new virtual async Task<IPage<TResult>> GetPageAsync(
             IPageConfig config,
             Expression<Func<TValue, bool>> predicate,
             bool enableAsNoTracking) =>
                 await Task.Run(() =>
-                    GetPage(GetAllQueryable(enableAsNoTracking).Where(predicate), config));
+                {
+                    var listToPage = RepositoryFacade.
+                        GetAllQueryable(enableAsNoTracking).
+                        Where(predicate);
+
+                    return GetPage(listToPage, config);
+                });
         #endregion
 
         #region Private Methods

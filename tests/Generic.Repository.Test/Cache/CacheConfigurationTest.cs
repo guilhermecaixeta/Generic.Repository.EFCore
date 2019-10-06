@@ -15,7 +15,10 @@
         public void CacheUp()
         {
             Cache = new CacheRepository();
-            Cache.Add<T>();
+            Cache.AddGet<T>();
+            Cache.AddSet<T>();
+            Cache.AddProperty<T>();
+            Cache.AddAttribute<T>();
         }
 
         [TearDown]

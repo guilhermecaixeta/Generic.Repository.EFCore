@@ -59,7 +59,7 @@ namespace Generic.Repository.Cache
             {
                 return result;
             }
-            throw new KeyNotFoundException($"FIELD> {nameof(key)} VALUE> {key} METHOD> {nameof(GetData)}");
+            throw new KeyNotFoundException($"FIELD> {nameof(key)} VALUE> {key}");
         }
     }
 }

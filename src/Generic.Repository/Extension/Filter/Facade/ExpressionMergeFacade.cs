@@ -13,14 +13,13 @@ namespace Generic.Repository.Extension.Filter.Facade
             ParameterExpression parameter,
             LambdaMerge typeMerge) where TValue : class
         {
-            var isNull = expressionA.IsNull();
             var predicate = expressionB.CreateExpression<TValue>(parameter);
 
-            if (isNull)
+            if (expressionA.IsNull())
             {
                 return predicate;
             }
-            var expressionsJoined = expressionA.JoinExpressions(predicate, parameter, typeMerge);
+            var expressionsJoined = JoinExpressions(expressionA, predicate, parameter, typeMerge);
 
             return expressionsJoined;
         }
@@ -47,21 +46,22 @@ namespace Generic.Repository.Extension.Filter.Facade
                 Expression.Lambda<Func<TValue, bool>>(expression, parameter);
 
         private static Expression<Func<TValue, bool>> JoinExpressions<TValue>(
-            this Expression<Func<TValue, bool>> predicateA,
+            Expression<Func<TValue, bool>> predicateA,
             Expression<Func<TValue, bool>> predicateB,
             ParameterExpression parameter,
             LambdaMerge typeMerge) where TValue : class
         {
-            var lambda = AndAlso(predicateA, predicateB, parameter);
-
-            if (typeMerge == LambdaMerge.Or)
+            switch (typeMerge)
             {
-                lambda = OrElse(predicateA, predicateB, parameter);
+                case LambdaMerge.And:
+                    var expression = AndAlso(predicateA, predicateB, parameter);
+                    return expression.CreateExpression<TValue>(parameter);
+
+                case LambdaMerge.Or:
+                    expression = OrElse(predicateA, predicateB, parameter);
+                    return expression.CreateExpression<TValue>(parameter);
             }
-
-            var result = lambda.CreateExpression<TValue>(parameter);
-
-            return result;
+            return null;
         }
 
         private static InvocationExpression Invoke<TValue>(

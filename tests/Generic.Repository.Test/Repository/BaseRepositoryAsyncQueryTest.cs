@@ -72,9 +72,6 @@
             Assert.IsNotNull(list);
 
             Assert.AreEqual(ComparablePageFilterResult, list.Count);
-
-            filter = UpdateFilter();
-            list = await Repository.FilterAllAsync(filter, true);
         }
 
         [Test]
@@ -95,7 +92,7 @@
         }
 
         [Test]
-        public async Task PageAll_FilterByExpressionAsync__DataValid()
+        public async Task PageAll_FilterByExpressionAsync_DataValid()
         {
             var page = await Repository.GetPageAsync(GetPageConfigFake(), GetFakeExpression(), true);
 
@@ -121,8 +118,6 @@
             Assert.AreEqual(new List<TValue>(), page.Content);
             Assert.AreEqual(Zero, page.TotalPage);
         }
-
-        internal abstract TFilter UpdateFilter();
 
         internal abstract IPageConfig GetPageConfigFake();
 

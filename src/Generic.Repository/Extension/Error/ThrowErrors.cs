@@ -14,7 +14,7 @@ namespace Generic.Repository.Extension.Error
         /// <exception cref="ArgumentNullException">Attribute&gt; {attributeName} MethodName&gt; {methodName}</exception>
         public static void ThrowErrorEmptyOrNullString(this string obj, string nameParameter, string nameMethod)
         {
-            var result = !obj.IsStringNonNullOrEmpty();
+            var result = !obj.IsStringNotNullOrEmpty();
             if (result)
             {
                 throw new ArgumentNullException($"{nameParameter} MethodName > {nameMethod}");
