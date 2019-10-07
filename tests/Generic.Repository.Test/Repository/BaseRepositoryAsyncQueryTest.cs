@@ -2,7 +2,6 @@
 {
     using Generic.Repository.Models.Filter;
     using Generic.Repository.Models.Page.PageConfig;
-    using Generic.Repository.Test.Model.Filter;
     using NUnit.Framework;
     using System;
     using System.Collections.Generic;
@@ -86,27 +85,27 @@
         public async Task PageAllAsync_DataValid()
         {
             var page = await Repository.GetPageAsync(GetPageConfigFake(), true);
-
+            var result = await page.Content.ConfigureAwait(false);
             Assert.IsNotNull(page.Content);
-            Assert.AreEqual(ComparablePageLength, page.Content.Count);
+            Assert.AreEqual(ComparablePageLength, result.Count);
         }
 
         [Test]
         public async Task PageAll_FilterByExpressionAsync_DataValid()
         {
             var page = await Repository.GetPageAsync(GetPageConfigFake(), GetFakeExpression(), true);
-
+            var result = await page.Content.ConfigureAwait(false);
             Assert.IsNotNull(page);
-            Assert.AreEqual(ComparablePageFilterResult, page.Content.Count);
+            Assert.AreEqual(ComparablePageFilterResult, result.Count);
         }
 
         [Test]
         public async Task PageAll_FilterByFilterDefaultAsync_DataValid()
         {
             var page = await Repository.GetPageAsync(GetPageConfigFake(), GetFilterFake(), true);
-
-            Assert.IsNotNull(page.Content);
-            Assert.AreEqual(ComparablePageFilterResult, page.Content.Count);
+            var result = await page.Content.ConfigureAwait(false);
+            Assert.IsNotNull(page);
+            Assert.AreEqual(ComparablePageFilterResult, result.Count);
         }
 
         [Test]
@@ -115,7 +114,7 @@
             BaseTearDown();
             var page = await Repository.GetPageAsync(GetPageConfigFake(), GetFilterFake(), true);
 
-            Assert.AreEqual(new List<TValue>(), page.Content);
+            Assert.AreEqual(new List<TValue>(), await page.Content.ConfigureAwait(false));
             Assert.AreEqual(Zero, page.TotalPage);
         }
 

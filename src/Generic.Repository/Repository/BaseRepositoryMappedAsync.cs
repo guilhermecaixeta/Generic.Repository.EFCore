@@ -1,5 +1,4 @@
 ﻿using Generic.Repository.Cache;
-using Generic.Repository.Extension.Error;
 using Generic.Repository.Extension.Page;
 using Generic.Repository.Extension.Validation;
 using Generic.Repository.Models.Filter;
@@ -29,11 +28,12 @@ namespace Generic.Repository.Repository
          :
          base(cacheService, context)
         {
-            if (IsValidCtor(mapperList, mapperData))
+            if (!IsValidCtor(mapperList, mapperData))
             {
-                this.mapperList = mapperList;
-                this.mapperData = mapperData;
+                return;
             }
+            this.mapperList = mapperList;
+            this.mapperData = mapperData;
         }
 
         public BaseRepositoryAsync(
@@ -57,8 +57,8 @@ namespace Generic.Repository.Repository
             Func<IEnumerable<TValue>, IEnumerable<TResult>> mapperListFunc,
             Func<TValue, TResult> mapperDataFunc)
         {
-            mapperListFunc.ThrowErrorNullValue(nameof(mapperListFunc), nameof(IsValidCtor));
-            mapperDataFunc.ThrowErrorNullValue(nameof(mapperDataFunc), nameof(IsValidCtor));
+            _isError.IsThrowErrorNullValue(mapperListFunc, nameof(mapperListFunc), nameof(IsValidCtor));
+            _isError.IsThrowErrorNullValue(mapperDataFunc, nameof(mapperDataFunc), nameof(IsValidCtor));
 
             return true;
         }
@@ -96,13 +96,12 @@ namespace Generic.Repository.Repository
             Expression<Func<TValue, bool>> predicate,
             bool enableAsNoTracking)
         {
-            RepositoryFacade.
-                ThrowErrorNullValue(predicate, nameof(predicate), nameof(GetSingleByAsync));
+            _isError.IsThrowErrorNullValue(predicate, nameof(predicate), nameof(GetSingleByAsync));
 
             var value = await RepositoryFacade.
                 GetAllQueryable(enableAsNoTracking).
                 SingleOrDefaultAsync(predicate);
-            
+
             return mapperData(value);
         }
 
@@ -110,13 +109,12 @@ namespace Generic.Repository.Repository
             Expression<Func<TValue, bool>> predicate,
             bool enableAsNoTracking)
         {
-            RepositoryFacade.
-                ThrowErrorNullValue(predicate, nameof(predicate), nameof(GetFirstByAsync));
-            
+            _isError.IsThrowErrorNullValue(predicate, nameof(predicate), nameof(GetFirstByAsync));
+
             var value = await RepositoryFacade.
                 GetAllQueryable(enableAsNoTracking).
                 FirstOrDefaultAsync(predicate);
-            
+
             return mapperData(value);
         }
 
@@ -127,7 +125,7 @@ namespace Generic.Repository.Repository
                 {
                     var listToPage = RepositoryFacade.
                         GetAllQueryable(enableAsNoTracking);
-                    
+
                     return GetPage(listToPage, config);
                 });
 
@@ -139,11 +137,11 @@ namespace Generic.Repository.Repository
                 {
                     var expression = RepositoryFacade.
                         GetExpressionByFilter(filter);
-                    
+
                     var listToPage = RepositoryFacade.
                         GetAllQueryable(enableAsNoTracking).
                         Where(expression);
-                    
+
                     return GetPage(listToPage, config);
                 });
 

@@ -3,10 +3,10 @@ using Generic.Repository.Enums;
 using Generic.Repository.Extension.Filter.Facade;
 using Generic.Repository.Extension.Validation;
 using Generic.Repository.Models.Filter;
+using Generic.Repository.ThrowError;
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
-using Generic.Repository.ThrowError;
 
 namespace Generic.Repository.Extension.Filter
 {
@@ -15,15 +15,15 @@ namespace Generic.Repository.Extension.Filter
     /// </summary>
     internal static class Filter
     {
-        private static readonly ExpressionTypeFacade FilterFacade = new ExpressionTypeFacade();
-
-        private static readonly ThrowErrors ThrowError = new ThrowErrors();
+        private static readonly IsError IsError = new IsError();
 
         private const string NameProperty = nameof(NameProperty);
 
         private const string MethodOption = nameof(MethodOption);
 
         private const string MergeOption = nameof(MergeOption);
+
+        private static readonly ExpressionTypeFacade FilterFacade = new ExpressionTypeFacade(IsError);
 
         /// <summary>Generates the predicate.</summary>
         /// <typeparam name="TValue">The type of the value.</typeparam>
@@ -63,7 +63,7 @@ namespace Generic.Repository.Extension.Filter
 
                 attributes.TryGetValue(MethodOption, out var attributeMethod);
 
-                ThrowError.ThrowErrorNullValue(attributeMethod, nameof(attributeMethod), nameof(GeneratePredicate));
+                IsError.IsThrowErrorNullValue(attributeMethod, nameof(attributeMethod), nameof(GeneratePredicate));
 
                 var methodOption = (LambdaMethod)attributeMethod.Value;
 
@@ -73,7 +73,7 @@ namespace Generic.Repository.Extension.Filter
 
                 var expression = methodOption.CreateExpressionPerType(parameter, property, value);
 
-                ThrowError.ThrowErrorNullValue(expression, nameof(expression), nameof(GeneratePredicate));
+                IsError.IsThrowErrorNullValue(expression, nameof(expression), nameof(GeneratePredicate));
 
                 predicate = ExpressionMergeFacade.CreateExpression(predicate, expression, parameter, mergeOption);
 
@@ -98,7 +98,7 @@ namespace Generic.Repository.Extension.Filter
             PropertyInfo property,
             object value)
         {
-            ThrowError.ThrowErrorNullValue(parameter, nameof(parameter), nameof(CreateExpressionPerType));
+            IsError.IsThrowErrorNullValue(parameter, nameof(parameter), nameof(CreateExpressionPerType));
 
             var memberExpression = Expression.Property(parameter, property);
             var constant = Expression.Constant(value);

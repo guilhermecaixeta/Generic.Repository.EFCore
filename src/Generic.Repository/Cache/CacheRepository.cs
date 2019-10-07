@@ -1,4 +1,4 @@
-using Generic.Repository.Extension.Error;
+using Generic.Repository.ThrowError;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +8,8 @@ namespace Generic.Repository.Cache
 {
     public class CacheRepository : ICacheRepository
     {
+        private static readonly IsError IsError = new IsError();
+
         private int Size { get; set; }
 
         private IDictionary<string, Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>> CacheAttribute { get; set; }
@@ -18,7 +20,7 @@ namespace Generic.Repository.Cache
 
         private IDictionary<string, Dictionary<string, PropertyInfo>> CacheProperties { get; set; }
 
-        private ICacheRepositoryFacade CacheFacade { get; } = new CacheRepositoryFacade();
+        private ICacheRepositoryFacade CacheFacade { get; } = new CacheRepositoryFacade(IsError);
 
         public CacheRepository()
         {
@@ -32,17 +34,20 @@ namespace Generic.Repository.Cache
             string assemblyName,
             string nameSpace)
         {
-            if ()
-            {
-                Size = Assembly.
+            IsError.
+                IsThrowErrorEmptyOrNullString(assemblyName, nameof(assemblyName), nameof(CacheRepository));
+
+            IsError.
+                IsThrowErrorEmptyOrNullString(nameSpace, nameof(nameSpace), nameof(CacheRepository));
+
+            Size = Assembly.
                 Load(assemblyName).
                 GetTypes().
                 Count(x => nameSpace.Split(';').Contains(x.Namespace));
 
-                if (Size > 0)
-                {
-                    InitCache(Size);
-                }
+            if (Size > 0)
+            {
+                InitCache(Size);
             }
         }
 
@@ -72,16 +77,16 @@ namespace Generic.Repository.Cache
             string propertyKey)
         {
             var dicResult = CacheFacade.
-            GetData<Dictionary<string, Action<object, object>>>(CacheSet, objectKey);
+            GetData(CacheSet, objectKey);
 
             var result = CacheFacade.
-            GetData<Action<object, object>>(dicResult, propertyKey);
+            GetData(dicResult, propertyKey);
             return result;
         }
 
         public IDictionary<string, Action<object, object>> GetDictionaryMethodSet(string objectKey)
         {
-            var dictionary = CacheFacade.GetData<Dictionary<string, Action<object, object>>>(CacheSet, objectKey);
+            var dictionary = CacheFacade.GetData(CacheSet, objectKey);
             return dictionary;
         }
 
@@ -91,17 +96,17 @@ namespace Generic.Repository.Cache
             string customAttributeKey)
         {
             var dictionaryI = CacheFacade
-            .GetData<Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>>(
+            .GetData(
                 CacheAttribute,
                 objectKey);
 
             var dictionaryII = CacheFacade
-            .GetData<Dictionary<string, CustomAttributeTypedArgument>>(
+            .GetData(
                 dictionaryI,
                 propertyKey);
 
             var result = CacheFacade
-            .GetData<CustomAttributeTypedArgument>(
+            .GetData(
                 dictionaryII,
                 customAttributeKey);
 
@@ -123,14 +128,20 @@ namespace Generic.Repository.Cache
 
         public PropertyInfo GetProperty(string objectKey, string propertyKey)
         {
-            var dictionary = CacheFacade.GetData(CacheProperties, objectKey);
-            var result = CacheFacade.GetData(dictionary, propertyKey);
+            var dictionary = CacheFacade.
+                GetData(CacheProperties, objectKey);
+
+            var result = CacheFacade.
+                GetData(dictionary, propertyKey);
+
             return result;
         }
 
         public IDictionary<string, PropertyInfo> GetDictionaryProperties(string objectKey)
         {
-            var result = CacheFacade.GetData(CacheProperties, objectKey);
+            var result = CacheFacade.
+                GetData(CacheProperties, objectKey);
+
             return result;
         }
 
@@ -140,7 +151,9 @@ namespace Generic.Repository.Cache
 
             if (!CacheGet.ContainsKey(values.typeName))
             {
-                CacheGet.Add(values.typeName, values.properties.ToDictionary(g => g.Name, m => CacheFacade.CreateFunction<TValue>(m)));
+                var dictionary = values.properties.
+                    ToDictionary(g => g.Name, m => CacheFacade.CreateFunction<TValue>(m));
+                CacheGet.Add(values.typeName, dictionary);
             }
         }
 
@@ -150,7 +163,9 @@ namespace Generic.Repository.Cache
 
             if (!CacheSet.ContainsKey(values.typeName))
             {
-                CacheSet.Add(values.typeName, values.properties.ToDictionary(s => s.Name, m => CacheFacade.CreateAction<TValue>(m)));
+                var dictionary = values.properties.
+                    ToDictionary(s => s.Name, m => CacheFacade.CreateAction<TValue>(m));
+                CacheSet.Add(values.typeName, dictionary);
             }
         }
 
@@ -170,7 +185,10 @@ namespace Generic.Repository.Cache
 
             if (!CacheAttribute.ContainsKey(values.typeName))
             {
-                CacheAttribute.Add(values.typeName, new Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>(values.properties.Length));
+                var dictionary = new Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>(values.properties.Length);
+
+                CacheAttribute.Add(values.typeName, dictionary);
+
                 foreach (var property in values.properties)
                 {
                     SetCacheAttributes(property, values.typeName);
@@ -195,7 +213,7 @@ namespace Generic.Repository.Cache
             InitCache();
         }
 
-        private void SetCacheAttributes(PropertyInfo propertyInfo, string typeName)
+        private void SetCacheAttributes(MemberInfo propertyInfo, string typeName)
         {
             var propertyName = propertyInfo.Name;
             CacheAttribute[typeName].Add(propertyName, propertyInfo.
@@ -224,9 +242,11 @@ namespace Generic.Repository.Cache
         {
             var typeName = typeof(TValue).Name;
 
-            PropertyInfo[] properties = typeof(TValue).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+            PropertyInfo[] properties = typeof(TValue).
+                GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
 
-            properties.ThrowErrorNullOrEmptyList(nameof(properties), string.Empty);
+            IsError.
+                IsThrowErrorNullOrEmptyList(properties, nameof(properties), string.Empty);
 
             return (typeName, properties);
         }

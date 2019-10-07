@@ -1,5 +1,5 @@
-using Generic.Repository.Extension.Error;
 using System;
+using Generic.Repository.ThrowError;
 
 namespace Generic.Repository.Models.Page.PageConfig
 {
@@ -10,10 +10,12 @@ namespace Generic.Repository.Models.Page.PageConfig
         public string sort { get; set; }
         public string order { get; set; }
 
-        public bool Equals(PageConfig other)
+        public bool Equals(PageConfig pageConfig)
         {
-            other.ThrowErrorNullValue(nameof(Equals), nameof(other));
-            return other.Equals(this);
+            new IsError().
+                IsThrowErrorNullValue(pageConfig, nameof(pageConfig), nameof(Equals));
+
+            return pageConfig.Equals(this);
         }
     }
 }

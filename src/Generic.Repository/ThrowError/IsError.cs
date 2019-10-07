@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using Generic.Repository.Exceptions;
+﻿using Generic.Repository.Exceptions;
 using Generic.Repository.Extension.Validation;
+using System;
+using System.Collections.Generic;
 
 namespace Generic.Repository.ThrowError
 {
-    internal class ThrowErrors
+    internal class IsError
     {
 
         /// <summary>Throws the error if string null or empty value.</summary>
@@ -13,7 +13,7 @@ namespace Generic.Repository.ThrowError
         /// <param name="nameParameter">Name of the Parameter.</param>
         /// <param name="nameMethod">Name of the method.</param>
         /// <exception cref="ArgumentNullException">Attribute&gt; {attributeName} MethodName&gt; {methodName}</exception>
-        public void ThrowErrorEmptyOrNullString(string obj, string nameParameter, string nameMethod)
+        public void IsThrowErrorEmptyOrNullString(string obj, string nameParameter, string nameMethod)
         {
             var result = !obj.IsStringNotNullOrEmpty();
             if (result)
@@ -27,7 +27,7 @@ namespace Generic.Repository.ThrowError
         /// <param name="nameParameter">Name of the Parameter.</param>
         /// <param name="nameMethod">Name of the method.</param>
         /// <exception cref="ArgumentNullException">Attribute&gt; {attributeName} MethodName&gt; {methodName}</exception>
-        public void ThrowErrorNullValue(object obj, string nameParameter, string nameMethod)
+        public void IsThrowErrorNullValue(object obj, string nameParameter, string nameMethod)
         {
             var result = obj.IsNull();
             if (result)
@@ -42,7 +42,7 @@ namespace Generic.Repository.ThrowError
         /// <param name="nameParameter">Name of the Parameter.</param>
         /// <param name="nameMethod">Name of the method.</param>
         /// <exception cref="ArgumentNullException">MethodName &gt; {methodName}</exception>
-        public void ThrowErrorNullOrEmptyList<T>(IEnumerable<T> obj, string nameParameter, string nameMethod)
+        public void IsThrowErrorNullOrEmptyList<T>(IEnumerable<T> obj, string nameParameter, string nameMethod)
         {
             var result = obj.HasAny();
             if (!result)
@@ -54,7 +54,7 @@ namespace Generic.Repository.ThrowError
         /// <summary>Throws the error if the type is not allowed.</summary>
         /// <typeparam name="T">Type not allowed.</typeparam>
         /// <param name="obj">The object.</param>
-        /// <exception cref="Generic.Repository.Exceptions.InvalidTypeException"></exception>
+        /// <exception cref="InvalidTypeException"></exception>
         public void ThrowErrorTypeIsNotAllowed<T>(object obj)
         {
             var isTypeValid = obj.IsType<T>();
@@ -67,8 +67,8 @@ namespace Generic.Repository.ThrowError
         /// <summary>Throws the error type is not equal to T.</summary>
         /// <typeparam name="T">Type to compare</typeparam>
         /// <param name="obj">The object.</param>
-        /// <exception cref="Generic.Repository.Exceptions.InvalidTypeException"></exception>
-        public void ThrowErrorTypeIsNotEqual<T>(object obj)
+        /// <exception cref="InvalidTypeException"></exception>
+        public void IsThrowErrorTypeIsNotEqual<T>(object obj)
         {
             var isTypeValid = obj.IsType<T>();
             if (!isTypeValid)

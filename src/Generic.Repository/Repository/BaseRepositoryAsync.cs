@@ -3,6 +3,7 @@ using Generic.Repository.Extension.Validation;
 using Generic.Repository.Models.Filter;
 using Generic.Repository.Models.Page;
 using Generic.Repository.Models.Page.PageConfig;
+using Generic.Repository.ThrowError;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ namespace Generic.Repository.Repository
         where TFilter : class, IFilter
     {
         #region Attr
+        internal readonly IsError _isError = new IsError();
 
         public IList<string> includesString { get; set; } = new List<string>();
 
@@ -67,7 +69,7 @@ namespace Generic.Repository.Repository
             Expression<Func<TValue, bool>> predicate,
             bool enableAsNoTracking)
         {
-            RepositoryFacade.ThrowErrorNullValue(predicate, nameof(predicate), nameof(GetSingleByAsync));
+            _isError.IsThrowErrorNullValue(predicate, nameof(predicate), nameof(GetSingleByAsync));
 
             return await RepositoryFacade.GetAllQueryable(enableAsNoTracking).Where(predicate).ToListAsync();
         }
@@ -81,7 +83,7 @@ namespace Generic.Repository.Repository
             Expression<Func<TValue, bool>> predicate,
             bool enableAsNoTracking)
         {
-            RepositoryFacade.ThrowErrorNullValue(predicate, nameof(predicate), nameof(GetSingleByAsync));
+            _isError.IsThrowErrorNullValue(predicate, nameof(predicate), nameof(GetSingleByAsync));
 
             return await RepositoryFacade.GetAllQueryable(enableAsNoTracking).SingleOrDefaultAsync(predicate);
         }
@@ -90,7 +92,7 @@ namespace Generic.Repository.Repository
             Expression<Func<TValue, bool>> predicate,
             bool enableAsNoTracking)
         {
-            RepositoryFacade.ThrowErrorNullValue(predicate, nameof(predicate), nameof(GetFirstByAsync));
+            _isError.IsThrowErrorNullValue(predicate, nameof(predicate), nameof(GetFirstByAsync));
 
             return await RepositoryFacade.GetAllQueryable(enableAsNoTracking).FirstOrDefaultAsync(predicate);
         }
@@ -126,7 +128,7 @@ namespace Generic.Repository.Repository
         public virtual async Task<int> CountAsync(
             Expression<Func<TValue, bool>> predicate)
         {
-            RepositoryFacade.ThrowErrorNullValue(predicate, nameof(predicate), nameof(CountAsync));
+            _isError.IsThrowErrorNullValue(predicate, nameof(predicate), nameof(CountAsync));
 
             return await RepositoryFacade.GetAllQueryable(true).CountAsync(predicate).ConfigureAwait(false);
         }
@@ -148,7 +150,7 @@ namespace Generic.Repository.Repository
         #region COMMAND - (CREAT, UPDATE, DELETE) With CancellationToken
         public virtual async Task<TValue> CreateAsync(TValue entity, CancellationToken token)
         {
-            RepositoryFacade.ThrowErrorNullValue(entity, nameof(entity), nameof(CreateAsync));
+            _isError.IsThrowErrorNullValue(entity, nameof(entity), nameof(CreateAsync));
 
             RepositoryFacade.SetState(EntityState.Added, entity);
             if (!UseCommit)
@@ -162,7 +164,7 @@ namespace Generic.Repository.Repository
             IEnumerable<TValue> entityList,
             CancellationToken token)
         {
-            RepositoryFacade.ThrowErrorNullOrEmptyList(entityList, nameof(entityList), nameof(CreateAsync));
+            _isError.IsThrowErrorNullOrEmptyList(entityList, nameof(entityList), nameof(CreateAsync));
 
             await Context.AddRangeAsync(entityList);
 
@@ -175,7 +177,7 @@ namespace Generic.Repository.Repository
 
         public virtual async Task UpdateAsync(TValue entity, CancellationToken token)
         {
-            RepositoryFacade.ThrowErrorNullValue(entity, nameof(entity), nameof(UpdateAsync));
+            _isError.IsThrowErrorNullValue(entity, nameof(entity), nameof(UpdateAsync));
 
             RepositoryFacade.SetState(EntityState.Modified, entity);
             if (!UseCommit)
@@ -186,7 +188,7 @@ namespace Generic.Repository.Repository
 
         public virtual async Task UpdateAsync(IEnumerable<TValue> entityList, CancellationToken token)
         {
-            RepositoryFacade.ThrowErrorNullOrEmptyList(entityList, nameof(entityList), nameof(UpdateAsync));
+            _isError.IsThrowErrorNullOrEmptyList(entityList, nameof(entityList), nameof(UpdateAsync));
 
             Context.UpdateRange(entityList);
             if (!UseCommit)
@@ -197,7 +199,7 @@ namespace Generic.Repository.Repository
 
         public virtual async Task DeleteAsync(TValue entity, CancellationToken token)
         {
-            RepositoryFacade.ThrowErrorNullValue(entity, nameof(entity), nameof(DeleteAsync));
+            _isError.IsThrowErrorNullValue(entity, nameof(entity), nameof(DeleteAsync));
 
             Context.Remove(entity);
             if (!UseCommit)
@@ -208,7 +210,7 @@ namespace Generic.Repository.Repository
 
         public virtual async Task DeleteAsync(IEnumerable<TValue> entityList, CancellationToken token)
         {
-            RepositoryFacade.ThrowErrorNullOrEmptyList(entityList, nameof(entityList), nameof(DeleteAsync));
+            _isError.IsThrowErrorNullOrEmptyList(entityList, nameof(entityList), nameof(DeleteAsync));
 
             Context.RemoveRange(entityList);
             if (!UseCommit)
