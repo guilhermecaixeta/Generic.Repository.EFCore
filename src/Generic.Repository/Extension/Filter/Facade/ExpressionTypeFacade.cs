@@ -1,5 +1,5 @@
 ﻿using Generic.Repository.Enums;
-using Generic.Repository.Extension.Validation;
+using Generic.Repository.ThrowError;
 using System;
 using System.Linq.Expressions;
 
@@ -7,18 +7,7 @@ namespace Generic.Repository.Extension.Filter.Facade
 {
     internal class ExpressionTypeFacade
     {
-        /// <summary>Determines whether [is string validate] [the specified value].</summary>
-        /// <param name="value">The value.</param>
-        /// <param name="nameMethod">The name method.</param>
-        /// <exception cref="ArgumentException">Type of argument is not valid to method. &gt; {nameMethod}</exception>
-        private static void IsStringValidate(object value, string nameMethod)
-        {
-            var result = value.IsType<string>();
-            if (result)
-            {
-                throw new ArgumentException($"Type of argument is not valid to method. > {nameMethod}");
-            }
-        }
+        private readonly ThrowErrors ThrowError = new ThrowErrors();
 
         /// <summary>Determines whether this instance contains the object.</summary>
         /// <param name="constant">The constant.</param>
@@ -32,17 +21,15 @@ namespace Generic.Repository.Extension.Filter.Facade
             MemberExpression memberExpression,
             object value)
         {
-            var isString = value.IsType<string>();
-            if (!isString)
-            {
-                throw new ArgumentException($"Type of argument is not valid to method. > {nameof(Contains)}");
-            }
+            ThrowError.ThrowErrorTypeIsNotEqual<string>(value);
 
             var method = typeof(string).
                 GetMethod(LambdaMethod.Contains.ToString(), new[] { typeof(string) });
 
             var result = Expression.
-                Call(memberExpression, method ?? throw new InvalidOperationException($"Error to get method contains. > {nameof(Contains)}"), constant);
+                Call(memberExpression,
+                    method ?? throw new InvalidOperationException($"Error to get method > {nameof(Contains)}"),
+                    constant);
             return result;
         }
 
@@ -56,7 +43,7 @@ namespace Generic.Repository.Extension.Filter.Facade
             MemberExpression memberExpression,
             object value)
         {
-            IsStringValidate(value, nameof(GreaterThan));
+            IsNotString(value);
             var result = Expression.GreaterThan(memberExpression, constant);
             return result;
         }
@@ -71,7 +58,7 @@ namespace Generic.Repository.Extension.Filter.Facade
             MemberExpression memberExpression,
             object value)
         {
-            IsStringValidate(value, nameof(LessThan));
+            IsNotString(value);
             var result = Expression.LessThan(memberExpression, constant);
             return result;
         }
@@ -86,7 +73,7 @@ namespace Generic.Repository.Extension.Filter.Facade
             MemberExpression memberExpression,
             object value)
         {
-            IsStringValidate(value, nameof(LessThan));
+            IsNotString(value);
             var result = Expression.Equal(memberExpression, constant);
             return result;
         }
@@ -101,7 +88,7 @@ namespace Generic.Repository.Extension.Filter.Facade
             MemberExpression memberExpression,
             object value)
         {
-            IsStringValidate(value, nameof(LessThan));
+            IsNotString(value);
             var result = Expression.GreaterThanOrEqual(memberExpression, constant);
             return result;
         }
@@ -116,9 +103,17 @@ namespace Generic.Repository.Extension.Filter.Facade
             MemberExpression memberExpression,
             object value)
         {
-            IsStringValidate(value, nameof(LessThan));
+            IsNotString(value);
             var result = Expression.LessThanOrEqual(memberExpression, constant);
             return result;
         }
+
+        /// <summary>Determines whether [is not string] [the specified object].</summary>
+        /// <param name="obj">The object.</param>
+        private void IsNotString(object obj)
+        {
+            ThrowError.ThrowErrorTypeIsNotAllowed<string>(obj);
+        }
+
     }
 }

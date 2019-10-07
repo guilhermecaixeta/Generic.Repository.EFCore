@@ -51,17 +51,16 @@ namespace Generic.Repository.Extension.Filter.Facade
             ParameterExpression parameter,
             LambdaMerge typeMerge) where TValue : class
         {
-            switch (typeMerge)
+            if (typeMerge == LambdaMerge.And)
             {
-                case LambdaMerge.And:
-                    var expression = AndAlso(predicateA, predicateB, parameter);
-                    return expression.CreateExpression<TValue>(parameter);
-
-                case LambdaMerge.Or:
-                    expression = OrElse(predicateA, predicateB, parameter);
-                    return expression.CreateExpression<TValue>(parameter);
+                var expression = AndAlso(predicateA, predicateB, parameter);
+                return expression.CreateExpression<TValue>(parameter);
             }
-            return null;
+            else 
+            {
+                var expression = OrElse(predicateA, predicateB, parameter);
+                return CreateExpression<TValue>(expression, parameter);
+            }
         }
 
         private static InvocationExpression Invoke<TValue>(

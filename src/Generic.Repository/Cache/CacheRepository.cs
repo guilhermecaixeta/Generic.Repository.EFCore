@@ -18,43 +18,43 @@ namespace Generic.Repository.Cache
 
         private IDictionary<string, Dictionary<string, PropertyInfo>> CacheProperties { get; set; }
 
-        private ICacheRepositoryFacade CacheFacade { get; }
+        private ICacheRepositoryFacade CacheFacade { get; } = new CacheRepositoryFacade();
 
         public CacheRepository()
         {
-            CacheFacade = new CacheRepositoryFacade();
             InitCache();
         }
 
+        /// <summary>Initializes a new instance of the <see cref="CacheRepository"/> class.</summary>
+        /// <param name="assemblyName">Name of the assembly.</param>
+        /// <param name="nameSpace">The name spaces splited by ";".</param>
         public CacheRepository(
-            string AssemblyName,
-            string Namespace)
+            string assemblyName,
+            string nameSpace)
         {
-            CacheFacade = new CacheRepositoryFacade();
-            if (!string.IsNullOrEmpty(AssemblyName) && !string.IsNullOrEmpty(Namespace))
+            if ()
             {
                 Size = Assembly.
-                Load(AssemblyName).
+                Load(assemblyName).
                 GetTypes().
-                Where(x => Namespace.Split(';').Contains(x.Namespace)).
-                Count();
+                Count(x => nameSpace.Split(';').Contains(x.Namespace));
+
                 if (Size > 0)
                 {
                     InitCache(Size);
                 }
-                InitCache();
             }
         }
 
         public Func<object, object> GetMethodGet(
             string objectKey,
-            string propertieKey)
+            string propertyKey)
         {
             var dicResult = CacheFacade.
             GetData(CacheGet, objectKey);
 
             var result = CacheFacade.
-            GetData(dicResult, propertieKey);
+            GetData(dicResult, propertyKey);
 
             return result;
         }

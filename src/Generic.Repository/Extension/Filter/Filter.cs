@@ -1,12 +1,12 @@
 using Generic.Repository.Cache;
 using Generic.Repository.Enums;
-using Generic.Repository.Extension.Error;
 using Generic.Repository.Extension.Filter.Facade;
 using Generic.Repository.Extension.Validation;
 using Generic.Repository.Models.Filter;
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
+using Generic.Repository.ThrowError;
 
 namespace Generic.Repository.Extension.Filter
 {
@@ -16,6 +16,8 @@ namespace Generic.Repository.Extension.Filter
     internal static class Filter
     {
         private static readonly ExpressionTypeFacade FilterFacade = new ExpressionTypeFacade();
+
+        private static readonly ThrowErrors ThrowError = new ThrowErrors();
 
         private const string NameProperty = nameof(NameProperty);
 
@@ -40,43 +42,44 @@ namespace Generic.Repository.Extension.Filter
             var filterName = typeof(TFilter).Name;
             var mergeOption = LambdaMerge.And;
 
-            var methodGetDictionary = cacheRepository.GetDictionaryMethodGet(filterName);
+            var dictionaryMethodGet = cacheRepository.GetDictionaryMethodGet(filterName);
 
-            foreach (var methodGetFilter in methodGetDictionary)
+            foreach (var getFilter in dictionaryMethodGet)
             {
-                var key = methodGetFilter.Key;
-                var value = methodGetFilter.Value(filter);
+                var key = getFilter.Key;
+                var value = getFilter.Value(filter);
 
-                if (IsValidValue(value))
+                if (!IsValidValue(value))
                 {
-
-                    var attributeCached = cacheRepository.GetDictionaryAttribute(filterName);
-
-                    if (!attributeCached.TryGetValue(key, out var attributes))
-                    {
-                        return null;
-                    }
-
-                    attributes.TryGetValue(MethodOption, out var attributeMethod);
-
-                    attributeMethod.ThrowErrorNullValue(nameof(attributeMethod), nameof(GeneratePredicate));
-
-                    var methodOption = (LambdaMethod)attributeMethod.Value;
-
-                    attributes.TryGetValue(NameProperty, out var attributeName);
-
-                    var property = cacheRepository.GetProperty(typeof(TValue).Name, (string)attributeName.Value ?? key);
-
-                    var expression = methodOption.CreateExpressionPerType(parameter, property, value);
-
-                    expression.ThrowErrorNullValue(nameof(expression), nameof(GeneratePredicate));
-
-                    predicate = ExpressionMergeFacade.CreateExpression(predicate, expression, parameter, mergeOption);
-
-                    attributes.TryGetValue(MergeOption, out var attributeMerge);
-
-                    mergeOption = !attributeMerge.Value.IsNull() ? (LambdaMerge)attributeMerge.Value : LambdaMerge.And;
+                    continue;
                 }
+
+                var attributeCached = cacheRepository.GetDictionaryAttribute(filterName);
+
+                if (!attributeCached.TryGetValue(key, out var attributes))
+                {
+                    return null;
+                }
+
+                attributes.TryGetValue(MethodOption, out var attributeMethod);
+
+                ThrowError.ThrowErrorNullValue(attributeMethod, nameof(attributeMethod), nameof(GeneratePredicate));
+
+                var methodOption = (LambdaMethod)attributeMethod.Value;
+
+                attributes.TryGetValue(NameProperty, out var attributeName);
+
+                var property = cacheRepository.GetProperty(typeof(TValue).Name, (string)attributeName.Value ?? key);
+
+                var expression = methodOption.CreateExpressionPerType(parameter, property, value);
+
+                ThrowError.ThrowErrorNullValue(expression, nameof(expression), nameof(GeneratePredicate));
+
+                predicate = ExpressionMergeFacade.CreateExpression(predicate, expression, parameter, mergeOption);
+
+                attributes.TryGetValue(MergeOption, out var attributeMerge);
+
+                mergeOption = !attributeMerge.Value.IsNull() ? (LambdaMerge)attributeMerge.Value : LambdaMerge.And;
             }
             return predicate;
         }
@@ -95,7 +98,7 @@ namespace Generic.Repository.Extension.Filter
             PropertyInfo property,
             object value)
         {
-            parameter.ThrowErrorNullValue(nameof(parameter), nameof(CreateExpressionPerType));
+            ThrowError.ThrowErrorNullValue(parameter, nameof(parameter), nameof(CreateExpressionPerType));
 
             var memberExpression = Expression.Property(parameter, property);
             var constant = Expression.Constant(value);

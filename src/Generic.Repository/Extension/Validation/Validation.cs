@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Generic.Repository.Exceptions;
 using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Generic.Repository.Extension.Validation
@@ -19,6 +20,7 @@ namespace Generic.Repository.Extension.Validation
             obj is T;
 
         internal static bool HasAny(this object obj) => 
-            !obj.IsNull() && obj is IEnumerable? ((IEnumerable)obj).Any() : false;
+            !obj.IsNull() && (obj.IsType<IEnumerable>() ? 
+                ((IEnumerable)obj).Any() : throw new InvalidTypeException(obj.GetType().Name));
     }
 }
