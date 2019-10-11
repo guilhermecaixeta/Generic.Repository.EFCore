@@ -7,7 +7,7 @@ namespace Generic.Repository.Models.Page
     public interface IPage<TReturn> : IEquatable<TReturn>
      where TReturn : class
     {
-        Task<IReadOnlyList<TReturn>> Content { get; }
+        IReadOnlyList<TReturn> Content { get; }
 
         int TotalElements { get; }
 

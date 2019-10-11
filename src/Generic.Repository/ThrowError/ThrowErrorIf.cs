@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Generic.Repository.ThrowError
 {
-    internal class IsError
+    internal static class ThrowErrorIf
     {
 
         /// <summary>Throws the error if string null or empty value.</summary>
@@ -13,7 +13,7 @@ namespace Generic.Repository.ThrowError
         /// <param name="nameParameter">Name of the Parameter.</param>
         /// <param name="nameMethod">Name of the method.</param>
         /// <exception cref="ArgumentNullException">Attribute&gt; {attributeName} MethodName&gt; {methodName}</exception>
-        public void IsThrowErrorEmptyOrNullString(string obj, string nameParameter, string nameMethod)
+        public static void IsEmptyOrNullString(string obj, string nameParameter, string nameMethod)
         {
             var result = !obj.IsStringNotNullOrEmpty();
             if (result)
@@ -27,7 +27,7 @@ namespace Generic.Repository.ThrowError
         /// <param name="nameParameter">Name of the Parameter.</param>
         /// <param name="nameMethod">Name of the method.</param>
         /// <exception cref="ArgumentNullException">Attribute&gt; {attributeName} MethodName&gt; {methodName}</exception>
-        public void IsThrowErrorNullValue(object obj, string nameParameter, string nameMethod)
+        public static void IsNullValue(object obj, string nameParameter, string nameMethod)
         {
             var result = obj.IsNull();
             if (result)
@@ -42,7 +42,7 @@ namespace Generic.Repository.ThrowError
         /// <param name="nameParameter">Name of the Parameter.</param>
         /// <param name="nameMethod">Name of the method.</param>
         /// <exception cref="ArgumentNullException">MethodName &gt; {methodName}</exception>
-        public void IsThrowErrorNullOrEmptyList<T>(IEnumerable<T> obj, string nameParameter, string nameMethod)
+        public static void IsNullOrEmptyList<T>(IEnumerable<T> obj, string nameParameter, string nameMethod)
         {
             var result = obj.HasAny();
             if (!result)
@@ -55,7 +55,7 @@ namespace Generic.Repository.ThrowError
         /// <typeparam name="T">Type not allowed.</typeparam>
         /// <param name="obj">The object.</param>
         /// <exception cref="InvalidTypeException"></exception>
-        public void ThrowErrorTypeIsNotAllowed<T>(object obj)
+        public static void TypeIsNotAllowed<T>(object obj)
         {
             var isTypeValid = obj.IsType<T>();
             if (isTypeValid)
@@ -68,7 +68,7 @@ namespace Generic.Repository.ThrowError
         /// <typeparam name="T">Type to compare</typeparam>
         /// <param name="obj">The object.</param>
         /// <exception cref="InvalidTypeException"></exception>
-        public void IsThrowErrorTypeIsNotEqual<T>(object obj)
+        public static void IsTypeNotEquals<T>(object obj)
         {
             var isTypeValid = obj.IsType<T>();
             if (!isTypeValid)

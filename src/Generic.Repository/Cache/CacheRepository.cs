@@ -8,8 +8,6 @@ namespace Generic.Repository.Cache
 {
     public class CacheRepository : ICacheRepository
     {
-        private static readonly IsError IsError = new IsError();
-
         private int Size { get; set; }
 
         private IDictionary<string, Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>> CacheAttribute { get; set; }
@@ -20,7 +18,7 @@ namespace Generic.Repository.Cache
 
         private IDictionary<string, Dictionary<string, PropertyInfo>> CacheProperties { get; set; }
 
-        private ICacheRepositoryFacade CacheFacade { get; } = new CacheRepositoryFacade(IsError);
+        private ICacheRepositoryFacade CacheFacade { get; } = new CacheRepositoryFacade();
 
         public CacheRepository()
         {
@@ -34,11 +32,11 @@ namespace Generic.Repository.Cache
             string assemblyName,
             string nameSpace)
         {
-            IsError.
-                IsThrowErrorEmptyOrNullString(assemblyName, nameof(assemblyName), nameof(CacheRepository));
+            ThrowErrorIf.
+                IsEmptyOrNullString(assemblyName, nameof(assemblyName), nameof(CacheRepository));
 
-            IsError.
-                IsThrowErrorEmptyOrNullString(nameSpace, nameof(nameSpace), nameof(CacheRepository));
+            ThrowErrorIf.
+                IsEmptyOrNullString(nameSpace, nameof(nameSpace), nameof(CacheRepository));
 
             Size = Assembly.
                 Load(assemblyName).
@@ -245,8 +243,8 @@ namespace Generic.Repository.Cache
             PropertyInfo[] properties = typeof(TValue).
                 GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
 
-            IsError.
-                IsThrowErrorNullOrEmptyList(properties, nameof(properties), string.Empty);
+            ThrowErrorIf.
+                IsNullOrEmptyList(properties, nameof(properties), string.Empty);
 
             return (typeName, properties);
         }

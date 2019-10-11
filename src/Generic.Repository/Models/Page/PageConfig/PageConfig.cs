@@ -12,8 +12,8 @@ namespace Generic.Repository.Models.Page.PageConfig
 
         public bool Equals(PageConfig pageConfig)
         {
-            new IsError().
-                IsThrowErrorNullValue(pageConfig, nameof(pageConfig), nameof(Equals));
+             ThrowErrorIf.
+                IsNullValue(pageConfig, nameof(pageConfig), nameof(Equals));
 
             return pageConfig.Equals(this);
         }

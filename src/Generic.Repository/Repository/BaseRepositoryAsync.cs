@@ -19,8 +19,6 @@ namespace Generic.Repository.Repository
         where TFilter : class, IFilter
     {
         #region Attr
-        internal readonly IsError _isError = new IsError();
-
         public IList<string> includesString { get; set; } = new List<string>();
 
         public IList<Expression<Func<TValue, object>>> includesExp { get; set; } =
@@ -48,16 +46,6 @@ namespace Generic.Repository.Repository
             RepositoryFacade.StartCache();
         }
 
-        public BaseRepositoryAsync(
-            ICacheRepository cacheService,
-            DbContext context,
-            bool useCommit)
-        {
-            CacheService = cacheService;
-            UseCommit = useCommit;
-            Context = context;
-        }
-
         #endregion
 
         #region QUERY
@@ -69,7 +57,7 @@ namespace Generic.Repository.Repository
             Expression<Func<TValue, bool>> predicate,
             bool enableAsNoTracking)
         {
-            _isError.IsThrowErrorNullValue(predicate, nameof(predicate), nameof(GetSingleByAsync));
+            ThrowErrorIf.IsNullValue(predicate, nameof(predicate), nameof(GetSingleByAsync));
 
             return await RepositoryFacade.GetAllQueryable(enableAsNoTracking).Where(predicate).ToListAsync();
         }
@@ -83,7 +71,7 @@ namespace Generic.Repository.Repository
             Expression<Func<TValue, bool>> predicate,
             bool enableAsNoTracking)
         {
-            _isError.IsThrowErrorNullValue(predicate, nameof(predicate), nameof(GetSingleByAsync));
+            ThrowErrorIf.IsNullValue(predicate, nameof(predicate), nameof(GetSingleByAsync));
 
             return await RepositoryFacade.GetAllQueryable(enableAsNoTracking).SingleOrDefaultAsync(predicate);
         }
@@ -92,7 +80,7 @@ namespace Generic.Repository.Repository
             Expression<Func<TValue, bool>> predicate,
             bool enableAsNoTracking)
         {
-            _isError.IsThrowErrorNullValue(predicate, nameof(predicate), nameof(GetFirstByAsync));
+            ThrowErrorIf.IsNullValue(predicate, nameof(predicate), nameof(GetFirstByAsync));
 
             return await RepositoryFacade.GetAllQueryable(enableAsNoTracking).FirstOrDefaultAsync(predicate);
         }
@@ -128,7 +116,7 @@ namespace Generic.Repository.Repository
         public virtual async Task<int> CountAsync(
             Expression<Func<TValue, bool>> predicate)
         {
-            _isError.IsThrowErrorNullValue(predicate, nameof(predicate), nameof(CountAsync));
+            ThrowErrorIf.IsNullValue(predicate, nameof(predicate), nameof(CountAsync));
 
             return await RepositoryFacade.GetAllQueryable(true).CountAsync(predicate).ConfigureAwait(false);
         }
@@ -150,13 +138,12 @@ namespace Generic.Repository.Repository
         #region COMMAND - (CREAT, UPDATE, DELETE) With CancellationToken
         public virtual async Task<TValue> CreateAsync(TValue entity, CancellationToken token)
         {
-            _isError.IsThrowErrorNullValue(entity, nameof(entity), nameof(CreateAsync));
+            ThrowErrorIf.IsNullValue(entity, nameof(entity), nameof(CreateAsync));
 
             RepositoryFacade.SetState(EntityState.Added, entity);
-            if (!UseCommit)
-            {
-                await SaveChangesAsync(token).ConfigureAwait(false);
-            }
+
+            await SaveChangesAsync(token).ConfigureAwait(false);
+
             return entity;
         }
 
@@ -164,20 +151,16 @@ namespace Generic.Repository.Repository
             IEnumerable<TValue> entityList,
             CancellationToken token)
         {
-            _isError.IsThrowErrorNullOrEmptyList(entityList, nameof(entityList), nameof(CreateAsync));
+            ThrowErrorIf.IsNullOrEmptyList(entityList, nameof(entityList), nameof(CreateAsync));
 
-            await Context.AddRangeAsync(entityList);
+            await Context.AddRangeAsync(entityList, token).ConfigureAwait(false);
 
-            if (!UseCommit)
-            {
-                await SaveChangesAsync(token).ConfigureAwait(false);
-            }
-
+            await SaveChangesAsync(token).ConfigureAwait(false);
         }
 
         public virtual async Task UpdateAsync(TValue entity, CancellationToken token)
         {
-            _isError.IsThrowErrorNullValue(entity, nameof(entity), nameof(UpdateAsync));
+            ThrowErrorIf.IsNullValue(entity, nameof(entity), nameof(UpdateAsync));
 
             RepositoryFacade.SetState(EntityState.Modified, entity);
             if (!UseCommit)
@@ -188,56 +171,51 @@ namespace Generic.Repository.Repository
 
         public virtual async Task UpdateAsync(IEnumerable<TValue> entityList, CancellationToken token)
         {
-            _isError.IsThrowErrorNullOrEmptyList(entityList, nameof(entityList), nameof(UpdateAsync));
+            ThrowErrorIf.IsNullOrEmptyList(entityList, nameof(entityList), nameof(UpdateAsync));
 
             Context.UpdateRange(entityList);
-            if (!UseCommit)
-            {
-                await SaveChangesAsync(token).ConfigureAwait(false);
-            }
+
+            await SaveChangesAsync(token).ConfigureAwait(false);
+
         }
 
         public virtual async Task DeleteAsync(TValue entity, CancellationToken token)
         {
-            _isError.IsThrowErrorNullValue(entity, nameof(entity), nameof(DeleteAsync));
+            ThrowErrorIf.IsNullValue(entity, nameof(entity), nameof(DeleteAsync));
 
             Context.Remove(entity);
-            if (!UseCommit)
-            {
-                await SaveChangesAsync(token).ConfigureAwait(false);
-            }
+
+            await SaveChangesAsync(token).ConfigureAwait(false);
         }
 
         public virtual async Task DeleteAsync(IEnumerable<TValue> entityList, CancellationToken token)
         {
-            _isError.IsThrowErrorNullOrEmptyList(entityList, nameof(entityList), nameof(DeleteAsync));
+            ThrowErrorIf.IsNullOrEmptyList(entityList, nameof(entityList), nameof(DeleteAsync));
 
             Context.RemoveRange(entityList);
-            if (!UseCommit)
-            {
-                await SaveChangesAsync(token).ConfigureAwait(false);
-            }
+
+            await SaveChangesAsync(token).ConfigureAwait(false);
         }
         #endregion
 
         #region COMMAND - (CREAT, UPDATE, DELETE) Without CancellationToken
         public virtual async Task<TValue> CreateAsync(TValue entity) =>
-        await CreateAsync(entity, default(CancellationToken)).ConfigureAwait(false);
+        await CreateAsync(entity, default).ConfigureAwait(false);
 
         public virtual async Task CreateAsync(IEnumerable<TValue> entityList) =>
-        await CreateAsync(entityList, default(CancellationToken)).ConfigureAwait(false);
+        await CreateAsync(entityList, default).ConfigureAwait(false);
 
         public virtual async Task UpdateAsync(TValue entity) =>
-        await UpdateAsync(entity, default(CancellationToken)).ConfigureAwait(false);
+        await UpdateAsync(entity, default).ConfigureAwait(false);
 
         public virtual async Task UpdateAsync(IEnumerable<TValue> entityList) =>
-        await UpdateAsync(entityList, default(CancellationToken)).ConfigureAwait(false);
+        await UpdateAsync(entityList, default).ConfigureAwait(false);
 
         public virtual async Task DeleteAsync(TValue entity) =>
-        await DeleteAsync(entity, default(CancellationToken)).ConfigureAwait(false);
+        await DeleteAsync(entity, default).ConfigureAwait(false);
 
         public virtual async Task DeleteAsync(IEnumerable<TValue> entityList) =>
-        await DeleteAsync(entityList, default(CancellationToken)).ConfigureAwait(false);
+        await DeleteAsync(entityList, default).ConfigureAwait(false);
         #endregion
 
         #region COMMIT
@@ -257,12 +235,6 @@ namespace Generic.Repository.Repository
                 !includesExp.IsNull() ?
                 includesExp.Aggregate(query, (current, include) => current.Include(include)) :
                 query;
-
-        internal void InitiateFacade(BaseRepositoryFacade<TValue, TFilter> repositoryFacade)
-        {
-            repositoryFacade = new BaseRepositoryFacade<TValue, TFilter>(Context, CacheService, SetIncludes);
-            repositoryFacade.StartCache();
-        }
         #endregion
     }
 }

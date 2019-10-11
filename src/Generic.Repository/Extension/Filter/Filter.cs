@@ -15,15 +15,13 @@ namespace Generic.Repository.Extension.Filter
     /// </summary>
     internal static class Filter
     {
-        private static readonly IsError IsError = new IsError();
-
         private const string NameProperty = nameof(NameProperty);
 
         private const string MethodOption = nameof(MethodOption);
 
         private const string MergeOption = nameof(MergeOption);
 
-        private static readonly ExpressionTypeFacade FilterFacade = new ExpressionTypeFacade(IsError);
+        private static readonly ExpressionTypeFacade FilterFacade = new ExpressionTypeFacade();
 
         /// <summary>Generates the predicate.</summary>
         /// <typeparam name="TValue">The type of the value.</typeparam>
@@ -63,7 +61,7 @@ namespace Generic.Repository.Extension.Filter
 
                 attributes.TryGetValue(MethodOption, out var attributeMethod);
 
-                IsError.IsThrowErrorNullValue(attributeMethod, nameof(attributeMethod), nameof(GeneratePredicate));
+                ThrowErrorIf.IsNullValue(attributeMethod, nameof(attributeMethod), nameof(GeneratePredicate));
 
                 var methodOption = (LambdaMethod)attributeMethod.Value;
 
@@ -73,7 +71,7 @@ namespace Generic.Repository.Extension.Filter
 
                 var expression = methodOption.CreateExpressionPerType(parameter, property, value);
 
-                IsError.IsThrowErrorNullValue(expression, nameof(expression), nameof(GeneratePredicate));
+                ThrowErrorIf.IsNullValue(expression, nameof(expression), nameof(GeneratePredicate));
 
                 predicate = ExpressionMergeFacade.CreateExpression(predicate, expression, parameter, mergeOption);
 
@@ -98,7 +96,7 @@ namespace Generic.Repository.Extension.Filter
             PropertyInfo property,
             object value)
         {
-            IsError.IsThrowErrorNullValue(parameter, nameof(parameter), nameof(CreateExpressionPerType));
+            ThrowErrorIf.IsNullValue(parameter, nameof(parameter), nameof(CreateExpressionPerType));
 
             var memberExpression = Expression.Property(parameter, property);
             var constant = Expression.Constant(value);

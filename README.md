@@ -23,13 +23,13 @@ Principles used:
    * *DRY* principle;
    * *SOLID* principles.
 
-This project is builded in *asp.net standard* and has the dependencies below:
-   * Microsoft.EntityFrameworkCore (>= 2.2.4)
+This project is builded in *asp.net standard 2.1* and has the dependencies below:
+   * Microsoft.EntityFrameworkCore (>= 3.0.0)
 
 ### V.1.0.0(DEPRECATED)
 This version is a pilot.
 
-### V.1.0.1 - OFICIAL
+### V.1.0.1 - Lite
 New features and fixs:
 * Fix include validation;
 * Add GetPageAsync on Repository;

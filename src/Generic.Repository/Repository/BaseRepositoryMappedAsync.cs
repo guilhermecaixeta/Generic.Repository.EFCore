@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Generic.Repository.ThrowError;
 
 namespace Generic.Repository.Repository
 {
@@ -28,40 +29,15 @@ namespace Generic.Repository.Repository
          :
          base(cacheService, context)
         {
-            if (!IsValidCtor(mapperList, mapperData))
-            {
-                return;
-            }
+            ThrowErrorIf.
+                IsNullValue(mapperList, nameof(mapperList), nameof(BaseRepositoryAsync<TValue, TResult, TFilter>));
+            ThrowErrorIf.
+                IsNullValue(mapperData, nameof(mapperData), nameof(BaseRepositoryAsync<TValue, TResult, TFilter>));
+
             this.mapperList = mapperList;
             this.mapperData = mapperData;
         }
 
-        public BaseRepositoryAsync(
-            ICacheRepository cacheRepository,
-            DbContext context,
-            bool useCommit,
-            Func<IEnumerable<TValue>, IEnumerable<TResult>> mapperList,
-            Func<TValue, TResult> mapperData)
-         :
-         base(
-            cacheRepository,
-            context,
-            useCommit)
-        {
-            if (!IsValidCtor(mapperList, mapperData)) return;
-            this.mapperList = mapperList;
-            this.mapperData = mapperData;
-        }
-
-        private bool IsValidCtor(
-            Func<IEnumerable<TValue>, IEnumerable<TResult>> mapperListFunc,
-            Func<TValue, TResult> mapperDataFunc)
-        {
-            _isError.IsThrowErrorNullValue(mapperListFunc, nameof(mapperListFunc), nameof(IsValidCtor));
-            _isError.IsThrowErrorNullValue(mapperDataFunc, nameof(mapperDataFunc), nameof(IsValidCtor));
-
-            return true;
-        }
         #endregion
 
         #region ATTRIBUTES
@@ -96,7 +72,7 @@ namespace Generic.Repository.Repository
             Expression<Func<TValue, bool>> predicate,
             bool enableAsNoTracking)
         {
-            _isError.IsThrowErrorNullValue(predicate, nameof(predicate), nameof(GetSingleByAsync));
+            ThrowErrorIf.IsNullValue(predicate, nameof(predicate), nameof(GetSingleByAsync));
 
             var value = await RepositoryFacade.
                 GetAllQueryable(enableAsNoTracking).
@@ -109,7 +85,7 @@ namespace Generic.Repository.Repository
             Expression<Func<TValue, bool>> predicate,
             bool enableAsNoTracking)
         {
-            _isError.IsThrowErrorNullValue(predicate, nameof(predicate), nameof(GetFirstByAsync));
+            ThrowErrorIf.IsNullValue(predicate, nameof(predicate), nameof(GetFirstByAsync));
 
             var value = await RepositoryFacade.
                 GetAllQueryable(enableAsNoTracking).

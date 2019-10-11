@@ -7,13 +7,6 @@ namespace Generic.Repository.Extension.Filter.Facade
 {
     internal class ExpressionTypeFacade
     {
-        private readonly IsError _isError;
-
-        public ExpressionTypeFacade(IsError isError)
-        {
-            _isError = isError;
-        }
-
         /// <summary>Determines whether this instance contains the object.</summary>
         /// <param name="constant">The constant.</param>
         /// <param name="memberExpression">The member expression.</param>
@@ -26,7 +19,7 @@ namespace Generic.Repository.Extension.Filter.Facade
             MemberExpression memberExpression,
             object value)
         {
-            _isError.IsThrowErrorTypeIsNotEqual<string>(value);
+            ThrowErrorIf.IsTypeNotEquals<string>(value);
 
             var method = typeof(string).
                 GetMethod(LambdaMethod.Contains.ToString(), new[] { typeof(string) });
@@ -117,7 +110,7 @@ namespace Generic.Repository.Extension.Filter.Facade
         /// <param name="obj">The object.</param>
         private void IsNotString(object obj)
         {
-            _isError.ThrowErrorTypeIsNotAllowed<string>(obj);
+            ThrowErrorIf.TypeIsNotAllowed<string>(obj);
         }
 
     }

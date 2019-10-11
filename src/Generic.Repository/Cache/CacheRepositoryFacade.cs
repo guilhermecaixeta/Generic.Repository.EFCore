@@ -7,22 +7,16 @@ namespace Generic.Repository.Cache
 {
     internal class CacheRepositoryFacade : ICacheRepositoryFacade
     {
-        private readonly IsError _isError;
-
-        public CacheRepositoryFacade(IsError isError)
-        {
-            _isError = isError;
-        }
         public Func<object, object> CreateFunction<TValue>(PropertyInfo property)
         {
-            _isError.
-                IsThrowErrorNullValue(property, nameof(property), nameof(CreateFunction));
+            ThrowErrorIf.
+                IsNullValue(property, nameof(property), nameof(CreateFunction));
             
             var getter = property.
                 GetGetMethod(true);
             
-            _isError.
-                IsThrowErrorNullValue(getter, nameof(property), nameof(CreateFunction));
+            ThrowErrorIf.
+                IsNullValue(getter, nameof(property), nameof(CreateFunction));
 
             return (Func<object, object>)ExtractMethod<TValue>(getter, property, "CreateFunctionGeneric");
         }
@@ -40,14 +34,14 @@ namespace Generic.Repository.Cache
 
         public Action<object, object> CreateAction<TValue>(PropertyInfo property)
         {
-            _isError.
-                IsThrowErrorNullValue(property, nameof(property), nameof(ExtractMethod));
+            ThrowErrorIf.
+                IsNullValue(property, nameof(property), nameof(ExtractMethod));
             
             var setter = property.
                 GetSetMethod(true);
             
-            _isError.
-                IsThrowErrorNullValue(setter, nameof(setter), nameof(ExtractMethod)); ;
+            ThrowErrorIf.
+                IsNullValue(setter, nameof(setter), nameof(ExtractMethod)); ;
 
             var result = (Action<object, object>) ExtractMethod<TValue>(setter, property, "CreateActionGeneric");
 
@@ -67,8 +61,8 @@ namespace Generic.Repository.Cache
 
         private object ExtractMethod<TValue>(MethodInfo method, PropertyInfo property, string nameMethod)
         {
-            _isError.
-                IsThrowErrorNullValue(method, nameof(method), nameof(ExtractMethod));
+            ThrowErrorIf.
+                IsNullValue(method, nameof(method), nameof(ExtractMethod));
             
             var type = typeof(ICacheRepositoryFacade);
             var genericMethod = type.GetMethod(nameMethod);
@@ -81,8 +75,8 @@ namespace Generic.Repository.Cache
 
         public R GetData<R>(IDictionary<string, R> dictionary, string key)
         {
-            _isError.
-                IsThrowErrorEmptyOrNullString(key, nameof(key), nameof(GetData));
+            ThrowErrorIf.
+                IsEmptyOrNullString(key, nameof(key), nameof(GetData));
             
             if (dictionary.TryGetValue(key, out var result))
             {

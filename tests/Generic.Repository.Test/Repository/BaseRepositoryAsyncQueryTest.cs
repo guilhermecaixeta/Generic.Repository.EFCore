@@ -32,7 +32,7 @@
         [Test]
         public async Task CountAsync_DataValid()
         {
-            var count = await Repository.CountAsync();
+            var count = await Repository.CountAsync().ConfigureAwait(false);
 
             Assert.AreEqual(ComparableListLength, count);
         }
@@ -40,7 +40,7 @@
         [Test]
         public async Task CountAsync_WithPredicate_DataValid()
         {
-            var count = await Repository.CountAsync(GetFakeExpression());
+            var count = await Repository.CountAsync(GetFakeExpression()).ConfigureAwait(false);
 
             Assert.AreEqual(ComparablePageFilterResult, count);
         }
@@ -48,7 +48,7 @@
         [Test]
         public async Task GetAllAsync_DataValid()
         {
-            var list = await Repository.GetAllAsync(true);
+            var list = await Repository.GetAllAsync(true).ConfigureAwait(false);
 
             Assert.IsNotNull(list);
             Assert.AreEqual(ComparableListLength, list.Count);
@@ -57,26 +57,30 @@
         [Test]
         public async Task GetAllByAsync_DataValid()
         {
-            var list = await Repository.GetAllByAsync(GetFakeExpression(), true);
-            var result = list.Count;
+            var list = await Repository.
+                GetAllByAsync(GetFakeExpression(), true).
+                ConfigureAwait(false);
+
             Assert.IsNotNull(list);
-            Assert.AreEqual(ComparablePageFilterResult, result);
+            Assert.AreEqual(ComparablePageFilterResult, list.Count);
         }
 
         [Test]
         public async Task FilterAllAsync_DataValid()
         {
             var filter = GetFilterFake();
-            var list = await Repository.FilterAllAsync(filter, true);
+            var list = await Repository.FilterAllAsync(filter, true).ConfigureAwait(false);
+            
             Assert.IsNotNull(list);
-
             Assert.AreEqual(ComparablePageFilterResult, list.Count);
         }
 
         [Test]
         public async Task FirstAsync_DataValid()
         {
-            var value = await Repository.GetFirstByAsync(GetFakeExpression(), true);
+            var value = await Repository.
+                GetFirstByAsync(GetFakeExpression(), true).
+                ConfigureAwait(false);
 
             Assert.IsNotNull(value);
         }
@@ -84,37 +88,45 @@
         [Test]
         public async Task PageAllAsync_DataValid()
         {
-            var page = await Repository.GetPageAsync(GetPageConfigFake(), true);
-            var result = await page.Content.ConfigureAwait(false);
+            var page = await Repository.
+                GetPageAsync(GetPageConfigFake(), true).
+                ConfigureAwait(false);
+
             Assert.IsNotNull(page.Content);
-            Assert.AreEqual(ComparablePageLength, result.Count);
+            Assert.AreEqual(ComparablePageLength, page.Content.Count);
         }
 
         [Test]
         public async Task PageAll_FilterByExpressionAsync_DataValid()
         {
-            var page = await Repository.GetPageAsync(GetPageConfigFake(), GetFakeExpression(), true);
-            var result = await page.Content.ConfigureAwait(false);
+            var page = await Repository.
+                GetPageAsync(GetPageConfigFake(), GetFakeExpression(), true).
+                ConfigureAwait(false);
+
             Assert.IsNotNull(page);
-            Assert.AreEqual(ComparablePageFilterResult, result.Count);
+            Assert.AreEqual(ComparablePageFilterResult, page.Content.Count);
         }
 
         [Test]
         public async Task PageAll_FilterByFilterDefaultAsync_DataValid()
         {
-            var page = await Repository.GetPageAsync(GetPageConfigFake(), GetFilterFake(), true);
-            var result = await page.Content.ConfigureAwait(false);
+            var page = await Repository.
+                GetPageAsync(GetPageConfigFake(), GetFilterFake(), true).
+                ConfigureAwait(false);
+
             Assert.IsNotNull(page);
-            Assert.AreEqual(ComparablePageFilterResult, result.Count);
+            Assert.AreEqual(ComparablePageFilterResult, page.Content.Count);
         }
 
         [Test]
         public async Task PageAll_NoData()
         {
             BaseTearDown();
-            var page = await Repository.GetPageAsync(GetPageConfigFake(), GetFilterFake(), true);
+            var page = await Repository.
+                GetPageAsync(GetPageConfigFake(), GetFilterFake(), true).
+                ConfigureAwait(false);
 
-            Assert.AreEqual(new List<TValue>(), await page.Content.ConfigureAwait(false));
+            Assert.AreEqual(new List<TValue>(), page.Content);
             Assert.AreEqual(Zero, page.TotalPage);
         }
 
