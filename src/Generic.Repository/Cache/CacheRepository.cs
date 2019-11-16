@@ -1,8 +1,9 @@
-using Generic.Repository.ThrowError;
+using Generic.Repository.Validations.ThrowError;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Generic.Repository.Cache
 {
@@ -25,85 +26,61 @@ namespace Generic.Repository.Cache
             InitCache();
         }
 
-        /// <summary>Initializes a new instance of the <see cref="CacheRepository"/> class.</summary>
-        /// <param name="assemblyName">Name of the assembly.</param>
-        /// <param name="nameSpace">The name spaces splited by ";".</param>
-        public CacheRepository(
-            string assemblyName,
-            string nameSpace)
-        {
-            ThrowErrorIf.
-                IsEmptyOrNullString(assemblyName, nameof(assemblyName), nameof(CacheRepository));
-
-            ThrowErrorIf.
-                IsEmptyOrNullString(nameSpace, nameof(nameSpace), nameof(CacheRepository));
-
-            Size = Assembly.
-                Load(assemblyName).
-                GetTypes().
-                Count(x => nameSpace.Split(';').Contains(x.Namespace));
-
-            if (Size > 0)
-            {
-                InitCache(Size);
-            }
-        }
-
-        public Func<object, object> GetMethodGet(
+        public async Task<Func<object, object>> GetMethodGet(
             string objectKey,
             string propertyKey)
         {
-            var dicResult = CacheFacade.
+            var dicResult = await CacheFacade.
             GetData(CacheGet, objectKey);
 
-            var result = CacheFacade.
+            var result = await CacheFacade.
             GetData(dicResult, propertyKey);
 
             return result;
         }
 
-        public IDictionary<string, Func<object, object>> GetDictionaryMethodGet(
+        public async Task<IDictionary<string, Func<object, object>>> GetDictionaryMethodGet(
             string objectKey)
         {
-            var dictionary = CacheFacade.
+            var dictionary = await CacheFacade.
             GetData(CacheGet, objectKey);
             return dictionary;
         }
 
-        public Action<object, object> GetMethodSet(
+        public async Task<Action<object, object>> GetMethodSet(
             string objectKey,
             string propertyKey)
         {
-            var dicResult = CacheFacade.
+            var dicResult = await CacheFacade.
             GetData(CacheSet, objectKey);
 
-            var result = CacheFacade.
+            var result = await CacheFacade.
             GetData(dicResult, propertyKey);
             return result;
         }
 
-        public IDictionary<string, Action<object, object>> GetDictionaryMethodSet(string objectKey)
+        public async Task<IDictionary<string, Action<object, object>>> GetDictionaryMethodSet(string objectKey)
         {
-            var dictionary = CacheFacade.GetData(CacheSet, objectKey);
+            var dictionary = await CacheFacade.GetData(CacheSet, objectKey);
             return dictionary;
         }
 
-        public CustomAttributeTypedArgument GetAttribute(
+        public async Task<CustomAttributeTypedArgument> GetAttribute(
             string objectKey,
             string propertyKey,
             string customAttributeKey)
         {
-            var dictionaryI = CacheFacade
+            var dictionaryI = await CacheFacade
             .GetData(
                 CacheAttribute,
                 objectKey);
 
-            var dictionaryII = CacheFacade
+            var dictionaryII = await CacheFacade
             .GetData(
                 dictionaryI,
                 propertyKey);
 
-            var result = CacheFacade
+            var result = await CacheFacade
             .GetData(
                 dictionaryII,
                 customAttributeKey);
@@ -111,87 +88,110 @@ namespace Generic.Repository.Cache
             return result;
         }
 
-        public IDictionary<string, CustomAttributeTypedArgument> GetDictionaryAttribute(string objectKey, string propertyKey)
+        public async Task<IDictionary<string, CustomAttributeTypedArgument>> GetDictionaryAttribute(string objectKey, string propertyKey)
         {
-            var dictionaryI = CacheFacade.GetData(CacheAttribute, objectKey);
-            var result = CacheFacade.GetData(dictionaryI, propertyKey);
+            var dictionaryI = await CacheFacade.GetData(CacheAttribute, objectKey);
+            var result = await CacheFacade.GetData(dictionaryI, propertyKey);
             return result;
         }
 
-        public IDictionary<string, Dictionary<string, CustomAttributeTypedArgument>> GetDictionaryAttribute(string objectKey)
+        public async Task<IDictionary<string, Dictionary<string, CustomAttributeTypedArgument>>> GetDictionaryAttribute(string objectKey)
         {
-            var result = CacheFacade.GetData(CacheAttribute, objectKey);
+            var result = await CacheFacade.GetData(CacheAttribute, objectKey);
             return result;
         }
 
-        public PropertyInfo GetProperty(string objectKey, string propertyKey)
+        public async Task<PropertyInfo> GetProperty(string objectKey, string propertyKey)
         {
-            var dictionary = CacheFacade.
+            var dictionary = await CacheFacade.
                 GetData(CacheProperties, objectKey);
 
-            var result = CacheFacade.
+            var result = await CacheFacade.
                 GetData(dictionary, propertyKey);
 
             return result;
         }
 
-        public IDictionary<string, PropertyInfo> GetDictionaryProperties(string objectKey)
+        public async Task<IDictionary<string, PropertyInfo>> GetDictionaryProperties(string objectKey)
         {
-            var result = CacheFacade.
+            var result = await CacheFacade.
                 GetData(CacheProperties, objectKey);
 
             return result;
         }
 
-        public void AddGet<TValue>()
+        public async Task AddGet<TValue>()
         {
-            var values = GetValues<TValue>();
-
-            if (!CacheGet.ContainsKey(values.typeName))
+            void ActionAdd()
             {
+                var values = GetValues<TValue>();
+
+                if (CacheGet.ContainsKey(values.typeName))
+                {
+                    return;
+                }
+
                 var dictionary = values.properties.
-                    ToDictionary(g => g.Name, m => CacheFacade.CreateFunction<TValue>(m));
+                       ToDictionary(g => g.Name, m => CacheFacade.CreateFunction<TValue>(m));
                 CacheGet.Add(values.typeName, dictionary);
             }
+
+            await CacheFacade.ProcessSemaphore(ActionAdd);
         }
 
-        public void AddSet<TValue>()
+        public async Task AddSet<TValue>()
         {
-            var values = GetValues<TValue>();
-
-            if (!CacheSet.ContainsKey(values.typeName))
+            void ActionAdd()
             {
+                var values = GetValues<TValue>();
+                if (CacheSet.ContainsKey(values.typeName))
+                {
+                    return;
+                }
                 var dictionary = values.properties.
-                    ToDictionary(s => s.Name, m => CacheFacade.CreateAction<TValue>(m));
+                                        ToDictionary(s => s.Name, m => CacheFacade.CreateAction<TValue>(m));
                 CacheSet.Add(values.typeName, dictionary);
             }
+
+            await CacheFacade.ProcessSemaphore(ActionAdd);
         }
 
-        public void AddProperty<TValue>()
+        public async Task AddProperty<TValue>()
         {
-            var values = GetValues<TValue>();
-
-            if (!CacheProperties.ContainsKey(values.typeName))
+            void ActionAdd()
             {
+                var values = GetValues<TValue>();
+
+                if (CacheProperties.ContainsKey(values.typeName))
+                {
+                    return;
+                }
                 CacheProperties.Add(values.typeName, values.properties.ToDictionary(p => p.Name, p => p));
             }
+
+            await CacheFacade.ProcessSemaphore(ActionAdd);
         }
 
-        public void AddAttribute<TValue>()
+        public async Task AddAttribute<TValue>()
         {
-            var values = GetValues<TValue>();
-
-            if (!CacheAttribute.ContainsKey(values.typeName))
+            void ActionAdd()
             {
-                var dictionary = new Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>(values.properties.Length);
+                var values = GetValues<TValue>();
 
-                CacheAttribute.Add(values.typeName, dictionary);
-
-                foreach (var property in values.properties)
+                if (!CacheAttribute.ContainsKey(values.typeName))
                 {
-                    SetCacheAttributes(property, values.typeName);
+                    var dictionary = new Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>(values.properties.Length);
+
+                    CacheAttribute.Add(values.typeName, dictionary);
+
+                    foreach (var property in values.properties)
+                    {
+                        SetCacheAttributes(property, values.typeName);
+                    }
                 }
             }
+
+            await CacheFacade.ProcessSemaphore(ActionAdd);
         }
 
         public bool HasMethodSet() => CacheSet.Any();
@@ -204,10 +204,6 @@ namespace Generic.Repository.Cache
 
         public void ClearCache()
         {
-            if (Size > 0)
-            {
-                InitCache(Size);
-            }
             InitCache();
         }
 
@@ -226,14 +222,6 @@ namespace Generic.Repository.Cache
             CacheGet = new Dictionary<string, Dictionary<string, Func<object, object>>>();
             CacheSet = new Dictionary<string, Dictionary<string, Action<object, object>>>();
             CacheAttribute = new Dictionary<string, Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>>();
-        }
-
-        private void InitCache(int size)
-        {
-            CacheProperties = new Dictionary<string, Dictionary<string, PropertyInfo>>(size);
-            CacheGet = new Dictionary<string, Dictionary<string, Func<object, object>>>(size);
-            CacheSet = new Dictionary<string, Dictionary<string, Action<object, object>>>(size);
-            CacheAttribute = new Dictionary<string, Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>>(size);
         }
 
         private (string typeName, PropertyInfo[] properties) GetValues<TValue>()

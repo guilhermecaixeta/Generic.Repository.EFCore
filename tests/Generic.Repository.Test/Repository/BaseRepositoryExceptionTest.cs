@@ -10,6 +10,7 @@ namespace Generic.Repository.Test.Repository
     public abstract class BaseRepositoryExceptionTest<TValue, TFilter> : BaseRepositoryAsyncQueryTest<TValue, TFilter>
         where TValue : class
         where TFilter : class, IFilter
+
     {
         private readonly TValue _value;
 
@@ -71,35 +72,35 @@ namespace Generic.Repository.Test.Repository
         public void GetPage_NullConfig() =>
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
-                await Repository.GetPageAsync(null, true);
+                await Repository.GetPageAsync(null, true, default);
             });
 
         [Test]
         public void GetPage_NullPredicate() =>
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
-                await Repository.GetPageAsync(GetPageConfigFake(), (Expression<Func<TValue, bool>>)null, true);
+                await Repository.GetPageAsync(GetPageConfigFake(), (Expression<Func<TValue, bool>>)null, true, default);
             });
 
         [Test]
         public void GetPage_NullFilter() =>
             Assert.ThrowsAsync<NullReferenceException>(async () =>
             {
-                await Repository.GetPageAsync(GetPageConfigFake(), (TFilter)null, true);
+                await Repository.GetPageAsync(GetPageConfigFake(), (TFilter)null, true, default);
             });
 
         [Test]
         public void GetFirstAsync_NullPredicate() =>
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
-                await Repository.GetFirstByAsync(null, true);
+                await Repository.GetFirstByAsync(null, true, default);
             });
 
         [Test]
         public void GetSingleAsync_NullPredicate() =>
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
-                await Repository.GetSingleByAsync(null, true);
+                await Repository.GetSingleByAsync(null, true, default);
             });
     }
 }

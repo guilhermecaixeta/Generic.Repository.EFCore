@@ -1,26 +1,46 @@
-using System;
-using System.Collections;
-using Generic.Repository.Exceptions;
-using Microsoft.EntityFrameworkCore.Internal;
-
-namespace Generic.Repository.Extension.Validation
+namespace Generic.Repository.Validations.Extension.Validation
 {
-    internal static class Validation
-    {
-        internal static bool IsNull(this object obj) => 
-            obj == null;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
-        internal static bool IsStringNotNullOrEmpty(this object obj) =>
+    public static class Validation
+    {
+        /// <summary>Determines whether this instance is null.</summary>
+        /// <param name="obj">The object.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified object is null; otherwise, <c>false</c>.</returns>
+        public static bool IsNull(this object obj) =>
+            obj is null;
+
+        /// <summary>Determines whether [is string not null or empty].</summary>
+        /// <param name="obj">The object.</param>
+        /// <returns>
+        ///   <c>true</c> if [is string not null or empty] [the specified object]; otherwise, <c>false</c>.</returns>
+        public static bool IsStringNotNullOrEmpty(this object obj) =>
             obj.IsType<string>() && !string.IsNullOrEmpty((string)obj);
 
-        internal static bool IsNotEqualDateTimeMaxMinValue(this object obj) =>
+        /// <summary>Determines whether [is not equal date time maximum minimum value].</summary>
+        /// <param name="obj">The object.</param>
+        /// <returns>
+        ///   <c>true</c> if [is not equal date time maximum minimum value] [the specified object]; otherwise, <c>false</c>.</returns>
+        public static bool IsNotEqualDateTimeMaxMinValue(this object obj) =>
             obj.IsType<DateTime>() && ((DateTime)obj).Date > DateTime.MinValue && ((DateTime)obj).Date < DateTime.MaxValue;
 
-        internal static bool IsType<T>(this object obj) => 
+        /// <summary>Determines whether this instance is type.</summary>
+        /// <typeparam name="T">Generic Type</typeparam>
+        /// <param name="obj">The object.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified object is type; otherwise, <c>false</c>.</returns>
+        public static bool IsType<T>(this object obj) =>
             obj is T;
 
-        internal static bool HasAny(this object obj) => 
-            !obj.IsNull() && (obj.IsType<IEnumerable>() ? 
-                ((IEnumerable)obj).Any() : throw new InvalidTypeException(obj.GetType().Name));
+        /// <summary>Determines whether this instance has any.</summary>
+        /// <typeparam name="T">Generic Type</typeparam>
+        /// <param name="obj">The object.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified object has any; otherwise, <c>false</c>.</returns>
+        public static bool HasAny<T>(this IEnumerable<T> obj) =>
+            !obj.IsNull() && obj.Any();
     }
 }

@@ -3,26 +3,58 @@ using Generic.Repository.Extension.Filter;
 using Generic.Repository.Extension.Page;
 using Generic.Repository.Models.Filter;
 using Generic.Repository.Models.Page;
-using Generic.Repository.Models.Page.PageConfig;
+using Generic.Repository.Models.PageAggregation.PageConfig;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace Generic.Repository.Repository
 {
-    internal class BaseRepositoryFacade<TValue, TFilter>
+    public class BaseRepositoryFacade<TValue, TFilter> : BaseRepositoryFacade<TValue>
         where TValue : class
         where TFilter : class, IFilter
     {
-        private readonly Func<IQueryable<TValue>, IQueryable<TValue>> _funcAddIncludes;
+        public BaseRepositoryFacade(
+            DbSet<TValue> context,
+            ICacheRepository cache,
+            Func<IQueryable<TValue>, IQueryable<TValue>> funcSetInclude) : base(context, cache, funcSetInclude)
+        { }
 
-        private readonly ICacheRepository _cache;
+        #region public Methods
 
-        private readonly DbContext _context;
+        public override async Task StartCache()
+        {
+            await base.StartCache();
+            await _cache.AddGet<TFilter>();
+            await _cache.AddAttribute<TFilter>();
+        }
+
+        public async Task<Expression<Func<TValue, bool>>> GetExpressionByFilter(TFilter filter) =>
+            await filter.CreateGenericFilter<TValue, TFilter>(_cache);
+
+        public new IPage<TValue> GetPage(IQueryable<TValue> query, IPageConfig config) =>
+            query.ToPageFiltred<TValue, TFilter>(_cache, config);
+
+        public new IPage<TResult> GetPage<TResult>(IQueryable<TValue> query, IPageConfig config, Func<IEnumerable<object>, IEnumerable<TResult>> mapping)
+            where TResult : class =>
+            query.ToPageFiltred<TValue, TFilter, TResult>(_cache, mapping, config);
+        #endregion
+    }
+
+    public class BaseRepositoryFacade<TValue>
+        where TValue : class
+    {
+        protected readonly Func<IQueryable<TValue>, IQueryable<TValue>> _funcAddIncludes;
+
+        protected readonly ICacheRepository _cache;
+
+        protected readonly DbSet<TValue> _context;
 
         public BaseRepositoryFacade(
-            DbContext context,
+            DbSet<TValue> context,
             ICacheRepository cache,
             Func<IQueryable<TValue>, IQueryable<TValue>> funcSetInclude)
         {
@@ -35,7 +67,7 @@ namespace Generic.Repository.Repository
 
         public IQueryable<TValue> GetAllQueryable(bool enableAsNoTracking)
         {
-            var query = _funcAddIncludes(_context.Set<TValue>());
+            var query = _funcAddIncludes(_context);
             if (enableAsNoTracking)
             {
                 query = query.AsNoTracking();
@@ -43,25 +75,22 @@ namespace Generic.Repository.Repository
             return query;
         }
 
-        public void StartCache()
+        public virtual async Task StartCache()
         {
-            _cache.AddGet<TValue>();
-            _cache.AddSet<TValue>();
-            _cache.AddProperty<TValue>();
-
-            _cache.AddGet<TFilter>();
-            _cache.AddAttribute<TFilter>();
+            await _cache.AddGet<TValue>();
+            await _cache.AddSet<TValue>();
+            await _cache.AddProperty<TValue>();
         }
 
         public void SetState(EntityState state, TValue item) =>
             _context.Attach(item).State = state;
 
-        public Expression<Func<TValue, bool>> GetExpressionByFilter(TFilter filter) =>
-            filter.GeneratePredicate<TValue, TFilter>(_cache);
-
-        public IPage<TValue> GetPage(IQueryable<TValue> query, IPageConfig config) =>
+        public virtual IPage<TValue> GetPage(IQueryable<TValue> query, IPageConfig config) =>
             query.ToPage(_cache, config);
-        
+
+        public virtual IPage<TResult> GetPage<TResult>(IQueryable<TValue> query, IPageConfig config, Func<IEnumerable<object>, IEnumerable<TResult>> mapping)
+            where TResult : class =>
+            query.ToPage(_cache, config, mapping);
         #endregion
     }
 }

@@ -3,38 +3,39 @@
     using NUnit.Framework;
     using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
 
     [TestFixture]
     public abstract class CacheRepositoryExceptionTest<T>
         : CacheRepositoryInsertTest<T>
         where T : class
     {
-        private const string SomeKey = "ABDC";
-
         private readonly string _emptyValue = string.Empty;
 
-        [Test]
-        public void GetDictionaryMethodSet_NullValueException() => 
-            Assert.Throws<ArgumentNullException>(() => Cache.GetDictionaryMethodSet(null));
+        private readonly string _nullValue = null;
 
         [Test]
-        public void GetDictionaryMethod_EmptyValueException() => 
-            Assert.Throws<ArgumentNullException>(() => Cache.GetDictionaryMethodGet(_emptyValue));
+        public async Task GetDictionaryMethodSet_NullValueException() =>
+            _ = await Task.FromResult(Assert.ThrowsAsync<ArgumentNullException>(async () => await Cache.GetDictionaryMethodSet(_nullValue)));
 
         [Test]
-        public void GetMethodSet_NullValueException() => 
-            Assert.Throws<ArgumentNullException>(() => Cache.GetMethodSet(null, NameProperty));
+        public async Task GetDictionaryMethod_EmptyValueException() =>
+            _ = await Task.FromResult(Assert.ThrowsAsync<ArgumentNullException>(async () => await Cache.GetDictionaryMethodGet(_emptyValue)));
 
         [Test]
-        public void GetMethodGet_EmptyValueException() =>
-         Assert.Throws<ArgumentNullException>(() => Cache.GetMethodGet(NameType, _emptyValue));
+        public async Task GetMethodSet_NullValueException() =>
+            _ = await Task.FromResult(Assert.ThrowsAsync<ArgumentNullException>(async () => await Cache.GetMethodSet(_nullValue, NameProperty)));
 
         [Test]
-        public void GetDictionaryAttributes_PropertyKeyNotFoundException() => 
-            Assert.Throws<KeyNotFoundException>(() => Cache.GetMethodGet(NameType, SomeKey));
+        public async Task GetMethodGet_EmptyValueException() =>
+            _ = await Task.FromResult(Assert.ThrowsAsync<ArgumentNullException>(async () => await Cache.GetMethodGet(NameType, _emptyValue)));
 
         [Test]
-        public void GetDictionaryAttribute_ObjectKeyNotFoundException() => 
-            Assert.Throws<KeyNotFoundException>(() => Cache.GetMethodGet(SomeKey, NameProperty));
+        public async Task GetDictionaryAttributes_PropertyKeyNotFoundException() =>
+            _ = await Task.FromResult(Assert.ThrowsAsync<KeyNotFoundException>(async () => await Cache.GetMethodGet(NameType, SomeKey)));
+
+        [Test]
+        public async Task GetDictionaryAttribute_ObjectKeyNotFoundException() =>
+            _ = await Task.FromResult(Assert.ThrowsAsync<KeyNotFoundException>(async () => await Cache.GetMethodGet(SomeKey, NameProperty)));
     }
 }

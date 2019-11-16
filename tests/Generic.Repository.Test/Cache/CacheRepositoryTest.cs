@@ -12,7 +12,7 @@ namespace Generic.Repository.Test.Cache
         public void CacheSetUp()
         {
             NameProperty = nameof(FakeFilter.Value);
-            NameAttribute = nameof(LambdaAttribute.MethodOption);
+            NameAttribute = nameof(FilterAttribute.MethodOption);
         }
     }
 }

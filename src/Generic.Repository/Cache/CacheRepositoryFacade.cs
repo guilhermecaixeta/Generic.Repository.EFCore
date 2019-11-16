@@ -1,7 +1,8 @@
-using Generic.Repository.ThrowError;
+using Generic.Repository.Validations.ThrowError;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Generic.Repository.Cache
 {
@@ -11,10 +12,10 @@ namespace Generic.Repository.Cache
         {
             ThrowErrorIf.
                 IsNullValue(property, nameof(property), nameof(CreateFunction));
-            
+
             var getter = property.
                 GetGetMethod(true);
-            
+
             ThrowErrorIf.
                 IsNullValue(getter, nameof(property), nameof(CreateFunction));
 
@@ -25,10 +26,10 @@ namespace Generic.Repository.Cache
         {
             var getterTypedDelegate = (Func<TValue, TReturn>)Delegate.
                 CreateDelegate(typeof(Func<TValue, TReturn>), getter);
-            
-            object GetterDelegate(object instance) => 
-                getterTypedDelegate((TValue) instance);
-            
+
+            object GetterDelegate(object instance) =>
+                getterTypedDelegate((TValue)instance);
+
             return GetterDelegate;
         }
 
@@ -36,14 +37,14 @@ namespace Generic.Repository.Cache
         {
             ThrowErrorIf.
                 IsNullValue(property, nameof(property), nameof(ExtractMethod));
-            
+
             var setter = property.
                 GetSetMethod(true);
-            
+
             ThrowErrorIf.
                 IsNullValue(setter, nameof(setter), nameof(ExtractMethod)); ;
 
-            var result = (Action<object, object>) ExtractMethod<TValue>(setter, property, "CreateActionGeneric");
+            var result = (Action<object, object>)ExtractMethod<TValue>(setter, property, "CreateActionGeneric");
 
             return result;
         }
@@ -52,10 +53,10 @@ namespace Generic.Repository.Cache
         {
             var setterTypedDelegate = (Action<TValue, TInput>)Delegate.
                 CreateDelegate(typeof(Action<TValue, TInput>), setter);
-            
-            void SetterDelegate(object instance, object value) => 
-                setterTypedDelegate((TValue) instance, (TInput) value);
-            
+
+            void SetterDelegate(object instance, object value) =>
+                setterTypedDelegate((TValue)instance, (TInput)value);
+
             return SetterDelegate;
         }
 
@@ -63,7 +64,7 @@ namespace Generic.Repository.Cache
         {
             ThrowErrorIf.
                 IsNullValue(method, nameof(method), nameof(ExtractMethod));
-            
+
             var type = typeof(ICacheRepositoryFacade);
             var genericMethod = type.GetMethod(nameMethod);
             var genericHelper = genericMethod?.
@@ -73,16 +74,49 @@ namespace Generic.Repository.Cache
                 Invoke(this, new object[] { method });
         }
 
-        public R GetData<R>(IDictionary<string, R> dictionary, string key)
+        public async Task<R> GetData<R>(IDictionary<string, R> dictionary, string key)
         {
-            ThrowErrorIf.
-                IsEmptyOrNullString(key, nameof(key), nameof(GetData));
-            
-            if (dictionary.TryGetValue(key, out var result))
+            R FuncGet()
             {
+                ThrowErrorIf.
+                IsEmptyOrNullString(key, nameof(key), nameof(GetData));
+
+                var isValid = dictionary.TryGetValue(key, out var result);
+
+                CacheSemaphore.Release();
+
+                if (!isValid)
+                {
+                    throw new KeyNotFoundException($"FIELD> {nameof(key)} VALUE> {key}");
+                }
+
                 return result;
             }
-            throw new KeyNotFoundException($"FIELD> {nameof(key)} VALUE> {key}");
+
+            return await ProcessSemaphore(FuncGet);
+        }
+
+        public async Task ProcessSemaphore(Action @delegate)
+        {
+            CacheSemaphore.InitializeSemaphore();
+            await Task.Run(() =>
+            {
+                CacheSemaphore.WaitOne();
+                @delegate();
+                CacheSemaphore.Release();
+            });
+        }
+
+        public async Task<R> ProcessSemaphore<R>(Func<R> @delegate)
+        {
+            CacheSemaphore.InitializeSemaphore();
+            return await Task.Run(() =>
+            {
+                CacheSemaphore.WaitOne();
+                var resultado = @delegate();
+                CacheSemaphore.Release();
+                return resultado;
+            });
         }
     }
 }

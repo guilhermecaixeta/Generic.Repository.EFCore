@@ -1,6 +1,6 @@
 ﻿namespace Generic.Repository.Test.Repository
 {
-    using Generic.Repository.Models.Page.PageConfig;
+    using Generic.Repository.Models.PageAggregation.PageConfig;
     using Generic.Repository.Test.Model;
     using Generic.Repository.Test.Model.DTO;
     using Generic.Repository.Test.Model.Filter;
@@ -30,7 +30,6 @@
         protected override IEnumerable<FakeDTO> MapperList(IEnumerable<FakeObject> value) =>
             value.Select(MapperDate);
 
-
         protected override IPageConfig GetPageConfigFake() =>
             _commom.GetPageConfigFake();
 
@@ -42,5 +41,10 @@
 
         protected override Expression<Func<FakeObject, bool>> GetFakeExpression() =>
             _commom.GetFakeExpression();
+
+        protected override FakeObject MapperReturnToDate(FakeDTO value)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

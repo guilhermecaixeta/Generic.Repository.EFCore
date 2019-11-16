@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Generic.Repository.Cache
 {
@@ -14,6 +15,10 @@ namespace Generic.Repository.Cache
 
         Action<object, object> CreateActionGeneric<TValue, TInput>(MethodInfo setter);
 
-        R GetData<R>(IDictionary<string, R> dictionary, string key);
+        Task<R> GetData<R>(IDictionary<string, R> dictionary, string key);
+
+        Task ProcessSemaphore(Action @delegate);
+
+        Task<R> ProcessSemaphore<R>(Func<R> @delegate);
     }
 }

@@ -1,9 +1,9 @@
 namespace Generic.Repository.Test.Repository
 {
-    using Generic.Repository.Test.Repository.Commom;
-    using Generic.Repository.Models.Page.PageConfig;
+    using Generic.Repository.Models.PageAggregation.PageConfig;
     using Generic.Repository.Test.Model;
     using Generic.Repository.Test.Model.Filter;
+    using Generic.Repository.Test.Repository.Commom;
     using NUnit.Framework;
     using System;
     using System.Collections.Generic;
@@ -49,7 +49,7 @@ namespace Generic.Repository.Test.Repository
 
             if (data.Equals(value.Value))
             {
-                UpdateFakeValue(value);
+                _ = UpdateFakeValue(value);
             }
 
             value.Value = data;

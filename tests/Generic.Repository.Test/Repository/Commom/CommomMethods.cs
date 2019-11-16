@@ -1,4 +1,4 @@
-﻿using Generic.Repository.Models.Page.PageConfig;
+﻿using Generic.Repository.Models.PageAggregation.PageConfig;
 using Generic.Repository.Test.Model;
 using Generic.Repository.Test.Model.Filter;
 using System;
@@ -26,10 +26,10 @@ namespace Generic.Repository.Test.Repository.Commom
         public IPageConfig GetPageConfigFake() =>
             new PageConfig
             {
-                order = "Value",
-                page = 0,
-                size = 5,
-                sort = "ASC"
+                Order = "Value",
+                Page = 0,
+                Size = 5,
+                Sort = Enums.PageSort.ASC
             };
 
         public Expression<Func<FakeObject, bool>> GetFakeExpression() =>

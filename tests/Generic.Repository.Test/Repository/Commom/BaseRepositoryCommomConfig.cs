@@ -8,9 +8,9 @@
     public abstract class BaseRepositoryCommomConfig<TValue>
     where TValue : class
     {
-        protected readonly CacheRepository Cache = new CacheRepository();
+        protected readonly ICacheRepository Cache = new CacheRepository();
 
-        protected DbContext DbContext;
+        protected DbInMemoryContext<TValue> DbContext;
 
         [SetUp]
         public virtual void BaseUp()

@@ -1,5 +1,5 @@
 ﻿using Generic.Repository.Enums;
-using Generic.Repository.ThrowError;
+using Generic.Repository.Validations.ThrowError;
 using System;
 using System.Linq.Expressions;
 
@@ -103,6 +103,18 @@ namespace Generic.Repository.Extension.Filter.Facade
         {
             IsNotString(value);
             var result = Expression.LessThanOrEqual(memberExpression, constant);
+            return result;
+        }
+
+        /// <summary>Fields the specified field name.</summary>
+        /// <param name="fieldName">Name of the field.</param>
+        /// <param name="memberExpression">The member expression.</param>
+        /// <returns></returns>
+        public Expression Field(
+            string fieldName,
+            MemberExpression memberExpression)
+        {
+            var result = Expression.Field(memberExpression, fieldName);
             return result;
         }
 

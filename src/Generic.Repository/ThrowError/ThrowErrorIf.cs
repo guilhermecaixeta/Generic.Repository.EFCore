@@ -1,11 +1,12 @@
-﻿using Generic.Repository.Exceptions;
-using Generic.Repository.Extension.Validation;
-using System;
-using System.Collections.Generic;
-
-namespace Generic.Repository.ThrowError
+﻿namespace Generic.Repository.Validations.ThrowError
 {
-    internal static class ThrowErrorIf
+    using System;
+    using System.Collections.Generic;
+    using Generic.Repository.Validations.Exceptions;
+    using Generic.Repository.Validations.Extension.Validation;
+
+    /// <summary>Static class to check if is needed to trow a Exception.</summary>
+    public static class ThrowErrorIf
     {
 
         /// <summary>Throws the error if string null or empty value.</summary>

@@ -1,19 +1,22 @@
+using Generic.Repository.Attributes;
 using Generic.Repository.Cache;
 using Generic.Repository.Enums;
 using Generic.Repository.Extension.Filter.Facade;
-using Generic.Repository.Extension.Validation;
 using Generic.Repository.Models.Filter;
-using Generic.Repository.ThrowError;
+using Generic.Repository.Models.PageAggregation.PageConfig;
+using Generic.Repository.Validations.Extension.Validation;
+using Generic.Repository.Validations.ThrowError;
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Generic.Repository.Extension.Filter
 {
     /// <summary>
     /// Extension Filter to generate lambda.
     /// </summary>
-    internal static class Filter
+    internal static class GenericExpressionFactory
     {
         private const string NameProperty = nameof(NameProperty);
 
@@ -29,7 +32,7 @@ namespace Generic.Repository.Extension.Filter
         /// <param name="filter">The filter.</param>
         /// <param name="cacheRepository">The cache repository.</param>
         /// <returns></returns>
-        public static Expression<Func<TValue, bool>> GeneratePredicate<TValue, TFilter>(
+        public async static Task<Expression<Func<TValue, bool>>> CreateGenericFilter<TValue, TFilter>(
         this TFilter filter,
         ICacheRepository cacheRepository)
         where TValue : class
@@ -40,7 +43,7 @@ namespace Generic.Repository.Extension.Filter
             var filterName = typeof(TFilter).Name;
             var mergeOption = LambdaMerge.And;
 
-            var dictionaryMethodGet = cacheRepository.GetDictionaryMethodGet(filterName);
+            var dictionaryMethodGet = await cacheRepository.GetDictionaryMethodGet(filterName);
 
             foreach (var getFilter in dictionaryMethodGet)
             {
@@ -52,7 +55,7 @@ namespace Generic.Repository.Extension.Filter
                     continue;
                 }
 
-                var attributeCached = cacheRepository.GetDictionaryAttribute(filterName);
+                var attributeCached = await cacheRepository.GetDictionaryAttribute(filterName);
 
                 if (!attributeCached.TryGetValue(key, out var attributes))
                 {
@@ -61,17 +64,17 @@ namespace Generic.Repository.Extension.Filter
 
                 attributes.TryGetValue(MethodOption, out var attributeMethod);
 
-                ThrowErrorIf.IsNullValue(attributeMethod, nameof(attributeMethod), nameof(GeneratePredicate));
+                ThrowErrorIf.IsNullValue(attributeMethod, nameof(attributeMethod), nameof(CreateGenericFilter));
 
                 var methodOption = (LambdaMethod)attributeMethod.Value;
 
                 attributes.TryGetValue(NameProperty, out var attributeName);
 
-                var property = cacheRepository.GetProperty(typeof(TValue).Name, (string)attributeName.Value ?? key);
+                var property = await cacheRepository.GetProperty(typeof(TValue).Name, (string)attributeName.Value ?? key);
 
                 var expression = methodOption.CreateExpressionPerType(parameter, property, value);
 
-                ThrowErrorIf.IsNullValue(expression, nameof(expression), nameof(GeneratePredicate));
+                ThrowErrorIf.IsNullValue(expression, nameof(expression), nameof(CreateGenericFilter));
 
                 predicate = ExpressionMergeFacade.CreateExpression(predicate, expression, parameter, mergeOption);
 
@@ -82,23 +85,64 @@ namespace Generic.Repository.Extension.Filter
             return predicate;
         }
 
-        /// <summary>
-        /// Create an expression per type;
-        /// </summary>
-        /// <param name="type">Type expression to create</param>
-        /// <param name="parameter">Parameter to will be used to make an expression</param>
-        /// <param name="property">Property to will be used to make an expression</param>
-        /// <param name="value">Value to will be used to make an expression</param>
+        public async static Task<Expression<Func<TValue, object>>> CreateGenericOrderBy<TValue, TFilter>(
+            this IPageConfig pageConfig,
+            ICacheRepository cacheRepository)
+        {
+            var tName = typeof(TValue).Name;
+            var fNme = typeof(TFilter).Name;
+            var parameter = Expression.Parameter(typeof(TValue));
+            var dicAttr = await cacheRepository.GetDictionaryAttribute(fNme, pageConfig.Order);
+
+            dicAttr.TryGetValue(nameof(FilterAttribute.NameProperty), out var nameField);
+
+            var name = (string)nameField.Value ?? pageConfig.Order;
+            var propertyInfo =await cacheRepository.GetProperty(tName, name);
+
+            return CreateExpression<TValue>(parameter, propertyInfo);
+        }
+
+        public async static Task<Expression<Func<TValue, object>>> CreateGenericOrderBy<TValue>(
+        this IPageConfig pageConfig,
+        ICacheRepository cacheRepository)
+        {
+            var tName = typeof(TValue).Name;
+            var parameter = Expression.Parameter(typeof(TValue));
+
+            var name = pageConfig.Order;
+            var propertyInfo = await cacheRepository.GetProperty(tName, name);
+
+            return CreateExpression<TValue>(parameter, propertyInfo);
+        }
+
+        internal static Expression<Func<TValue, object>> CreateExpression<TValue>(
+            ParameterExpression parameter,
+            PropertyInfo propertyInfo)
+        {
+            ThrowErrorIf.IsNullValue(parameter, nameof(parameter), nameof(CreateExpressionPerType));
+            ThrowErrorIf.IsNullValue(propertyInfo, nameof(propertyInfo), nameof(CreateExpressionPerType));
+
+            var memberExpression = Expression.PropertyOrField(parameter, propertyInfo.Name);
+            Expression conversion = Expression.Convert(memberExpression, typeof(object));
+            return Expression.Lambda<Func<TValue, object>>(conversion, parameter);
+        }
+
+        /// <summary>Creates the type of the expression per.</summary>
+        /// <param name="type">The type.</param>
+        /// <param name="parameter">The parameter.</param>
+        /// <param name="propertyInfo">The property information.</param>
+        /// <param name="value">The value.</param>
         /// <returns></returns>
         private static Expression CreateExpressionPerType(
             this LambdaMethod type,
             ParameterExpression parameter,
-            PropertyInfo property,
+            PropertyInfo propertyInfo,
             object value)
         {
             ThrowErrorIf.IsNullValue(parameter, nameof(parameter), nameof(CreateExpressionPerType));
+            ThrowErrorIf.IsNullValue(propertyInfo, nameof(propertyInfo), nameof(CreateExpressionPerType));
 
-            var memberExpression = Expression.Property(parameter, property);
+            var memberExpression = Expression.Property(parameter, propertyInfo);
             var constant = Expression.Constant(value);
 
             switch (type)
@@ -124,6 +168,10 @@ namespace Generic.Repository.Extension.Filter
             }
         }
 
+        /// <summary>Determines whether [is valid value] [the specified value].</summary>
+        /// <param name="value">The value.</param>
+        /// <returns>
+        ///   <c>true</c> if [is valid value] [the specified value]; otherwise, <c>false</c>.</returns>
         private static bool IsValidValue(object value) =>
             value.IsNotEqualDateTimeMaxMinValue() || value.IsStringNotNullOrEmpty();
     }

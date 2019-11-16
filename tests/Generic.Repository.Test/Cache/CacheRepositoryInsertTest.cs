@@ -1,6 +1,5 @@
 namespace Generic.Repository.Test.Cache
 {
-    using Generic.Repository.Cache;
     using NUnit.Framework;
 
     [TestFixture]
@@ -12,10 +11,10 @@ namespace Generic.Repository.Test.Cache
         [Test]
         public void ValidateValues_ValidValue()
         {
-            Assert.IsTrue(Cache.HasMethodSet());
             Assert.IsTrue(Cache.HasMethodGet());
-            Assert.IsTrue(Cache.HasAttribute());
+            Assert.IsTrue(Cache.HasMethodSet());
             Assert.IsTrue(Cache.HasProperty());
+            Assert.IsTrue(Cache.HasAttribute());
         }
 
         [Test]
