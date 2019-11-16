@@ -29,6 +29,9 @@ namespace Generic.Repository.Repository
 
         public QueryAsync(TContext context, ICacheRepository cacheService)
         {
+            ThrowErrorIf.InitializeCache(cacheService);
+            ThrowErrorIf.IsNullValue(context, nameof(context), typeof(QueryAsync<,>).Name);
+
             Context = context;
             CacheService = cacheService;
             RepositoryFacade = new BaseRepositoryFacade<TValue>(Context.Set<TValue>(), CacheService, SetIncludes);

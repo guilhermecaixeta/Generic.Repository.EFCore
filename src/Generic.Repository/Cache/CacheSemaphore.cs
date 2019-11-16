@@ -2,7 +2,7 @@
 
 namespace Generic.Repository.Cache
 {
-    public static class CacheSemaphore
+    internal static class CacheSemaphore
     {
         private const int MaxValue = 1;
 
