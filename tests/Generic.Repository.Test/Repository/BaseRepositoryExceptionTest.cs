@@ -1,10 +1,12 @@
 namespace Generic.Repository.Test.Repository
 {
+    using Generic.Repository.Exceptions;
     using Generic.Repository.Models.Filter;
     using NUnit.Framework;
     using System;
     using System.Collections.Generic;
     using System.Linq.Expressions;
+    using System.Threading.Tasks;
 
     [TestFixture]
     public abstract class BaseRepositoryExceptionTest<TValue, TFilter> : BaseRepositoryAsyncQueryTest<TValue, TFilter>
@@ -28,14 +30,14 @@ namespace Generic.Repository.Test.Repository
 
         [Test]
         public void CreateList_NullList() =>
-            Assert.ThrowsAsync<ArgumentNullException>(async () =>
+            Assert.ThrowsAsync<ListNullOrEmptyException>(async () =>
             {
                 await Repository.CreateAsync((IEnumerable<TValue>)null);
             });
 
         [Test]
         public void CreateList_EmptyList() =>
-            Assert.ThrowsAsync<ArgumentNullException>(async () =>
+            Assert.ThrowsAsync<ListNullOrEmptyException>(async () =>
             {
                 await Repository.CreateAsync(new List<TValue>());
             });
@@ -56,14 +58,14 @@ namespace Generic.Repository.Test.Repository
 
         [Test]
         public void DeleteList_NullList() =>
-            Assert.ThrowsAsync<ArgumentNullException>(async () =>
+            Assert.ThrowsAsync<ListNullOrEmptyException>(async () =>
             {
                 await Repository.DeleteAsync((IEnumerable<TValue>)null);
             });
 
         [Test]
         public void DeleteList_EmptyList() =>
-            Assert.ThrowsAsync<ArgumentNullException>(async () =>
+            Assert.ThrowsAsync<ListNullOrEmptyException>(async () =>
             {
                 await Repository.DeleteAsync(new List<TValue>());
             });
@@ -86,7 +88,7 @@ namespace Generic.Repository.Test.Repository
         public void GetPage_NullFilter() =>
             Assert.ThrowsAsync<NullReferenceException>(async () =>
             {
-                await Repository.GetPageAsync(GetPageConfigFake(), (TFilter)null, true, default);
+                await Repository.GetPageAsync(GetPageConfigFake(), null, true, default);
             });
 
         [Test]

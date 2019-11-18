@@ -1,6 +1,9 @@
 namespace Generic.Repository.Test.Cache
 {
     using NUnit.Framework;
+    using System;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
 
     [TestFixture]
     public abstract class CacheRepositoryInsertTest<T> : CacheConfigurationTest<T>
@@ -9,12 +12,12 @@ namespace Generic.Repository.Test.Cache
 
 
         [Test]
-        public void ValidateValues_ValidValue()
+        public async Task ValidateValues_ValidValue()
         {
-            Assert.IsTrue(Cache.HasMethodGet());
-            Assert.IsTrue(Cache.HasMethodSet());
-            Assert.IsTrue(Cache.HasProperty());
-            Assert.IsTrue(Cache.HasAttribute());
+            Assert.IsTrue(await Cache.HasMethodGet());
+            Assert.IsTrue(await Cache.HasMethodSet());
+            Assert.IsTrue(await Cache.HasProperty());
+            Assert.IsTrue(await Cache.HasAttribute());
         }
 
         [Test]
@@ -81,13 +84,13 @@ namespace Generic.Repository.Test.Cache
         }
 
         [Test]
-        public void ClearCache_Valid()
+        public async Task ClearCache_Valid()
         {
             Cache.ClearCache();
-            Assert.IsFalse(Cache.HasMethodGet());
-            Assert.IsFalse(Cache.HasMethodGet());
-            Assert.IsFalse(Cache.HasAttribute());
-            Assert.IsFalse(Cache.HasProperty());
+            Assert.IsFalse(await Cache.HasMethodGet());
+            Assert.IsFalse(await Cache.HasMethodGet());
+            Assert.IsFalse(await Cache.HasAttribute());
+            Assert.IsFalse(await Cache.HasProperty());
         }
     }
 }

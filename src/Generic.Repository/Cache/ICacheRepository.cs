@@ -33,13 +33,13 @@ namespace Generic.Repository.Cache
 
         Task AddAttribute<TValue>();
 
-        bool HasMethodSet();
+        Task<bool> HasMethodSet();
 
-        bool HasMethodGet();
+        Task<bool> HasMethodGet();
 
-        bool HasProperty();
+        Task<bool> HasProperty();
 
-        bool HasAttribute();
+        Task<bool> HasAttribute();
 
         void ClearCache();
 

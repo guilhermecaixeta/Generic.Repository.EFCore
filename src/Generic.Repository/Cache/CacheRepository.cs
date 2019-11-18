@@ -125,8 +125,9 @@ namespace Generic.Repository.Cache
             void ActionAdd()
             {
                 var values = GetValues<TValue>();
+                var valid = CacheGet.ContainsKey(values.typeName);
 
-                if (CacheGet.ContainsKey(values.typeName))
+                if (valid)
                 {
                     return;
                 }
@@ -144,7 +145,9 @@ namespace Generic.Repository.Cache
             void ActionAdd()
             {
                 var values = GetValues<TValue>();
-                if (CacheSet.ContainsKey(values.typeName))
+                var valid = CacheSet.ContainsKey(values.typeName);
+
+                if (valid)
                 {
                     return;
                 }
@@ -161,8 +164,9 @@ namespace Generic.Repository.Cache
             void ActionAdd()
             {
                 var values = GetValues<TValue>();
+                var valid = CacheProperties.ContainsKey(values.typeName);
 
-                if (CacheProperties.ContainsKey(values.typeName))
+                if (valid)
                 {
                     return;
                 }
@@ -177,30 +181,36 @@ namespace Generic.Repository.Cache
             void ActionAdd()
             {
                 var values = GetValues<TValue>();
+                var valid = CacheAttribute.ContainsKey(values.typeName);
 
-                if (!CacheAttribute.ContainsKey(values.typeName))
+                if (valid)
                 {
-                    var dictionary = new Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>(values.properties.Length);
+                    return;
+                }
+                var dictionary = new Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>(values.properties.Length);
 
-                    CacheAttribute.Add(values.typeName, dictionary);
+                CacheAttribute.Add(values.typeName, dictionary);
 
-                    foreach (var property in values.properties)
-                    {
-                        SetCacheAttributes(property, values.typeName);
-                    }
+                foreach (var property in values.properties)
+                {
+                    SetCacheAttributes(property, values.typeName);
                 }
             }
 
             await CacheFacade.ProcessSemaphore(ActionAdd);
         }
 
-        public bool HasMethodSet() => CacheSet.Any();
+        public async Task<bool> HasMethodSet() =>
+            await CacheFacade.ProcessSemaphore(() => CacheSet.Any());
 
-        public bool HasMethodGet() => CacheGet.Any();
+        public async Task<bool> HasMethodGet() =>
+            await CacheFacade.ProcessSemaphore(() => CacheGet.Any());
 
-        public bool HasProperty() => CacheProperties.Any();
+        public async Task<bool> HasProperty() =>
+            await CacheFacade.ProcessSemaphore(() => CacheProperties.Any());
 
-        public bool HasAttribute() => CacheAttribute.Any();
+        public async Task<bool> HasAttribute() =>
+            await CacheFacade.ProcessSemaphore(() => CacheAttribute.Any());
 
         public void ClearCache()
         {

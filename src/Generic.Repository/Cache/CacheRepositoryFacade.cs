@@ -83,8 +83,6 @@ namespace Generic.Repository.Cache
 
                 var isValid = dictionary.TryGetValue(key, out var result);
 
-                CacheSemaphore.Release();
-
                 if (!isValid)
                 {
                     throw new KeyNotFoundException($"FIELD> {nameof(key)} VALUE> {key}");
