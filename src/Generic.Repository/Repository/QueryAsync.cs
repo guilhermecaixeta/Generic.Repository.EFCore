@@ -88,20 +88,18 @@ namespace Generic.Repository.Repository
             IPageConfig config,
             bool enableAsNoTracking,
             CancellationToken token) =>
-                await Task.Run(() =>
-                    RepositoryFacade.GetPage(RepositoryFacade.GetAllQueryable(enableAsNoTracking), config), token);
+                await RepositoryFacade.GetPage(RepositoryFacade.GetAllQueryable(enableAsNoTracking), config, token);
 
         public virtual async Task<IPage<TValue>> GetPageAsync(
             IPageConfig config,
             Expression<Func<TValue, bool>> predicate,
             bool enableAsNoTracking,
-            CancellationToken token) =>
-                await Task.Run(() =>
-                {
-                    var listToPage = RepositoryFacade.GetAllQueryable(enableAsNoTracking).Where(predicate);
-                    return RepositoryFacade.GetPage(listToPage, config);
-                }, token).ConfigureAwait(false);
+            CancellationToken token)
+        {
 
+            var listToPage = RepositoryFacade.GetAllQueryable(enableAsNoTracking).Where(predicate);
+            return await RepositoryFacade.GetPage(listToPage, config, token).ConfigureAwait(false);
+        }
         public virtual async Task<int> CountAsync(
             Expression<Func<TValue, bool>> predicate,
             CancellationToken token)

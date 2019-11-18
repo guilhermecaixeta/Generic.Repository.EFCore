@@ -133,10 +133,7 @@ namespace Generic.Repository.Repository
 
             var queryable = RepositoryFacade.GetAllQueryable(enableAsNoTracking);
 
-            return await Task.Run(() =>
-            {
-                return RepositoryFacade.GetPage(queryable, config, mapper);
-            }); throw new NotImplementedException();
+            return await RepositoryFacade.GetPage(queryable, config, mapper, token);
         }
 
         public async Task<IPage<TReturn>> GetPageAsync<TReturn>(
@@ -153,10 +150,7 @@ namespace Generic.Repository.Repository
 
             var queryable = RepositoryFacade.GetAllQueryable(enableAsNoTracking).Where(predicate);
 
-            return await Task.Run(() =>
-            {
-                return RepositoryFacade.GetPage(queryable, config, mapper);
-            });
+            return await RepositoryFacade.GetPage(queryable, config, mapper, token);
         }
         #endregion
 
