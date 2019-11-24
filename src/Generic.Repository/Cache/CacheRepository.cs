@@ -193,6 +193,7 @@ namespace Generic.Repository.Cache
             void ActionAdd()
             {
                 var values = GetValues<TValue>();
+                
                 var valid = CacheProperties.ContainsKey(values.typeName);
 
                 if (valid || !values.cacheable)
@@ -212,6 +213,7 @@ namespace Generic.Repository.Cache
             void ActionAdd()
             {
                 var values = GetValues<TValue>();
+                
                 var valid = CacheAttribute.ContainsKey(values.typeName);
 
                 if (valid || !values.cacheable)
