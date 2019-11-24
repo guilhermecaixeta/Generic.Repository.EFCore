@@ -14,7 +14,7 @@ namespace Generic.Repository.Test.Cache
         {
             var valid = true;
 
-            void CheckValid(object result)
+            void CheckIfIsValid(object result)
             {
                 if (!valid)
                 {
@@ -36,26 +36,29 @@ namespace Generic.Repository.Test.Cache
                         {
                             var tarefa = Task.Run(async () =>
                             {
-                                var result = await Cache.GetMethodGet(NameType, NameProperty);
-                                CheckValid(result);
+                                var result = await Cache.GetMethodGet(NameType, NameProperty, default);
+                                CheckIfIsValid(result);
                             });
                             listaTarefaIO.Add(tarefa);
+
                             tarefa = Task.Run(async () =>
                             {
-                                var result = await Cache.GetMethodSet(NameType, NameProperty);
-                                CheckValid(result);
+                                var result = await Cache.GetMethodSet(NameType, NameProperty, default);
+                                CheckIfIsValid(result);
                             });
                             listaTarefaIO.Add(tarefa);
+
                             tarefa = Task.Run(async () =>
                             {
-                                var result = await Cache.GetProperty(NameType, NameProperty);
-                                CheckValid(result);
+                                var result = await Cache.GetProperty(NameType, NameProperty, default);
+                                CheckIfIsValid(result);
                             });
                             listaTarefaIO.Add(tarefa);
+
                             tarefa = Task.Run(async () =>
                             {
-                                var result = await Cache.GetAttribute(NameType, NameProperty, NameAttribute);
-                                CheckValid(result);
+                                var result = await Cache.GetAttribute(NameType, NameProperty, NameAttribute, default);
+                                CheckIfIsValid(result);
                             });
                             listaTarefaIO.Add(tarefa);
                         }
@@ -79,7 +82,6 @@ namespace Generic.Repository.Test.Cache
         [Test]
         public async Task CacheAccess_StressInput()
         {
-            Cache.ClearCache();
             var valid = true;
             for (int j = 0; j <= 10; j++)
             {
@@ -92,18 +94,22 @@ namespace Generic.Repository.Test.Cache
 
                         for (int i = 0; i <= 10; i++)
                         {
-                            var tarefa = Task.Run(async () => await Cache.AddGet<T>());
+                            Cache.ClearCache();
+
+                            var tarefa = Task.Run(async () => await Cache.AddGet<T>(default));
                             listaTarefaIO.Add(tarefa);
-                            tarefa = Task.Run(async () => await Cache.AddSet<T>());
+
+                            tarefa = Task.Run(async () => await Cache.AddSet<T>(default));
                             listaTarefaIO.Add(tarefa);
-                            tarefa = Task.Run(async () => await Cache.AddProperty<T>());
+
+                            tarefa = Task.Run(async () => await Cache.AddProperty<T>(default));
                             listaTarefaIO.Add(tarefa);
-                            tarefa = Task.Run(async () => await Cache.AddAttribute<T>());
+
+                            tarefa = Task.Run(async () => await Cache.AddAttribute<T>(default));
                             listaTarefaIO.Add(tarefa);
                         }
 
                         await Task.WhenAll(listaTarefaIO);
-                        Cache.ClearCache();
                     });
 
                     listaTarefas.Add(tarefaGeral);

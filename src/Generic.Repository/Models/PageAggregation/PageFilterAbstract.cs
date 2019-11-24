@@ -37,11 +37,11 @@ namespace Generic.Repository.Models.Page
             IPageConfig config,
             IQueryable<TValue> listEntities,
             ICacheRepository cacheRepository,
-            Func<IEnumerable<object>, IEnumerable<TResult>> mapperTo
+            Func<IEnumerable<object>, IEnumerable<TResult>> mapperTo,
+            bool needMap = true
         )
         {
             ThrowErrorIf.IsNullValue(config, nameof(config), string.Empty);
-            ThrowErrorIf.IsNullValue(mapperTo, nameof(mapperTo), string.Empty);
             ThrowErrorIf.IsNullValue(listEntities, nameof(listEntities), string.Empty);
             ThrowErrorIf.IsNullValue(cacheRepository, nameof(cacheRepository), string.Empty);
 
@@ -57,7 +57,12 @@ namespace Generic.Repository.Models.Page
             TotalElements = Count;
 
             TotalPage = TotalElements / Size;
-            Content = mapperTo(GetItems()).ToList();
+           
+            if (needMap)
+            {
+                ThrowErrorIf.IsNullValue(mapperTo, nameof(mapperTo), string.Empty);
+                Content = mapperTo(GetItems()).ToList();
+            }
         }
         #endregion
 
@@ -93,7 +98,7 @@ namespace Generic.Repository.Models.Page
         /// <returns></returns>
         protected IReadOnlyList<TValue> GetItems()
         {
-            var orderBy = PageConfig.CreateGenericOrderBy<TValue, TFilter>(cacheRepository: _cacheRepository).GetAwaiter().GetResult();
+            var orderBy = PageConfig.CreateGenericOrderBy<TValue, TFilter>(_cacheRepository, default).GetAwaiter().GetResult();
 
             var list = !Sort.Equals(PageSort.ASC.ToString())
             ? ListEntities.OrderByDescending(orderBy)
@@ -122,7 +127,8 @@ namespace Generic.Repository.Models.Page
                 config,
                 listEntities,
                 cacheRepository,
-                null)
+                null,
+                false)
         {
         }
 
@@ -205,7 +211,10 @@ namespace Generic.Repository.Models.Page
             TotalElements = Count;
 
             TotalPage = TotalElements / Size;
-            Content = GetItems().ConfigureAwait(false).GetAwaiter().GetResult();
+            Content = GetItems().
+                        ConfigureAwait(false).
+                        GetAwaiter().
+                        GetResult();
         }
         #endregion
 
@@ -248,7 +257,7 @@ namespace Generic.Repository.Models.Page
 
         internal async Task<IQueryable<TValue>> GetQueryable()
         {
-            var orderBy = await PageConfig.CreateGenericOrderBy<TValue>(cacheRepository: CacheRepository);
+            var orderBy = await PageConfig.CreateGenericOrderBy<TValue>(CacheRepository, default);
 
             var list = !Sort.Equals(PageSort.ASC.ToString())
             ? ListEntities.OrderByDescending(orderBy)

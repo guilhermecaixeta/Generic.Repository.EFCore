@@ -9,6 +9,7 @@ using Generic.Repository.Validations.ThrowError;
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Generic.Repository.Extension.Filter
@@ -34,7 +35,8 @@ namespace Generic.Repository.Extension.Filter
         /// <returns></returns>
         public async static Task<Expression<Func<TValue, bool>>> CreateGenericFilter<TValue, TFilter>(
         this TFilter filter,
-        ICacheRepository cacheRepository)
+        ICacheRepository cacheRepository,
+        CancellationToken token)
         where TValue : class
         where TFilter : class, IFilter
         {
@@ -43,7 +45,7 @@ namespace Generic.Repository.Extension.Filter
             var filterName = typeof(TFilter).Name;
             var mergeOption = LambdaMerge.And;
 
-            var dictionaryMethodGet = await cacheRepository.GetDictionaryMethodGet(filterName);
+            var dictionaryMethodGet = await cacheRepository.GetDictionaryMethodGet(filterName, token);
 
             foreach (var getFilter in dictionaryMethodGet)
             {
@@ -55,7 +57,7 @@ namespace Generic.Repository.Extension.Filter
                     continue;
                 }
 
-                var attributeCached = await cacheRepository.GetDictionaryAttribute(filterName);
+                var attributeCached = await cacheRepository.GetDictionaryAttribute(filterName, token);
 
                 if (!attributeCached.TryGetValue(key, out var attributes))
                 {
@@ -70,7 +72,7 @@ namespace Generic.Repository.Extension.Filter
 
                 attributes.TryGetValue(NameProperty, out var attributeName);
 
-                var property = await cacheRepository.GetProperty(typeof(TValue).Name, (string)attributeName.Value ?? key);
+                var property = await cacheRepository.GetProperty(typeof(TValue).Name, (string)attributeName.Value ?? key, token);
 
                 var expression = methodOption.CreateExpressionPerType(parameter, property, value);
 
@@ -87,43 +89,55 @@ namespace Generic.Repository.Extension.Filter
 
         public async static Task<Expression<Func<TValue, object>>> CreateGenericOrderBy<TValue, TFilter>(
             this IPageConfig pageConfig,
-            ICacheRepository cacheRepository)
+            ICacheRepository cacheRepository,
+            CancellationToken token)
         {
-            var tName = typeof(TValue).Name;
-            var fNme = typeof(TFilter).Name;
-            var parameter = Expression.Parameter(typeof(TValue));
-            var dicAttr = await cacheRepository.GetDictionaryAttribute(fNme, pageConfig.Order);
+            var key = typeof(TFilter).Name;
 
-            dicAttr.TryGetValue(nameof(FilterAttribute.NameProperty), out var nameField);
+            var dictionary = await cacheRepository.GetDictionaryAttribute(key, pageConfig.Order, token);
 
-            var name = (string)nameField.Value ?? pageConfig.Order;
-            var propertyInfo =await cacheRepository.GetProperty(tName, name);
+            dictionary.TryGetValue(NameProperty, out var nameField);
 
-            return CreateExpression<TValue>(parameter, propertyInfo);
+            var order = (string)nameField.Value ?? pageConfig.Order;
+
+            return await GetGenericExpression<TValue>(order, cacheRepository, token);
         }
 
         public async static Task<Expression<Func<TValue, object>>> CreateGenericOrderBy<TValue>(
         this IPageConfig pageConfig,
-        ICacheRepository cacheRepository)
+        ICacheRepository cacheRepository,
+        CancellationToken token)
         {
-            var tName = typeof(TValue).Name;
+            var order = pageConfig.Order;
+
+            return await GetGenericExpression<TValue>(order, cacheRepository, token);
+        }
+
+        private static async Task<Expression<Func<TValue, object>>> GetGenericExpression<TValue>(
+            string order,
+            ICacheRepository cacheRepository,
+            CancellationToken token)
+        {
+            var key = typeof(TValue).Name;
+
             var parameter = Expression.Parameter(typeof(TValue));
 
-            var name = pageConfig.Order;
-            var propertyInfo = await cacheRepository.GetProperty(tName, name);
+            var propertyInfo = await cacheRepository.GetProperty(key, order, token);
 
             return CreateExpression<TValue>(parameter, propertyInfo);
         }
 
-        internal static Expression<Func<TValue, object>> CreateExpression<TValue>(
+        private static Expression<Func<TValue, object>> CreateExpression<TValue>(
             ParameterExpression parameter,
             PropertyInfo propertyInfo)
         {
-            ThrowErrorIf.IsNullValue(parameter, nameof(parameter), nameof(CreateExpressionPerType));
-            ThrowErrorIf.IsNullValue(propertyInfo, nameof(propertyInfo), nameof(CreateExpressionPerType));
+            ThrowErrorIf.IsNullValue(parameter, nameof(parameter), nameof(CreateExpression));
+            ThrowErrorIf.IsNullValue(propertyInfo, nameof(propertyInfo), nameof(CreateExpression));
 
             var memberExpression = Expression.PropertyOrField(parameter, propertyInfo.Name);
-            Expression conversion = Expression.Convert(memberExpression, typeof(object));
+
+            var conversion = Expression.Convert(memberExpression, typeof(object));
+
             return Expression.Lambda<Func<TValue, object>>(conversion, parameter);
         }
 

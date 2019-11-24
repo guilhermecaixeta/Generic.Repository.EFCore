@@ -11,16 +11,17 @@
         protected string NameProperty;
         protected string NameAttribute;
         protected string SomeKey = "ABDC";
+        protected string NoCacheableProperty;
         protected readonly string NameType = typeof(T).Name;
 
         [SetUp]
         public async Task CacheUp()
         {
             Cache = new CacheRepository();
-            await Cache.AddGet<T>();
-            await Cache.AddSet<T>();
-            await Cache.AddProperty<T>();
-            await Cache.AddAttribute<T>();
+            await Cache.AddGet<T>(default);
+            await Cache.AddSet<T>(default);
+            await Cache.AddProperty<T>(default);
+            await Cache.AddAttribute<T>(default);
         }
 
         [TearDown]

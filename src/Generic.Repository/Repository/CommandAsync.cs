@@ -11,7 +11,7 @@ namespace Generic.Repository.Repository
         where TValue : class
         where TContext : DbContext
     {
-        public CommandAsync(TContext context, ICacheRepository cacheService) 
+        public CommandAsync(TContext context, ICacheRepository cacheService)
             : base(context, cacheService)
         {
 
@@ -22,7 +22,7 @@ namespace Generic.Repository.Repository
         {
             ThrowErrorIf.IsNullValue(entity, nameof(entity), nameof(CreateAsync));
 
-            RepositoryFacade.SetState(EntityState.Added, entity);
+            Context.Attach(entity).State = EntityState.Added;
 
             await SaveChangesAsync(token).ConfigureAwait(false);
 
@@ -44,7 +44,7 @@ namespace Generic.Repository.Repository
         {
             ThrowErrorIf.IsNullValue(entity, nameof(entity), nameof(UpdateAsync));
 
-            RepositoryFacade.SetState(EntityState.Modified, entity);
+            Context.Attach(entity).State = EntityState.Modified;
 
             await SaveChangesAsync(token).ConfigureAwait(false);
         }
@@ -78,30 +78,7 @@ namespace Generic.Repository.Repository
         }
         #endregion
 
-        #region COMMAND - (CREAT, UPDATE, DELETE) Without CancellationToken
-        public virtual async Task<TValue> CreateAsync(TValue entity) =>
-        await CreateAsync(entity, default).ConfigureAwait(false);
-
-        public virtual async Task CreateAsync(IEnumerable<TValue> entityList) =>
-        await CreateAsync(entityList, default).ConfigureAwait(false);
-
-        public virtual async Task UpdateAsync(TValue entity) =>
-        await UpdateAsync(entity, default).ConfigureAwait(false);
-
-        public virtual async Task UpdateAsync(IEnumerable<TValue> entityList) =>
-        await UpdateAsync(entityList, default).ConfigureAwait(false);
-
-        public virtual async Task DeleteAsync(TValue entity) =>
-        await DeleteAsync(entity, default).ConfigureAwait(false);
-
-        public virtual async Task DeleteAsync(IEnumerable<TValue> entityList) =>
-        await DeleteAsync(entityList, default).ConfigureAwait(false);
-        #endregion
-
         #region COMMIT
-
-        public Task SaveChangesAsync() =>
-            SaveChangesAsync(default);
 
         public Task SaveChangesAsync(CancellationToken cancellationToken) =>
          Context.SaveChangesAsync(cancellationToken);

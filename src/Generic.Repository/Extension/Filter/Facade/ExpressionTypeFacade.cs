@@ -26,7 +26,7 @@ namespace Generic.Repository.Extension.Filter.Facade
 
             var result = Expression.
                 Call(memberExpression,
-                    method ?? throw new InvalidOperationException($"Error to get method > {nameof(Contains)}"),
+                    method ?? throw new InvalidOperationException($"Error to get method Contains > {nameof(Contains)}"),
                     constant);
             return result;
         }

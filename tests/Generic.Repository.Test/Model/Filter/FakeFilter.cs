@@ -7,6 +7,11 @@ namespace Generic.Repository.Test.Model.Filter
     {
         [Filter(MethodOption = Enums.LambdaMethod.Contains)]
         public string Value { get; set; }
+
+        [NoCacheable]
+        public string Unkown { get; set; }
+
+        public FakeFilterEquals Nested { get; set; }
     }
 
     public class FakeFilterEquals : IFilter

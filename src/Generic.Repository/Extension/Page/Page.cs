@@ -34,6 +34,14 @@ namespace Generic.Repository.Extension.Page
         #endregion
 
 
+        /// <summary>Converts to page.</summary>
+        /// <typeparam name="TValue">The type of the value.</typeparam>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="listEntities">The list entities.</param>
+        /// <param name="cacheRepository">The cache repository.</param>
+        /// <param name="config">The configuration.</param>
+        /// <param name="mapping">The mapping.</param>
+        /// <returns></returns>
         public static IPage<TResult> ToPage<TValue, TResult>(
             this IQueryable<TValue> listEntities,
             ICacheRepository cacheRepository,

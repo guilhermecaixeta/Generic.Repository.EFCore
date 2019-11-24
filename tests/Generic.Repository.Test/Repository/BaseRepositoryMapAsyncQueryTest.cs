@@ -27,7 +27,7 @@ namespace Generic.Repository.Test.Repository
         public async Task FakeDataUp()
         {
             var mockList = GetListFake();
-            await Repository.CreateAsync(mockList).ConfigureAwait(false);
+            await Repository.CreateAsync(mockList, default).ConfigureAwait(false);
         }
 
         [Test]

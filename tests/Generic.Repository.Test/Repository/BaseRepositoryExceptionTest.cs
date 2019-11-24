@@ -25,49 +25,49 @@ namespace Generic.Repository.Test.Repository
         public void Create_NullValue() =>
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
-                await Repository.CreateAsync(_value);
+                await Repository.CreateAsync(_value, default);
             });
 
         [Test]
         public void CreateList_NullList() =>
             Assert.ThrowsAsync<ListNullOrEmptyException>(async () =>
             {
-                await Repository.CreateAsync((IEnumerable<TValue>)null);
+                await Repository.CreateAsync((IEnumerable<TValue>)null, default);
             });
 
         [Test]
         public void CreateList_EmptyList() =>
             Assert.ThrowsAsync<ListNullOrEmptyException>(async () =>
             {
-                await Repository.CreateAsync(new List<TValue>());
+                await Repository.CreateAsync(new List<TValue>(), default);
             });
 
         [Test]
         public void Update_NullValue() =>
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
-                await Repository.UpdateAsync(_value);
+                await Repository.UpdateAsync(_value, default);
             });
 
         [Test]
         public void Delete_NullValue() =>
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
-                await Repository.DeleteAsync(_value);
+                await Repository.DeleteAsync(_value, default);
             });
 
         [Test]
         public void DeleteList_NullList() =>
             Assert.ThrowsAsync<ListNullOrEmptyException>(async () =>
             {
-                await Repository.DeleteAsync((IEnumerable<TValue>)null);
+                await Repository.DeleteAsync((IEnumerable<TValue>)null, default);
             });
 
         [Test]
         public void DeleteList_EmptyList() =>
             Assert.ThrowsAsync<ListNullOrEmptyException>(async () =>
             {
-                await Repository.DeleteAsync(new List<TValue>());
+                await Repository.DeleteAsync(new List<TValue>(), default);
             });
 
         [Test]
@@ -86,7 +86,7 @@ namespace Generic.Repository.Test.Repository
 
         [Test]
         public void GetPage_NullFilter() =>
-            Assert.ThrowsAsync<NullReferenceException>(async () =>
+            Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
                 await Repository.GetPageAsync(GetPageConfigFake(), null, true, default);
             });

@@ -12,6 +12,7 @@ namespace Generic.Repository.Test.Cache
         public void CacheSetUp()
         {
             NameProperty = nameof(FakeFilter.Value);
+            NoCacheableProperty = nameof(FakeFilter.Unkown);
             NameAttribute = nameof(FilterAttribute.MethodOption);
         }
     }

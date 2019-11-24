@@ -26,7 +26,7 @@
         public async Task FakeDataUp()
         {
             var mockList = GetListFake();
-            await Repository.CreateAsync(mockList);
+            await Repository.CreateAsync(mockList, default);
         }
 
         [Test]
@@ -70,7 +70,7 @@
         {
             var filter = GetFilterFake();
             var list = await Repository.FilterAllAsync(filter, true, default).ConfigureAwait(false);
-            
+
             Assert.IsNotNull(list);
             Assert.AreEqual(ComparablePageFilterResult, list.Count);
         }

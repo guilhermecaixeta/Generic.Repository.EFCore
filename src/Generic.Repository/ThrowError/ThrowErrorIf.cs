@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading;
     using System.Threading.Tasks;
     using Generic.Repository.Cache;
     using Generic.Repository.Exceptions;
@@ -38,19 +39,29 @@
             }
         }
 
-        public async static Task IsFieldNotEquals(object value, object field, string nameField)
+        public async static Task IsFieldNotEquals<TValue>(
+            TValue value,
+            object field,
+            string nameField,
+            CancellationToken token)
         {
-            var result = await AreEquals(value, field, nameField);
+            var result = await AreEquals(value, field, nameField, token);
+
             if (result.Item1)
             {
                 throw new NotEqualsFieldException(result.Item2.ToString(), field.ToString());
             }
         }
 
-        public static async Task IsFieldNotEquals<TException>(object value, object field, string nameField)
+        public static async Task IsFieldNotEquals<TValue, TException>(
+            TValue value,
+            object field,
+            string nameField,
+            CancellationToken token)
         where TException : Exception, new()
         {
-            var result = await AreEquals(value, field, nameField);
+            var result = await AreEquals(value, field, nameField, token);
+
             if (result.Item1)
             {
                 throw new TException();
@@ -163,6 +174,7 @@
         public static void IsTypeNotEquals<T>(object obj)
         {
             var isTypeValid = obj.IsType<T>();
+
             if (!isTypeValid)
             {
                 throw new InvalidTypeException(obj.GetType().Name);
@@ -170,16 +182,24 @@
         }
 
         /// <summary>Ares the equals.</summary>
+        /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="field1">The field1.</param>
         /// <param name="field2">The field2.</param>
         /// <param name="nameField">The name field.</param>
         /// <returns></returns>
-        private async static Task<(bool, object)> AreEquals(object field1, object field2, string nameField)
+        private async static Task<(bool, object)> AreEquals<TEntity>(
+            TEntity field1,
+            object field2,
+            string nameField,
+            CancellationToken token)
         {
-            var funcGet = await CacheRepository.GetMethodGet(field1.GetType().Name, nameField);
-            var fieldComparer = funcGet(field1);
+            var funcGet = await CacheRepository.GetMethodGet(field1.GetType().Name, nameField, token);
 
-            return (fieldComparer == field2, fieldComparer);
+            var value = funcGet(field1);
+
+            var isEquals = value.Equals(field2);
+
+            return (isEquals, value);
         }
     }
 }

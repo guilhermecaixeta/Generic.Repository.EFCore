@@ -92,7 +92,6 @@ namespace Generic.Repository.Interfaces.Repository
         /// <param name="value">The value.</param>
         /// <returns></returns>
         Task<TValue> FindAsync(
-            CancellationToken token,
             params object[] values);
 
         /// <summary>

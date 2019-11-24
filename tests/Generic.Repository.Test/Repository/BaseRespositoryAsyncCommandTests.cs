@@ -21,7 +21,7 @@ namespace Generic.Repository.Test.Repository
         {
             var value = CreateFakeValue();
             value = await Repository.
-                CreateAsync(value).
+                CreateAsync(value, default).
                 ConfigureAwait(false);
 
             Assert.NotNull(value);
@@ -33,7 +33,7 @@ namespace Generic.Repository.Test.Repository
             var value = CreateFakeValue();
 
             value = await Repository.
-                CreateAsync(value).
+                CreateAsync(value, default).
                 ConfigureAwait(false);
 
             var valueOutdated = await Repository.
@@ -41,7 +41,7 @@ namespace Generic.Repository.Test.Repository
                 ConfigureAwait(false);
 
             await Repository.
-                UpdateAsync(UpdateFakeValue(value)).
+                UpdateAsync(UpdateFakeValue(value), default).
                 ConfigureAwait(false);
 
             Assert.AreNotEqual(value, valueOutdated);
@@ -51,10 +51,10 @@ namespace Generic.Repository.Test.Repository
         public async Task DeleteValueAsync_ValidValue()
         {
             var value = CreateFakeValue();
-            value = await Repository.CreateAsync(value).
+            value = await Repository.CreateAsync(value, default).
                 ConfigureAwait(false);
 
-            await Repository.DeleteAsync(value).
+            await Repository.DeleteAsync(value, default).
                 ConfigureAwait(false);
 
             var result = await Repository.
@@ -68,15 +68,16 @@ namespace Generic.Repository.Test.Repository
         public async Task CreateListAsync_ValidValue()
         {
             var list = GetListFake();
+            
             await Repository.
-                CreateAsync(list).
+                CreateAsync(list, default).
                 ConfigureAwait(false);
 
             var count = await Repository.
                 CountAsync(default).
                 ConfigureAwait(false);
 
-            Assert.AreEqual(list.Count(), count);
+            Assert.AreEqual(100, count);
         }
 
         [Test]
@@ -96,7 +97,7 @@ namespace Generic.Repository.Test.Repository
                 ForEach(x => UpdateFakeValue(x));
 
             await Repository.
-                UpdateAsync(listUpdated).
+                UpdateAsync(listUpdated, default).
                 ConfigureAwait(false);
 
             var result = listOutdated.Equals(listUpdated);
@@ -111,7 +112,7 @@ namespace Generic.Repository.Test.Repository
                 GetAllAsync(false, default).
                 ConfigureAwait(false);
 
-            await Repository.DeleteAsync(list).
+            await Repository.DeleteAsync(list, default).
                 ConfigureAwait(false);
 
             var count = await Repository.

@@ -5,7 +5,6 @@ using Generic.Repository.Models.Filter;
 using Generic.Repository.Models.Page;
 using Generic.Repository.Models.PageAggregation.PageConfig;
 using Generic.Repository.Validations.ThrowError;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,29 +18,48 @@ namespace Generic.Repository.Repository
         where TValue : class
         where TFilter : class, IFilter
     {
-        public BaseRepositoryFacade(
-            DbSet<TValue> context,
-            ICacheRepository cache,
-            Func<IQueryable<TValue>, IQueryable<TValue>> funcSetInclude) : base(context, cache, funcSetInclude)
+        private BaseRepositoryFacade(
+            ICacheRepository cache) : base(cache)
         { }
 
         #region public Methods
 
-        public override async Task StartCache()
+        protected override async Task StartCache(CancellationToken token)
         {
-            await base.StartCache();
-            await _cache.AddGet<TFilter>();
-            await _cache.AddAttribute<TFilter>();
+            await base.StartCache(token);
+            await _cache.AddGet<TFilter>(token);
+            await _cache.AddAttribute<TFilter>(token);
         }
 
-        public async Task<Expression<Func<TValue, bool>>> GetExpressionByFilter(TFilter filter) =>
-            await filter.CreateGenericFilter<TValue, TFilter>(_cache);
+        /// <summary>Initializers the specified context.</summary>
+        /// <param name="context">The context.</param>
+        /// <param name="cache">The cache.</param>
+        /// <param name="enableAsNoTracking">if set to <c>true</c> [enable as no tracking].</param>
+        /// <param name="funcSetInclude">The function set include.</param>
+        /// <returns></returns>
+        public new static async Task<BaseRepositoryFacade<TValue, TFilter>> Initializer(
+            ICacheRepository cache,
+            CancellationToken token)
+        {
+            var instance = new BaseRepositoryFacade<TValue, TFilter>(cache);
+
+            await instance.StartCache(token);
+
+            return instance;
+        }
+
+        public async Task<Expression<Func<TValue, bool>>> GetExpressionByFilter(
+            TFilter filter,
+            CancellationToken token) =>
+                await filter.
+                    CreateGenericFilter<TValue, TFilter>(_cache, token);
 
         public new async Task<IPage<TValue>> GetPage(
             IQueryable<TValue> query,
             IPageConfig config,
             CancellationToken token) =>
-            await Task.Run(() => query.ToPageFiltred<TValue, TFilter>(_cache, config), token);
+                await Task.Run(() => query.
+                    ToPageFiltred<TValue, TFilter>(_cache, config), token);
 
         public new async Task<IPage<TResult>> GetPage<TResult>(
             IQueryable<TValue> query,
@@ -49,7 +67,8 @@ namespace Generic.Repository.Repository
             Func<IEnumerable<object>, IEnumerable<TResult>> mapping,
             CancellationToken token)
             where TResult : class =>
-           await Task.Run(() => query.ToPageFiltred<TValue, TFilter, TResult>(_cache, mapping, config), token);
+                await Task.Run(() => query.
+                    ToPageFiltred<TValue, TFilter, TResult>(_cache, mapping, config), token);
 
         #endregion
     }
@@ -57,61 +76,57 @@ namespace Generic.Repository.Repository
     public class BaseRepositoryFacade<TValue>
         where TValue : class
     {
-        protected readonly Func<IQueryable<TValue>, IQueryable<TValue>> _funcAddIncludes;
-
         protected readonly ICacheRepository _cache;
 
-        protected readonly DbSet<TValue> _context;
-
-        public BaseRepositoryFacade(
-            DbSet<TValue> context,
-            ICacheRepository cache,
-            Func<IQueryable<TValue>, IQueryable<TValue>> funcSetInclude)
+        protected BaseRepositoryFacade(
+            ICacheRepository cache)
         {
-            ThrowErrorIf.IsNullValue(funcSetInclude, nameof(funcSetInclude), typeof(BaseRepositoryFacade<,>).Name);
-            ThrowErrorIf.IsNullValue(context, nameof(context), typeof(BaseRepositoryFacade<,>).Name);
             ThrowErrorIf.IsNullValue(cache, nameof(cache), typeof(BaseRepositoryFacade<,>).Name);
 
             _cache = cache;
-            _context = context;
-            _funcAddIncludes = funcSetInclude;
         }
 
         #region public Methods
 
-        public IQueryable<TValue> GetAllQueryable(bool enableAsNoTracking)
+        protected virtual async Task StartCache(CancellationToken token)
         {
-            var query = _funcAddIncludes(_context);
-            if (enableAsNoTracking)
-            {
-                query = query.AsNoTracking();
-            }
-            return query;
+            await _cache.AddGet<TValue>(token);
+            await _cache.AddSet<TValue>(token);
+            await _cache.AddProperty<TValue>(token);
         }
 
-        public virtual async Task StartCache()
+        /// <summary>Initializers the specified context.</summary>
+        /// <param name="context">The context.</param>
+        /// <param name="cache">The cache.</param>
+        /// <param name="enableAsNoTracking">if set to <c>true</c> [enable as no tracking].</param>
+        /// <param name="funcSetInclude">The function set include.</param>
+        /// <returns></returns>
+        public static async Task<BaseRepositoryFacade<TValue>> Initializer(
+            ICacheRepository cache,
+            CancellationToken token)
         {
-            await _cache.AddGet<TValue>();
-            await _cache.AddSet<TValue>();
-            await _cache.AddProperty<TValue>();
+            var instance = new BaseRepositoryFacade<TValue>(cache);
+
+            await instance.StartCache(token);
+
+            return instance;
         }
 
-        public void SetState(EntityState state, TValue item) =>
-            _context.Attach(item).State = state;
 
         public virtual async Task<IPage<TValue>> GetPage(
             IQueryable<TValue> query,
             IPageConfig config,
             CancellationToken token) =>
-            await Task.Run(() => query.ToPage(_cache, config), token);
+                await Task.Run(() => query.ToPage(_cache, config), token);
 
         public virtual async Task<IPage<TResult>> GetPage<TResult>(
             IQueryable<TValue> query,
             IPageConfig config,
             Func<IEnumerable<object>, IEnumerable<TResult>> mapping,
-             CancellationToken token)
+            CancellationToken token)
             where TResult : class =>
-           await Task.Run(() => query.ToPage(_cache, config, mapping), token);
+                await Task.Run(() => query.ToPage(_cache, config, mapping), token);
+
         #endregion
     }
 }

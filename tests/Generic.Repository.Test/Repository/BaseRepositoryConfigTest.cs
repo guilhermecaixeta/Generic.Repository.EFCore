@@ -18,7 +18,6 @@
         public void ChildBaseUp() =>
             Repository = GetRepositoryFake();
 
-
         private BaseRepositoryAsync<TValue, TFilter, DbInMemoryContext<TValue>> GetRepositoryFake() =>
             new BaseRepositoryAsync<TValue, TFilter, DbInMemoryContext<TValue>>(DbContext, Cache);
 

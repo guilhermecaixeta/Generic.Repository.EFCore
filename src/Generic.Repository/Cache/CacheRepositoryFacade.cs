@@ -2,6 +2,7 @@ using Generic.Repository.Validations.ThrowError;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Generic.Repository.Cache
@@ -74,7 +75,7 @@ namespace Generic.Repository.Cache
                 Invoke(this, new object[] { method });
         }
 
-        public async Task<R> GetData<R>(IDictionary<string, R> dictionary, string key)
+        public async Task<R> GetData<R>(IDictionary<string, R> dictionary, string key, CancellationToken token)
         {
             R FuncGet()
             {
@@ -91,10 +92,10 @@ namespace Generic.Repository.Cache
                 return result;
             }
 
-            return await ProcessSemaphore(FuncGet);
+            return await ProcessSemaphore(FuncGet, token);
         }
 
-        public async Task ProcessSemaphore(Action @delegate)
+        public async Task ProcessSemaphore(Action @delegate, CancellationToken token)
         {
             CacheSemaphore.InitializeSemaphore();
             await Task.Run(() =>
@@ -102,10 +103,10 @@ namespace Generic.Repository.Cache
                 CacheSemaphore.WaitOne();
                 @delegate();
                 CacheSemaphore.Release();
-            });
+            }, token);
         }
 
-        public async Task<R> ProcessSemaphore<R>(Func<R> @delegate)
+        public async Task<R> ProcessSemaphore<R>(Func<R> @delegate, CancellationToken token)
         {
             CacheSemaphore.InitializeSemaphore();
             return await Task.Run(() =>
@@ -114,7 +115,8 @@ namespace Generic.Repository.Cache
                 var resultado = @delegate();
                 CacheSemaphore.Release();
                 return resultado;
-            });
+            }, token);
         }
+
     }
 }
