@@ -1,48 +1,47 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Generic.Repository.Cache
 {
     public interface ICacheRepository
     {
-        Func<object, object> GetMethodGet(string objectKey, string propertyKey);
+        Task AddAttribute<TValue>(CancellationToken token);
 
-        IDictionary<string, Func<object, object>> GetDictionaryMethodGet(string objectKey);
+        Task AddGet<TValue>(CancellationToken token);
 
-        Action<object, object> GetMethodSet(string objectKey, string propertyKey);
+        Task AddProperty<TValue>(CancellationToken token);
 
-        IDictionary<string, Action<object, object>> GetDictionaryMethodSet(string objectKey);
-
-        PropertyInfo GetProperty(string objectKey, string propertyKey);
-
-        IDictionary<string, PropertyInfo> GetDictionaryProperties(string objectKey);
-
-        CustomAttributeTypedArgument GetAttribute(string objectKey, string propertyKey, string customAttributeKey);
-
-        IDictionary<string, CustomAttributeTypedArgument> GetDictionaryAttribute(string objectKey, string propertyKey);
-
-        IDictionary<string, Dictionary<string, CustomAttributeTypedArgument>> GetDictionaryAttribute(string objectKey);
-
-        void Add<TValue>();
-
-        void Add<TValue>(bool saveAttribute);
-
-        void Add<TValue>(bool saveAttribute, bool saveGet);
-
-        void Add<TValue>(bool saveAttribute, bool saveGet, bool saveSet);
-
-        void Add<TValue>(bool saveAttribute, bool saveGet, bool saveSet, bool saveProperties);
-
-        bool HasMethodSet();
-
-        bool HasMethodGet();
-
-        bool HasProperty();
-
-        bool HasAttribute();
+        Task AddSet<TValue>(CancellationToken token);
 
         void ClearCache();
 
+        Task<CustomAttributeTypedArgument> GetAttribute(string objectKey, string propertyKey, string customAttributeKey, CancellationToken token);
+
+        Task<IDictionary<string, CustomAttributeTypedArgument>> GetDictionaryAttribute(string objectKey, string propertyKey, CancellationToken token);
+
+        Task<IDictionary<string, Dictionary<string, CustomAttributeTypedArgument>>> GetDictionaryAttribute(string objectKey, CancellationToken token);
+
+        Task<IDictionary<string, Func<object, object>>> GetDictionaryMethodGet(string objectKey, CancellationToken token);
+
+        Task<IDictionary<string, Action<object, object>>> GetDictionaryMethodSet(string objectKey, CancellationToken token);
+
+        Task<IDictionary<string, PropertyInfo>> GetDictionaryProperties(string objectKey, CancellationToken token);
+
+        Task<Func<object, object>> GetMethodGet(string objectKey, string propertyKey, CancellationToken token);
+
+        Task<Action<object, object>> GetMethodSet(string objectKey, string propertyKey, CancellationToken token);
+
+        Task<PropertyInfo> GetProperty(string objectKey, string propertyKey, CancellationToken token);
+
+        Task<bool> HasAttribute(CancellationToken token);
+
+        Task<bool> HasMethodGet(CancellationToken token);
+
+        Task<bool> HasMethodSet(CancellationToken token);
+
+        Task<bool> HasProperty(CancellationToken token);
     }
 }

@@ -9,87 +9,81 @@ namespace Generic.Repository.Test.Repository
     using System.Threading.Tasks;
 
     [TestFixture]
-    public abstract class BaseRepositoryAsyncCommandTest<TValue, TFilter> : BaseRepositoryConfigTest<TValue, TFilter>
+    public abstract class BaseRepositoryAsyncCommandTest<TValue, TFilter>
+        : BaseRepositoryConfigTest<TValue, TFilter>
         where TValue : class
         where TFilter : class, IFilter
     {
-        internal abstract IEnumerable<TValue> GetListFake();
-
         [Test]
-        public async Task CreateValueAndGetSingleAsync_ValidValue()
+        public async Task CreateListAsync_ValidValue()
         {
-            var value = CreateFakeValue();
-            value = await Repository.CreateAsync(value).
+            var list = GetListFake();
+
+            await Repository.
+                CreateAsync(list, default).
                 ConfigureAwait(false);
 
-            var result = await Repository.
-                GetSingleByAsync(GetFakeExpression(value), false).
+            var count = await Repository.
+                CountAsync(default).
                 ConfigureAwait(false);
 
-            Assert.AreEqual(value, result);
+            Assert.AreEqual(100, count);
         }
 
         [Test]
-        public async Task UpdateValueAndGetFirstAsync_ValidValue()
+        public async Task CreateValueAsync_ValidValue()
         {
             var value = CreateFakeValue();
-
-            value = await Repository.CreateAsync(value).
+            value = await Repository.
+                CreateAsync(value, default).
                 ConfigureAwait(false);
 
-            var valueOutdated = await Repository.
-                GetFirstByAsync(GetFakeExpression(value), true).
+            Assert.NotNull(value);
+        }
+
+        [Test]
+        public async Task DeleteListAsync_ValidValue()
+        {
+            var list = await Repository.
+                GetAllAsync(false, default).
                 ConfigureAwait(false);
 
-            await Repository.UpdateAsync(UpdateFakeValue(value)).
+            await Repository.DeleteAsync(list, default).
                 ConfigureAwait(false);
 
-            Assert.AreNotEqual(value, valueOutdated);
+            var count = await Repository.
+                CountAsync(default).
+                ConfigureAwait(false);
+
+            Assert.AreEqual(0, count);
         }
 
         [Test]
         public async Task DeleteValueAsync_ValidValue()
         {
             var value = CreateFakeValue();
-            value = await Repository.CreateAsync(value).
+            value = await Repository.CreateAsync(value, default).
                 ConfigureAwait(false);
 
-            await Repository.DeleteAsync(value).
+            await Repository.DeleteAsync(value, default).
                 ConfigureAwait(false);
 
             var result = await Repository.
-                GetFirstByAsync(GetFakeExpression(value), false).
+                GetFirstByAsync(GetFakeExpression(value), false, default).
                 ConfigureAwait(false);
 
             Assert.AreEqual(null, result);
         }
 
         [Test]
-        public async Task CreateListAsync_ValidValue()
-        {
-            BaseTearDown();
-            var list = GetListFake();
-            await Repository.
-                CreateAsync(list).
-                ConfigureAwait(false);
-
-            var count = await Repository.
-                CountAsync().
-                ConfigureAwait(false);
-
-            Assert.AreEqual(list.Count(), count);
-        }
-
-        [Test]
         public async Task UpdateListAsync_ValidValue()
         {
-
             var listOutdated = await Repository.
-                GetAllAsync(false).
+                GetAllAsync(false, default).
                 ConfigureAwait(false);
 
             var listUpdated = await Repository.
-                GetAllAsync(false).
+                GetAllAsync(false, default).
                 ConfigureAwait(false);
 
             listUpdated.
@@ -97,7 +91,7 @@ namespace Generic.Repository.Test.Repository
                 ForEach(x => UpdateFakeValue(x));
 
             await Repository.
-                UpdateAsync(listUpdated).
+                UpdateAsync(listUpdated, default).
                 ConfigureAwait(false);
 
             var result = listOutdated.Equals(listUpdated);
@@ -106,24 +100,31 @@ namespace Generic.Repository.Test.Repository
         }
 
         [Test]
-        public async Task DeleteListAsync_ValidValue()
+        public async Task UpdateValueAndGetFirstAsync_ValidValue()
         {
-            var list = await Repository.
-                GetAllAsync(false).
+            var value = CreateFakeValue();
+
+            value = await Repository.
+                CreateAsync(value, default).
                 ConfigureAwait(false);
 
-            await Repository.DeleteAsync(list).
+            var valueOutdated = await Repository.
+                GetFirstByAsync(GetFakeExpression(value), true, default).
                 ConfigureAwait(false);
 
-            var count = await Repository.
-                CountAsync().
+            await Repository.
+                UpdateAsync(UpdateFakeValue(value), default).
                 ConfigureAwait(false);
 
-            Assert.AreEqual(0, count);
+            Assert.AreNotEqual(value, valueOutdated);
         }
 
+        internal abstract IEnumerable<TValue> GetListFake();
+
         protected abstract TValue CreateFakeValue();
-        protected abstract TValue UpdateFakeValue(TValue value);
+
         protected abstract Expression<Func<TValue, bool>> GetFakeExpression(TValue value);
+
+        protected abstract TValue UpdateFakeValue(TValue value);
     }
 }
