@@ -1,80 +1,46 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Generic.Repository.Extension.Validation
+namespace Generic.Repository.Validations.Extension.Validation
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
     public static class Validation
     {
-        /// <summary>
-        /// Validate if data is null.
-        /// </summary>
-        /// <param name="value">value to validate</param>
-        /// <param name="className">name class to value</param>
-        /// <param name="nameObject">name object of value</param>
-        /// <returns></returns>
-        public static bool IsNull(this object value, string className, string nameObject) => value.ValidateNullableOfObject() ?
-        HandleNullError($"ClassName: {className} {Environment.NewLine} Message: {nameObject} is null or empty.") : false;
+        /// <summary>Determines whether this instance has any.</summary>
+        /// <typeparam name="T">Generic Type</typeparam>
+        /// <param name="obj">The object.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified object has any; otherwise, <c>false</c>.</returns>
+        public static bool HasAny<T>(this IEnumerable<T> obj) =>
+            !obj.IsNull() && obj.Any();
 
-        /// <summary>
-        /// Validate if data is null.
-        /// </summary>
-        /// <param name="value">value to valdate</param>
-        /// <param name="Message">message to show</param>
-        /// <returns></returns>
-        public static bool IsNull(this object value, string Message) => value.ValidateNullableOfObject() ? HandleNullError(Message) : false;
+        /// <summary>Determines whether [is not equal date time maximum minimum value].</summary>
+        /// <param name="obj">The object.</param>
+        /// <returns>
+        ///   <c>true</c> if [is not equal date time maximum minimum value] [the specified object]; otherwise, <c>false</c>.</returns>
+        public static bool IsNotEqualDateTimeMaxMinValue(this object obj) =>
+            obj.IsType<DateTime>() && ((DateTime)obj).Date > DateTime.MinValue && ((DateTime)obj).Date < DateTime.MaxValue;
 
-        /// <summary>
-        /// Validate if list is not null and has any element. 
-        /// </summary>
-        /// <param name="list"></param>
-        /// <param name="className"></param>
-        /// <param name="nameObject"></param>
-        /// <typeparam name="TValue"></typeparam>
-        /// <returns></returns>
-        public static bool HasAny<TValue>(this IEnumerable<TValue> list, string className, string nameObject) => !list.IsNull(className, nameObject) && list.Any() ? true : throw new ArgumentException(MessageError($"ClassName: {className} {Environment.NewLine}Message: {nameObject} don't has any element."));
+        /// <summary>Determines whether this instance is null.</summary>
+        /// <param name="obj">The object.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified object is null; otherwise, <c>false</c>.</returns>
+        public static bool IsNull(this object obj) =>
+            obj is null;
 
-        /// <summary>
-        /// Validate if data type is not string
-        /// </summary>
-        /// <param name="type">Property to validate</param>
-        /// <param name="className">Name of class will be used</param>
-        /// <param name="nameObject">Name of object will be used</param>
-        /// <param name="methodName">Name of method will be used</param>
-        /// <returns>Return a bool</returns>
-        public static bool IsNotString(this Type type, string className, string nameObject, string methodName) => isValidType(type, typeof(string)) ?
-           HandleNotSupportedError($"ClassName: {className} {Environment.NewLine}Message: {nameObject} type is string. {methodName} method doesn't support this type.")
-            : true;
+        /// <summary>Determines whether [is string not null or empty].</summary>
+        /// <param name="obj">The object.</param>
+        /// <returns>
+        ///   <c>true</c> if [is string not null or empty] [the specified object]; otherwise, <c>false</c>.</returns>
+        public static bool IsStringNotNullOrEmpty(this object obj) =>
+            obj.IsType<string>() && !string.IsNullOrEmpty((string)obj);
 
-        /// <summary>
-        /// Verify if data is string.
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="className"></param>
-        /// <param name="nameObject"></param>
-        /// <returns></returns>
-        public static bool IsString(this Type type, string className, string nameObject) => !isValidType(type, typeof(string)) ?
-               HandleNotSupportedError($"ClassName: {className} {Environment.NewLine}Message: {nameObject} type is not string. This method only can be used by string type parameter.")
-               : true;
-
-        /// <summary>
-        /// Handle argument null exception to user.
-        /// </summary>
-        /// <param name="message"></param>
-        /// <returns></returns>
-        public static bool HandleNullError(string message) => throw new ArgumentNullException(MessageError(message));
-
-        /// <summary>
-        /// Handle not supported exception to user.
-        /// </summary>
-        /// <param name="message"></param>
-        /// <returns></returns>
-        public static bool HandleNotSupportedError(string message) => throw new NotSupportedException(MessageError(message));
-
-        private static bool ValidateNullableOfObject(this object value) => isValidType(value.GetType(), typeof(string)) && string.IsNullOrEmpty(value.ToString()) || value == null;
-
-        private static bool isValidType(Type typeObject, Type typeComparison) => typeObject == typeComparison;
-
-        private static string MessageError(string message) => $"ERROR> {message}";
+        /// <summary>Determines whether this instance is type.</summary>
+        /// <typeparam name="T">Generic Type</typeparam>
+        /// <param name="obj">The object.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified object is type; otherwise, <c>false</c>.</returns>
+        public static bool IsType<T>(this object obj) =>
+            obj is T;
     }
 }

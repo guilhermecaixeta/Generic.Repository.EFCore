@@ -1,93 +1,59 @@
 namespace Generic.Repository.Test.Repository
 {
-    using Generic.Repository.Attributes;
-    using Generic.Repository.Models.Filter;
-    using Generic.Repository.Models.Page.PageConfig;
+    using Generic.Repository.Models.PageAggregation.PageConfig;
+    using Generic.Repository.Test.Model;
+    using Generic.Repository.Test.Model.Filter;
+    using Generic.Repository.Test.Repository.Commom;
     using NUnit.Framework;
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Linq.Expressions;
-
-    public class FakeObject
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-    }
-
-    public class FakeFilter : IFilter
-    {
-        [Lambda(MethodOption = Enums.LambdaMethod.Contains)]
-        public string Name { get; set; }
-    }
 
     [TestFixture]
     public class BaseRepositoryAsyncTest :
-        BaseRepositoryAsyncQueryTest<FakeObject, FakeFilter>
+        BaseRepositoryExceptionTest<FakeObject, FakeFilter>
     {
-        private string _fakeSearchValue;
+        private readonly CommomMethods Commom = new CommomMethods();
+
         public BaseRepositoryAsyncTest()
         {
-            ComparableListLength = 10;
+            ComparableListLength = Commom.SizeListTest;
             ComparablePageLength = 5;
             ComparablePageFilterResult = 1;
         }
 
-        internal override IPageConfig GetFakePageConfig()
-            => new PageConfig { order = "Name", page = 0, size = 5, sort = "ASC" };
+        internal override Expression<Func<FakeObject, bool>> GetFakeExpression() =>
+            Commom.GetFakeExpression();
 
-        internal override FakeFilter GetFakeFilter()
-        => new FakeFilter { Name = _fakeSearchValue };
+        internal override FakeFilter GetFilterFake() =>
+            Commom.GetFilterFake();
 
-        internal override Expression<Func<FakeObject, bool>> GetFakeExpression()
-        => GetExpression(x => _fakeSearchValue.Contains(x.Name));
+        internal override IEnumerable<FakeObject> GetListFake() =>
+            Commom.GetListFake();
 
-        internal override IEnumerable<FakeObject> GetListFake()
-        {
-            bool checkout = false;
-            for (int i = 0; i < 10; i++)
-            {
-                var name = GetFakeName();
-                if (!checkout)
-                {
-                    _fakeSearchValue = name;
-                    checkout = true;
-                }
-                yield return new FakeObject { Name = name };
-            }
-        }
+        internal override IPageConfig GetPageConfigFake() =>
+                                    Commom.GetPageConfigFake();
 
         protected override FakeObject CreateFakeValue() =>
-            new FakeObject { Name = GetFakeName() };
+            new FakeObject
+            {
+                Value = Commom.GetFakeName()
+            };
+
+        protected override Expression<Func<FakeObject, bool>> GetFakeExpression(FakeObject value) =>
+                    Commom.GetFakeExpression(value);
 
         protected override FakeObject UpdateFakeValue(FakeObject value)
         {
-            var name = GetFakeName();
+            var data = Commom.GetFakeName();
 
-            if (name.Equals(value.Name))
+            if (data.Equals(value.Value))
             {
-                UpdateFakeValue(value);
+                _ = UpdateFakeValue(value);
             }
 
-            value.Name = name;
+            value.Value = data;
             return value;
         }
-
-        protected override Expression<Func<FakeObject, bool>> GetFakeExpression(FakeObject value) => 
-            GetExpression(x => x.Id == value.Id);
-
-        private Expression<Func<FakeObject, bool>> GetExpression(
-            Expression<Func<FakeObject, bool>> expression) => expression;
-
-        private static string GetFakeName()
-        {
-            var random = new Random();
-
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-
-            return new string(Enumerable.Repeat(chars, 3)
-              .Select(s => s[random.Next(s.Length)]).ToArray());
-        }
-
     }
 }

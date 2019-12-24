@@ -1,26 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <RepositoryUrl>https://github.com/guilhermecaixeta/Generic.Repository.EFCore</RepositoryUrl>
     <PackageTags>Generics Repository, Async, Pagination, reactive programmation, crud, solid, filter</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <AssemblyVersion>1.0.0.1</AssemblyVersion>
     <FileVersion>1.0.0.1</FileVersion>
     <PackageProjectUrl>https://github.com/guilhermecaixeta/Generic.Repository.EFCore</PackageProjectUrl>
-    <PackageReleaseNotes>V.1.0.1
-Fix bugs, fix cache use and add new features.</PackageReleaseNotes>
+    <PackageReleaseNotes>V.1.0.2
+Update to .Net framework 2.1.</PackageReleaseNotes>
     <PackageId>Generic.RepositoryAsync.EFCore</PackageId>
     <Authors>GuiCaixeta</Authors>
     <Product>Generic.RepositoryAsync.EFCore</Product>
     <Description>Generic repository, implemented using the best of programmation.</Description>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="coveralls.io" Version="1.4.2" />
-    <PackageReference Include="Ensure.That" Version="8.1.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore"
+                      Version="3.0.0" />
   </ItemGroup>
-
 </Project>

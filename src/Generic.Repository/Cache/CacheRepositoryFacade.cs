@@ -1,68 +1,121 @@
-using Generic.Repository.Extension.Validation;
+using Generic.Repository.Validations.ThrowError;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Generic.Repository.Cache
 {
     internal class CacheRepositoryFacade : ICacheRepositoryFacade
     {
-        public Func<object, object> CreateFunction<TValue>(PropertyInfo property)
-        {
-            property.IsNull(property.Name, nameof(CreateFunction));
-            var getter = property.GetGetMethod(true);
-            getter.IsNull($"ClassName: {nameof(CreateFunction)} {Environment.NewLine}Message: The property {property.Name} does not have a public accessor.");
-
-            return (Func<object, object>)ExtractMethod<TValue>(getter, property, "CreateFunctionGeneric");
-        }
-
-        public Func<object, object> CreateFunctionGeneric<TValue, TReturn>(MethodInfo getter)
-        {
-            Func<TValue, TReturn> getterTypedDelegate = (Func<TValue, TReturn>)Delegate.CreateDelegate(typeof(Func<TValue, TReturn>), getter);
-            Func<object, object> getterDelegate = ((object instance) => getterTypedDelegate((TValue)instance));
-            return getterDelegate;
-        }
-
         public Action<object, object> CreateAction<TValue>(PropertyInfo property)
         {
-            property.IsNull(property.Name, nameof(CreateAction));
-            var setter = property.GetSetMethod(true);
-            setter.
-                IsNull($"ClassName: {nameof(CreateAction)} {Environment.NewLine}Message: The property {property.Name} does not have a public setter.");
+            ThrowErrorIf.
+                IsNullValue(property, nameof(property), nameof(ExtractMethod));
 
-            var result = (Action<object, object>) ExtractMethod<TValue>(setter, property, "CreateActionGeneric");
+            var setter = property.
+                GetSetMethod(true);
+
+            ThrowErrorIf.
+                IsNullValue(setter, nameof(setter), nameof(ExtractMethod)); ;
+
+            var result = (Action<object, object>)ExtractMethod<TValue>(setter, property, "CreateActionGeneric");
 
             return result;
         }
 
         public Action<object, object> CreateActionGeneric<TValue, TInput>(MethodInfo setter)
         {
-            Action<TValue, TInput> setterTypedDelegate = (Action<TValue, TInput>)Delegate.CreateDelegate(typeof(Action<TValue, TInput>), setter);
-            Action<object, object> setterDelegate = (object instance, object value) => setterTypedDelegate((TValue)instance, (TInput)value);
-            return setterDelegate;
+            var setterTypedDelegate = (Action<TValue, TInput>)Delegate.
+                CreateDelegate(typeof(Action<TValue, TInput>), setter);
+
+            void SetterDelegate(object instance, object value) =>
+                setterTypedDelegate((TValue)instance, (TInput)value);
+
+            return SetterDelegate;
+        }
+
+        public Func<object, object> CreateFunction<TValue>(PropertyInfo property)
+        {
+            ThrowErrorIf.
+                IsNullValue(property, nameof(property), nameof(CreateFunction));
+
+            var getter = property.
+                GetGetMethod(true);
+
+            ThrowErrorIf.
+                IsNullValue(getter, nameof(property), nameof(CreateFunction));
+
+            return (Func<object, object>)ExtractMethod<TValue>(getter, property, "CreateFunctionGeneric");
+        }
+
+        public Func<object, object> CreateFunctionGeneric<TValue, TReturn>(MethodInfo getter)
+        {
+            var getterTypedDelegate = (Func<TValue, TReturn>)Delegate.
+                CreateDelegate(typeof(Func<TValue, TReturn>), getter);
+
+            object GetterDelegate(object instance) =>
+                getterTypedDelegate((TValue)instance);
+
+            return GetterDelegate;
+        }
+
+        public async Task<R> GetData<R>(IDictionary<string, R> dictionary, string key, CancellationToken token)
+        {
+            R FuncGet()
+            {
+                ThrowErrorIf.
+                IsEmptyOrNullString(key, nameof(key), nameof(GetData));
+
+                var isValid = dictionary.TryGetValue(key, out var result);
+
+                if (!isValid)
+                {
+                    throw new KeyNotFoundException($"FIELD> {nameof(key)} VALUE> {key}");
+                }
+
+                return result;
+            }
+
+            return await RunFunctionInSemaphore(FuncGet, token);
+        }
+
+        public async Task RunActionInSemaphore(Action @delegate, CancellationToken token)
+        {
+            CacheSemaphore.InitializeSemaphore();
+            await Task.Run(() =>
+            {
+                CacheSemaphore.WaitOne();
+                @delegate();
+                CacheSemaphore.Release();
+            }, token);
+        }
+
+        public async Task<R> RunFunctionInSemaphore<R>(Func<R> @delegate, CancellationToken token)
+        {
+            CacheSemaphore.InitializeSemaphore();
+            return await Task.Run(() =>
+            {
+                CacheSemaphore.WaitOne();
+                var result = @delegate();
+                CacheSemaphore.Release();
+                return result;
+            }, token);
         }
 
         private object ExtractMethod<TValue>(MethodInfo method, PropertyInfo property, string nameMethod)
         {
-            method.IsNull(nameof(ExtractMethod), nameof(method));
+            ThrowErrorIf.
+                IsNullValue(method, nameof(method), nameof(ExtractMethod));
+
             var type = typeof(ICacheRepositoryFacade);
             var genericMethod = type.GetMethod(nameMethod);
-            var genericHelper = genericMethod.MakeGenericMethod(typeof(TValue), property.PropertyType);
+            var genericHelper = genericMethod?.
+                MakeGenericMethod(typeof(TValue), property.PropertyType);
 
-            return genericHelper.Invoke(this, new object[] { method });
-        }
-
-        public R GetData<R>(IDictionary<string, R> dictionary, string key)
-        {
-            if (string.IsNullOrEmpty(key) || string.IsNullOrWhiteSpace(key))
-            {
-                throw new ArgumentNullException($"FIELD> {nameof(key)} METHOD> {nameof(GetData)}");
-            }
-            if (dictionary.TryGetValue(key, out var result))
-            {
-                return result;
-            }
-            throw new KeyNotFoundException($"FIELD> {nameof(key)} VALUE> {key} METHOD> {nameof(GetData)}");
+            return genericHelper?.
+                Invoke(this, new object[] { method });
         }
     }
 }

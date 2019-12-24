@@ -5,8 +5,6 @@ namespace Generic.Repository.Test.Data
     public class DbInMemoryContext<T> : DbContext
     where T : class
     {
-        DbSet<T> Value { get; set; }
-
         public DbInMemoryContext()
         { }
 
@@ -14,5 +12,6 @@ namespace Generic.Repository.Test.Data
             : base(options)
         { }
 
+        private DbSet<T> Value { get; set; }
     }
 }

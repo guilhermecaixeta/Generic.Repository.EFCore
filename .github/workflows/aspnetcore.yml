@@ -1,24 +1,27 @@
+
 name: ASP.NET Core CI
+
 on:
   push:
     branches:
     - master
     - develop
     tags:
-    - 'v*.*.*'
-  pull_request:   
-  jobs:
-    build:  
-      strategy:
-        matrix:
-          core_version: [2.2.108]
-          os: [ubuntu-latest, windows-latest, macOS-latest]
-      name: ${{ matrix.os }}
-      runs-on: ${{ matrix.os }}
-      steps:
-      - run: dotnet --info
-      - uses: actions/checkout@v1
-      - if: contains(matrix.os, 'windows')
-        run: .\build.ps1
-      - if: contains(matrix.os, 'macOS') || contains(matrix.os, 'ubuntu')
-        run: ./build.sh
+    - '*.*.*'
+  pull_request:
+jobs:
+  build:  
+    strategy:
+      matrix:
+        core_version: [2.2.108]
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+    
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    steps:
+    - run: dotnet --info
+    - uses: actions/checkout@v1
+    - if: contains(matrix.os, 'windows')
+      run: build.bat
+    - if: contains(matrix.os, 'macOS') || contains(matrix.os, 'ubuntu')
+      run: ./build.sh
