@@ -23,14 +23,17 @@ before_install:
   - git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
   - git fetch origin      
 
+install:
+  - sudo apt-get install -qq dotnet-sdk-2.0.0
+  
 script:
 # You must run this command to give Travis permissions to execute the build.sh shell script:
     # git update-index --chmod=+x ./build.sh    
-    # - ./build.sh
-     - dotnet restore
-     - dotnet build
-     - cd tests/Generic.Repository.Test
-     - dotnet test
+     - bash ./build.sh
+    # - dotnet restore
+    # - dotnet build
+    # - cd tests/Generic.Repository.Test
+    # - dotnet test
 
 global:
     - DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
