@@ -25,7 +25,7 @@ before_install:
 
 script:
 # You must run this command to give Travis permissions to execute the build.sh shell script:
-    git update-index --chmod=+x ./build.sh    
+    # git update-index --chmod=+x ./build.sh    
      - ./build.sh
     # - dotnet restore
     # - dotnet build
