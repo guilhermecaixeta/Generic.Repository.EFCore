@@ -5,7 +5,9 @@ namespace Generic.Repository.Cache
     internal static class CacheSemaphore
     {
         public static Semaphore Semaphore;
+
         public static bool Signal = true;
+
         private const int MaxValue = 1;
 
         private const int MinValue = 1;

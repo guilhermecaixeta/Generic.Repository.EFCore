@@ -32,7 +32,7 @@ namespace Generic.Repository.Repository
 
         #endregion Ctor
 
-        #region Queries
+        #region QUERIES
 
         public async Task<IReadOnlyList<TValue>> FilterAllAsync(
             TFilter filter,
@@ -161,9 +161,9 @@ namespace Generic.Repository.Repository
                 await BaseRepositoryFacade<TValue, TFilter>.
                     Initializer(CacheService, token);
 
-        #endregion Queries
+        #endregion QUERIES
 
-        #region Internals Methods
+        #region INTERNALS METHODS
 
         internal async Task CreateQueryFiltered(
             TFilter filter,
@@ -179,7 +179,7 @@ namespace Generic.Repository.Repository
             base.CreateQueryFiltered(predicate, enableAsNotTracking);
         }
 
-        #endregion Internals Methods
+        #endregion INTERNALS METHODS
     }
 
     public class BaseRepositoryAsync<TValue, TContext> :
@@ -187,7 +187,7 @@ namespace Generic.Repository.Repository
     where TContext : DbContext
     where TValue : class
     {
-        #region Ctor
+        #region CTOR
 
         public BaseRepositoryAsync(
             TContext context,
@@ -195,11 +195,15 @@ namespace Generic.Repository.Repository
         {
         }
 
+        #endregion CTOR
+
+        #region QUERY
+
         public async Task<IReadOnlyList<TReturn>> GetAllAsync<TReturn>(
-            bool enableAsNotTracking,
-            Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
-            CancellationToken token)
-            where TReturn : class
+             bool enableAsNotTracking,
+             Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
+             CancellationToken token)
+             where TReturn : class
         {
             ThrowErrorIf.IsNullValue(mapper, nameof(mapper), nameof(GetAllAsync));
 
@@ -262,6 +266,6 @@ namespace Generic.Repository.Repository
                 ConfigureAwait(false);
         }
 
-        #endregion Ctor
+        #endregion QUERY
     }
 }
