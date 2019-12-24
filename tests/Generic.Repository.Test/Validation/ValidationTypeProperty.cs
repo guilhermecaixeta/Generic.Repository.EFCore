@@ -8,6 +8,14 @@ namespace Generic.Repository.Test.Validation
     [TestFixture]
     public class ValidationTypeProperty
     {
+        public bool IsPrimitive(Type type)
+        {
+            return type.IsSubclassOf(typeof(ValueType)) ||
+                    type.Equals(typeof(string)) ||
+                    type.Equals(typeof(StringBuilder)) ||
+                    type.Equals(typeof(StringDictionary));
+        }
+
         [Test]
         public void TypeProperty_IsPrimitive()
         {
@@ -30,14 +38,6 @@ namespace Generic.Repository.Test.Validation
             Assert.IsTrue(IsPrimitive(typeof(char)));
             Assert.IsTrue(IsPrimitive(typeof(byte)));
             Assert.IsFalse(IsPrimitive(typeof(object)));
-        }
-
-        public bool IsPrimitive(Type type)
-        {
-            return type.IsSubclassOf(typeof(ValueType)) ||
-                    type.Equals(typeof(string)) ||
-                    type.Equals(typeof(StringBuilder)) ||
-                    type.Equals(typeof(StringDictionary));
         }
     }
 }

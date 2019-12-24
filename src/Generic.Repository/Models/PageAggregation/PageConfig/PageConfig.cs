@@ -1,16 +1,11 @@
-using System;
 using Generic.Repository.Enums;
 using Generic.Repository.Validations.ThrowError;
+using System;
 
 namespace Generic.Repository.Models.PageAggregation.PageConfig
 {
     public class PageConfig : IPageConfig, IEquatable<PageConfig>
     {
-        public int Page { get; set; }
-        public int Size { get; set; }
-        public PageSort Sort { get; set; }
-        public string Order { get; set; }
-
         public PageConfig()
         {
             Page = 0;
@@ -26,6 +21,11 @@ namespace Generic.Repository.Models.PageAggregation.PageConfig
             Sort = PageSort.DESC;
             Order = order;
         }
+
+        public string Order { get; set; }
+        public int Page { get; set; }
+        public int Size { get; set; }
+        public PageSort Sort { get; set; }
 
         public bool Equals(PageConfig pageConfig)
         {

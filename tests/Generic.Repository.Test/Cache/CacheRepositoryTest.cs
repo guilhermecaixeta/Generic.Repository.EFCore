@@ -7,7 +7,6 @@ namespace Generic.Repository.Test.Cache
     [TestFixture]
     public class CacheRepositoryTest : CacheRepositoryIOAccessTest<FakeFilter>
     {
-
         [SetUp]
         public void CacheSetUp()
         {

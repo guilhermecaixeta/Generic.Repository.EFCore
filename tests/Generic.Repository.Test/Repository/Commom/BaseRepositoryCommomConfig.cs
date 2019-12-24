@@ -12,16 +12,16 @@
 
         protected DbInMemoryContext<TValue> DbContext;
 
+        [TearDown]
+        public virtual void BaseTearDown() =>
+            DbContext.Database.EnsureDeleted();
+
         [SetUp]
         public virtual void BaseUp()
         {
             var contextOptions = GetDbContextOptionsFake();
             DbContext = new DbInMemoryContext<TValue>(contextOptions);
         }
-
-        [TearDown]
-        public virtual void BaseTearDown() =>
-            DbContext.Database.EnsureDeleted();
 
         private static DbContextOptions<DbInMemoryContext<TValue>> GetDbContextOptionsFake() =>
             new DbContextOptionsBuilder<DbInMemoryContext<TValue>>()

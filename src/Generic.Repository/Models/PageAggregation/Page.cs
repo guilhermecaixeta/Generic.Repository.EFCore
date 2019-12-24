@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Generic.Repository.Models.Page
+namespace Generic.Repository.Models.PageAggregation
 {
     /// <summary>
     /// Page Class
@@ -53,11 +53,11 @@ namespace Generic.Repository.Models.Page
     /// order = Id
     /// </summary>
     /// <typeparam name="TValue">Type of page return</typeparam>
-    public class PageFiltred<TValue, TFilter> : PageFilterAbstract<TValue, TFilter>
+    public class PageFiltered<TValue, TFilter> : PageFilterAbstract<TValue, TFilter>
     where TValue : class
     where TFilter : class, IFilter
     {
-        public PageFiltred(
+        public PageFiltered(
         ICacheRepository cacheRepository,
         IQueryable<TValue> listEntities,
         IPageConfig config
@@ -69,12 +69,12 @@ namespace Generic.Repository.Models.Page
         { }
     }
 
-    public class PageFiltred<TValue, TFilter, TResult> : PageFilterAbstract<TValue, TFilter, TResult>
+    public class PageFiltered<TValue, TFilter, TResult> : PageFilterAbstract<TValue, TFilter, TResult>
     where TValue : class
     where TFilter : class, IFilter
     where TResult : class
     {
-        public PageFiltred(
+        public PageFiltered(
                 ICacheRepository cacheRepository,
                 IQueryable<TValue> listEntities,
                 Func<IEnumerable<object>, IEnumerable<TResult>> mapperTo,

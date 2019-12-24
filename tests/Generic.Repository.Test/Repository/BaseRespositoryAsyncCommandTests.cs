@@ -9,12 +9,26 @@ namespace Generic.Repository.Test.Repository
     using System.Threading.Tasks;
 
     [TestFixture]
-    public abstract class BaseRepositoryAsyncCommandTest<TValue, TFilter> 
+    public abstract class BaseRepositoryAsyncCommandTest<TValue, TFilter>
         : BaseRepositoryConfigTest<TValue, TFilter>
         where TValue : class
         where TFilter : class, IFilter
     {
-        internal abstract IEnumerable<TValue> GetListFake();
+        [Test]
+        public async Task CreateListAsync_ValidValue()
+        {
+            var list = GetListFake();
+
+            await Repository.
+                CreateAsync(list, default).
+                ConfigureAwait(false);
+
+            var count = await Repository.
+                CountAsync(default).
+                ConfigureAwait(false);
+
+            Assert.AreEqual(100, count);
+        }
 
         [Test]
         public async Task CreateValueAsync_ValidValue()
@@ -28,23 +42,20 @@ namespace Generic.Repository.Test.Repository
         }
 
         [Test]
-        public async Task UpdateValueAndGetFirstAsync_ValidValue()
+        public async Task DeleteListAsync_ValidValue()
         {
-            var value = CreateFakeValue();
-
-            value = await Repository.
-                CreateAsync(value, default).
+            var list = await Repository.
+                GetAllAsync(false, default).
                 ConfigureAwait(false);
 
-            var valueOutdated = await Repository.
-                GetFirstByAsync(GetFakeExpression(value), true, default).
+            await Repository.DeleteAsync(list, default).
                 ConfigureAwait(false);
 
-            await Repository.
-                UpdateAsync(UpdateFakeValue(value), default).
+            var count = await Repository.
+                CountAsync(default).
                 ConfigureAwait(false);
 
-            Assert.AreNotEqual(value, valueOutdated);
+            Assert.AreEqual(0, count);
         }
 
         [Test]
@@ -65,25 +76,8 @@ namespace Generic.Repository.Test.Repository
         }
 
         [Test]
-        public async Task CreateListAsync_ValidValue()
-        {
-            var list = GetListFake();
-            
-            await Repository.
-                CreateAsync(list, default).
-                ConfigureAwait(false);
-
-            var count = await Repository.
-                CountAsync(default).
-                ConfigureAwait(false);
-
-            Assert.AreEqual(100, count);
-        }
-
-        [Test]
         public async Task UpdateListAsync_ValidValue()
         {
-
             var listOutdated = await Repository.
                 GetAllAsync(false, default).
                 ConfigureAwait(false);
@@ -106,26 +100,31 @@ namespace Generic.Repository.Test.Repository
         }
 
         [Test]
-        public async Task DeleteListAsync_ValidValue()
+        public async Task UpdateValueAndGetFirstAsync_ValidValue()
         {
-            var list = await Repository.
-                GetAllAsync(false, default).
+            var value = CreateFakeValue();
+
+            value = await Repository.
+                CreateAsync(value, default).
                 ConfigureAwait(false);
 
-            await Repository.DeleteAsync(list, default).
+            var valueOutdated = await Repository.
+                GetFirstByAsync(GetFakeExpression(value), true, default).
                 ConfigureAwait(false);
 
-            var count = await Repository.
-                CountAsync(default).
+            await Repository.
+                UpdateAsync(UpdateFakeValue(value), default).
                 ConfigureAwait(false);
 
-            Assert.AreEqual(0, count);
+            Assert.AreNotEqual(value, valueOutdated);
         }
 
+        internal abstract IEnumerable<TValue> GetListFake();
+
         protected abstract TValue CreateFakeValue();
-        
-        protected abstract TValue UpdateFakeValue(TValue value);
 
         protected abstract Expression<Func<TValue, bool>> GetFakeExpression(TValue value);
+
+        protected abstract TValue UpdateFakeValue(TValue value);
     }
 }

@@ -31,36 +31,6 @@ namespace Generic.Repository.Extension.Filter.Facade
             return result;
         }
 
-        /// <summary>Greaters the than.</summary>
-        /// <param name="constant">The constant.</param>
-        /// <param name="memberExpression">The member expression.</param>
-        /// <param name="value">The value.</param>
-        /// <returns></returns>
-        public Expression GreaterThan(
-            ConstantExpression constant,
-            MemberExpression memberExpression,
-            object value)
-        {
-            IsNotString(value);
-            var result = Expression.GreaterThan(memberExpression, constant);
-            return result;
-        }
-
-        /// <summary>Lesses the than.</summary>
-        /// <param name="constant">The constant.</param>
-        /// <param name="memberExpression">The member expression.</param>
-        /// <param name="value">The value.</param>
-        /// <returns></returns>
-        public Expression LessThan(
-            ConstantExpression constant,
-            MemberExpression memberExpression,
-            object value)
-        {
-            IsNotString(value);
-            var result = Expression.LessThan(memberExpression, constant);
-            return result;
-        }
-
         /// <summary>Equals the specified constant.</summary>
         /// <param name="constant">The constant.</param>
         /// <param name="memberExpression">The member expression.</param>
@@ -73,6 +43,33 @@ namespace Generic.Repository.Extension.Filter.Facade
         {
             IsNotString(value);
             var result = Expression.Equal(memberExpression, constant);
+            return result;
+        }
+
+        /// <summary>Fields the specified field name.</summary>
+        /// <param name="fieldName">Name of the field.</param>
+        /// <param name="memberExpression">The member expression.</param>
+        /// <returns></returns>
+        public Expression Field(
+            string fieldName,
+            MemberExpression memberExpression)
+        {
+            var result = Expression.Field(memberExpression, fieldName);
+            return result;
+        }
+
+        /// <summary>Greaters the than.</summary>
+        /// <param name="constant">The constant.</param>
+        /// <param name="memberExpression">The member expression.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        public Expression GreaterThan(
+            ConstantExpression constant,
+            MemberExpression memberExpression,
+            object value)
+        {
+            IsNotString(value);
+            var result = Expression.GreaterThan(memberExpression, constant);
             return result;
         }
 
@@ -91,6 +88,21 @@ namespace Generic.Repository.Extension.Filter.Facade
             return result;
         }
 
+        /// <summary>Lesses the than.</summary>
+        /// <param name="constant">The constant.</param>
+        /// <param name="memberExpression">The member expression.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        public Expression LessThan(
+            ConstantExpression constant,
+            MemberExpression memberExpression,
+            object value)
+        {
+            IsNotString(value);
+            var result = Expression.LessThan(memberExpression, constant);
+            return result;
+        }
+
         /// <summary>Lesses the than or equal.</summary>
         /// <param name="constant">The constant.</param>
         /// <param name="memberExpression">The member expression.</param>
@@ -106,24 +118,11 @@ namespace Generic.Repository.Extension.Filter.Facade
             return result;
         }
 
-        /// <summary>Fields the specified field name.</summary>
-        /// <param name="fieldName">Name of the field.</param>
-        /// <param name="memberExpression">The member expression.</param>
-        /// <returns></returns>
-        public Expression Field(
-            string fieldName,
-            MemberExpression memberExpression)
-        {
-            var result = Expression.Field(memberExpression, fieldName);
-            return result;
-        }
-
         /// <summary>Determines whether [is not string] [the specified object].</summary>
         /// <param name="obj">The object.</param>
         private void IsNotString(object obj)
         {
             ThrowErrorIf.TypeIsNotAllowed<string>(obj);
         }
-
     }
 }

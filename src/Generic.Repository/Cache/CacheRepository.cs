@@ -13,65 +13,113 @@ namespace Generic.Repository.Cache
 {
     public class CacheRepository : ICacheRepository
     {
-        private IDictionary<string, Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>> CacheAttribute { get; set; }
-
-        private IDictionary<string, Dictionary<string, Func<object, object>>> CacheGet { get; set; }
-
-        private IDictionary<string, Dictionary<string, Action<object, object>>> CacheSet { get; set; }
-
-        private IDictionary<string, Dictionary<string, PropertyInfo>> CacheProperties { get; set; }
-
-        private ICacheRepositoryFacade CacheFacade { get; } = new CacheRepositoryFacade();
-
         public CacheRepository()
         {
             InitCache();
         }
 
-        public async Task<Func<object, object>> GetMethodGet(
-            string objectKey,
-            string propertyKey,
+        private IDictionary<string, Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>> CacheAttribute { get; set; }
+
+        private ICacheRepositoryFacade CacheFacade { get; } = new CacheRepositoryFacade();
+        private IDictionary<string, Dictionary<string, Func<object, object>>> CacheGet { get; set; }
+
+        private IDictionary<string, Dictionary<string, PropertyInfo>> CacheProperties { get; set; }
+        private IDictionary<string, Dictionary<string, Action<object, object>>> CacheSet { get; set; }
+
+        public async Task AddAttribute<TValue>(
             CancellationToken token)
         {
-            var dicResult = await CacheFacade.
-                GetData(CacheGet, objectKey, token);
+            void ActionAdd()
+            {
+                var values = GetValues<TValue>();
 
-            var result = await CacheFacade.
-                GetData(dicResult, propertyKey, token);
+                var valid = CacheAttribute.ContainsKey(values.typeName);
 
-            return result;
+                if (valid || !values.cacheable)
+                {
+                    return;
+                }
+
+                var dictionary = new Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>(values.properties.Count());
+
+                CacheAttribute.Add(values.typeName, dictionary);
+
+                foreach (var property in values.properties)
+                {
+                    SetCacheAttributes(property, values.typeName);
+                }
+            }
+
+            await CacheFacade.RunActionInSemaphore(ActionAdd, token);
         }
 
-        public async Task<IDictionary<string, Func<object, object>>> GetDictionaryMethodGet(
-            string objectKey,
+        public async Task AddGet<TValue>(
             CancellationToken token)
         {
-            var dictionary = await CacheFacade.
-                GetData(CacheGet, objectKey, token);
+            void ActionAdd()
+            {
+                var values = GetValues<TValue>();
 
-            return dictionary;
+                var valid = CacheGet.ContainsKey(values.typeName);
+
+                if (valid || !values.cacheable)
+                {
+                    return;
+                }
+
+                var dictionary = values.properties.
+                       ToDictionary(g => g.Name, m => CacheFacade.CreateFunction<TValue>(m));
+                CacheGet.Add(values.typeName, dictionary);
+            }
+
+            await CacheFacade.RunActionInSemaphore(ActionAdd, token);
         }
 
-        public async Task<Action<object, object>> GetMethodSet(
-            string objectKey,
-            string propertyKey,
+        public async Task AddProperty<TValue>(
             CancellationToken token)
         {
-            var dicResult = await CacheFacade.
-                GetData(CacheSet, objectKey, token);
+            void ActionAdd()
+            {
+                var values = GetValues<TValue>();
 
-            var result = await CacheFacade.
-                GetData(dicResult, propertyKey, token);
+                var valid = CacheProperties.ContainsKey(values.typeName);
 
-            return result;
+                if (valid || !values.cacheable)
+                {
+                    return;
+                }
+
+                CacheProperties.Add(values.typeName, values.properties.ToDictionary(p => p.Name, p => p));
+            }
+
+            await CacheFacade.RunActionInSemaphore(ActionAdd, token);
         }
 
-        public async Task<IDictionary<string, Action<object, object>>> GetDictionaryMethodSet(
-            string objectKey,
+        public async Task AddSet<TValue>(
             CancellationToken token)
         {
-            var dictionary = await CacheFacade.GetData(CacheSet, objectKey, token);
-            return dictionary;
+            void ActionAdd()
+            {
+                var values = GetValues<TValue>();
+
+                var valid = CacheSet.ContainsKey(values.typeName);
+
+                if (valid || !values.cacheable)
+                {
+                    return;
+                }
+
+                var dictionary = values.properties.
+                                        ToDictionary(s => s.Name, m => CacheFacade.CreateAction<TValue>(m));
+                CacheSet.Add(values.typeName, dictionary);
+            }
+
+            await CacheFacade.RunActionInSemaphore(ActionAdd, token);
+        }
+
+        public void ClearCache()
+        {
+            InitCache();
         }
 
         public async Task<CustomAttributeTypedArgument> GetAttribute(
@@ -119,6 +167,62 @@ namespace Generic.Repository.Cache
             return result;
         }
 
+        public async Task<IDictionary<string, Func<object, object>>> GetDictionaryMethodGet(
+            string objectKey,
+            CancellationToken token)
+        {
+            var dictionary = await CacheFacade.
+                GetData(CacheGet, objectKey, token);
+
+            return dictionary;
+        }
+
+        public async Task<IDictionary<string, Action<object, object>>> GetDictionaryMethodSet(
+            string objectKey,
+            CancellationToken token)
+        {
+            var dictionary = await CacheFacade.GetData(CacheSet, objectKey, token);
+            return dictionary;
+        }
+
+        public async Task<IDictionary<string, PropertyInfo>> GetDictionaryProperties(
+            string objectKey,
+            CancellationToken token)
+        {
+            var result = await CacheFacade.
+                GetData(CacheProperties, objectKey, token);
+
+            return result;
+        }
+
+        public async Task<Func<object, object>> GetMethodGet(
+                                                                                                    string objectKey,
+            string propertyKey,
+            CancellationToken token)
+        {
+            var dicResult = await CacheFacade.
+                GetData(CacheGet, objectKey, token);
+
+            var result = await CacheFacade.
+                GetData(dicResult, propertyKey, token);
+
+            return result;
+        }
+
+        public async Task<Action<object, object>> GetMethodSet(
+            string objectKey,
+            string propertyKey,
+            CancellationToken token)
+        {
+            var dicResult = await CacheFacade.
+                GetData(CacheSet, objectKey, token);
+
+            var result = await CacheFacade.
+                GetData(dicResult, propertyKey, token);
+
+            return result;
+        }
+
         public async Task<PropertyInfo> GetProperty(
             string objectKey,
             string propertyKey,
@@ -133,145 +237,21 @@ namespace Generic.Repository.Cache
             return result;
         }
 
-        public async Task<IDictionary<string, PropertyInfo>> GetDictionaryProperties(
-            string objectKey,
-            CancellationToken token)
-        {
-            var result = await CacheFacade.
-                GetData(CacheProperties, objectKey, token);
-
-            return result;
-        }
-
-        public async Task AddGet<TValue>(
-            CancellationToken token)
-        {
-            void ActionAdd()
-            {
-                var values = GetValues<TValue>();
-
-                var valid = CacheGet.ContainsKey(values.typeName);
-
-                if (valid || !values.cacheable)
-                {
-                    return;
-                }
-
-                var dictionary = values.properties.
-                       ToDictionary(g => g.Name, m => CacheFacade.CreateFunction<TValue>(m));
-                CacheGet.Add(values.typeName, dictionary);
-            }
-
-            await CacheFacade.ProcessSemaphore(ActionAdd, token);
-        }
-
-        public async Task AddSet<TValue>(
-            CancellationToken token)
-        {
-            void ActionAdd()
-            {
-                var values = GetValues<TValue>();
-
-                var valid = CacheSet.ContainsKey(values.typeName);
-
-                if (valid || !values.cacheable)
-                {
-                    return;
-                }
-
-                var dictionary = values.properties.
-                                        ToDictionary(s => s.Name, m => CacheFacade.CreateAction<TValue>(m));
-                CacheSet.Add(values.typeName, dictionary);
-            }
-
-            await CacheFacade.ProcessSemaphore(ActionAdd, token);
-        }
-
-        public async Task AddProperty<TValue>(
-            CancellationToken token)
-        {
-            void ActionAdd()
-            {
-                var values = GetValues<TValue>();
-                
-                var valid = CacheProperties.ContainsKey(values.typeName);
-
-                if (valid || !values.cacheable)
-                {
-                    return;
-                }
-
-                CacheProperties.Add(values.typeName, values.properties.ToDictionary(p => p.Name, p => p));
-            }
-
-            await CacheFacade.ProcessSemaphore(ActionAdd, token);
-        }
-
-        public async Task AddAttribute<TValue>(
-            CancellationToken token)
-        {
-            void ActionAdd()
-            {
-                var values = GetValues<TValue>();
-                
-                var valid = CacheAttribute.ContainsKey(values.typeName);
-
-                if (valid || !values.cacheable)
-                {
-                    return;
-                }
-
-                var dictionary = new Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>(values.properties.Count());
-
-                CacheAttribute.Add(values.typeName, dictionary);
-
-                foreach (var property in values.properties)
-                {
-                    SetCacheAttributes(property, values.typeName);
-                }
-            }
-
-            await CacheFacade.ProcessSemaphore(ActionAdd, token);
-        }
-
-        public async Task<bool> HasMethodSet(
+        public async Task<bool> HasAttribute(
             CancellationToken token) =>
-            await CacheFacade.ProcessSemaphore(() => CacheSet.Any(), token);
+            await CacheFacade.RunFunctionInSemaphore(() => CacheAttribute.Any(), token);
 
         public async Task<bool> HasMethodGet(
             CancellationToken token) =>
-            await CacheFacade.ProcessSemaphore(() => CacheGet.Any(), token);
+            await CacheFacade.RunFunctionInSemaphore(() => CacheGet.Any(), token);
+
+        public async Task<bool> HasMethodSet(
+                            CancellationToken token) =>
+            await CacheFacade.RunFunctionInSemaphore(() => CacheSet.Any(), token);
 
         public async Task<bool> HasProperty(
             CancellationToken token) =>
-            await CacheFacade.ProcessSemaphore(() => CacheProperties.Any(), token);
-
-        public async Task<bool> HasAttribute(
-            CancellationToken token) =>
-            await CacheFacade.ProcessSemaphore(() => CacheAttribute.Any(), token);
-
-        public void ClearCache()
-        {
-            InitCache();
-        }
-
-        private void SetCacheAttributes(MemberInfo propertyInfo, string typeName)
-        {
-            var propertyName = propertyInfo.Name;
-
-            CacheAttribute[typeName].Add(propertyName, propertyInfo.
-                GetCustomAttributesData().
-                SelectMany(x => x.NamedArguments).
-                ToDictionary(x => x.MemberName, x => x.TypedValue));
-        }
-
-        private void InitCache()
-        {
-            CacheProperties = new Dictionary<string, Dictionary<string, PropertyInfo>>();
-            CacheGet = new Dictionary<string, Dictionary<string, Func<object, object>>>();
-            CacheSet = new Dictionary<string, Dictionary<string, Action<object, object>>>();
-            CacheAttribute = new Dictionary<string, Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>>();
-        }
+            await CacheFacade.RunFunctionInSemaphore(() => CacheProperties.Any(), token);
 
         /// <summary>Gets the values from TValue</summary>
         /// <typeparam name="TValue">The type of the value.</typeparam>
@@ -291,6 +271,24 @@ namespace Generic.Repository.Cache
             var propertiesList = ValidateProperty(properties);
 
             return (typeName, propertiesList, cacheable);
+        }
+
+        private void InitCache()
+        {
+            CacheProperties = new Dictionary<string, Dictionary<string, PropertyInfo>>();
+            CacheGet = new Dictionary<string, Dictionary<string, Func<object, object>>>();
+            CacheSet = new Dictionary<string, Dictionary<string, Action<object, object>>>();
+            CacheAttribute = new Dictionary<string, Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>>();
+        }
+
+        private void SetCacheAttributes(MemberInfo propertyInfo, string typeName)
+        {
+            var propertyName = propertyInfo.Name;
+
+            CacheAttribute[typeName].Add(propertyName, propertyInfo.
+                GetCustomAttributesData().
+                SelectMany(x => x.NamedArguments).
+                ToDictionary(x => x.MemberName, x => x.TypedValue));
         }
 
         /// <summary>Validates the property.</summary>

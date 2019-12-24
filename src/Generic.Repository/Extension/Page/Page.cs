@@ -1,6 +1,6 @@
 using Generic.Repository.Cache;
 using Generic.Repository.Models.Filter;
-using Generic.Repository.Models.Page;
+using Generic.Repository.Models.PageAggregation;
 using Generic.Repository.Models.PageAggregation.PageConfig;
 using System;
 using System.Collections.Generic;
@@ -31,8 +31,8 @@ namespace Generic.Repository.Extension.Page
                 cacheRepository,
                 listEntities,
                 config);
-        #endregion
 
+        #endregion Page<TValue>
 
         /// <summary>Converts to page.</summary>
         /// <typeparam name="TValue">The type of the value.</typeparam>
@@ -64,17 +64,18 @@ namespace Generic.Repository.Extension.Page
         /// <param name="cacheRepository">The cache repository.</param>
         /// <param name="config">The configuration.</param>
         /// <returns></returns>
-        public static IPage<TValue> ToPageFiltred<TValue, TFilter>(
+        public static IPage<TValue> ToPageFiltered<TValue, TFilter>(
             this IQueryable<TValue> listEntities,
             ICacheRepository cacheRepository,
             IPageConfig config)
             where TValue : class
             where TFilter : class, IFilter =>
-            new PageFiltred<TValue, TFilter>(
+            new PageFiltered<TValue, TFilter>(
                 cacheRepository,
                 listEntities,
                 config);
-        #endregion
+
+        #endregion Page<TValue, TFilter>
 
         #region Page<TValue, TFilter, TResult>
 
@@ -87,7 +88,7 @@ namespace Generic.Repository.Extension.Page
         /// <param name="mapperTo">The mapper to.</param>
         /// <param name="config">The configuration.</param>
         /// <returns></returns>
-        public static IPage<TResult> ToPageFiltred<TValue, TFilter, TResult>(
+        public static IPage<TResult> ToPageFiltered<TValue, TFilter, TResult>(
             this IQueryable<TValue> listEntities,
             ICacheRepository cacheRepository,
             Func<IEnumerable<object>, IEnumerable<TResult>> mapping,
@@ -95,12 +96,12 @@ namespace Generic.Repository.Extension.Page
             where TValue : class
             where TResult : class
             where TFilter : class, IFilter =>
-                new PageFiltred<TValue, TFilter, TResult>(
+                new PageFiltered<TValue, TFilter, TResult>(
                     cacheRepository,
                     listEntities,
                     mapping,
                     config);
-        #endregion
 
+        #endregion Page<TValue, TFilter, TResult>
     }
 }

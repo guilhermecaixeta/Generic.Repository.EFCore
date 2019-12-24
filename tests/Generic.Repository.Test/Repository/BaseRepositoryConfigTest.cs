@@ -11,7 +11,6 @@
         where TValue : class
         where TFilter : class, IFilter
     {
-
         protected BaseRepositoryAsync<TValue, TFilter, DbInMemoryContext<TValue>> Repository;
 
         [SetUp]
@@ -20,6 +19,5 @@
 
         private BaseRepositoryAsync<TValue, TFilter, DbInMemoryContext<TValue>> GetRepositoryFake() =>
             new BaseRepositoryAsync<TValue, TFilter, DbInMemoryContext<TValue>>(DbContext, Cache);
-
     }
 }

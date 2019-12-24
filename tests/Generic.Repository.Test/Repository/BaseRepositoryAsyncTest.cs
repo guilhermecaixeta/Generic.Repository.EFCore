@@ -22,8 +22,8 @@ namespace Generic.Repository.Test.Repository
             ComparablePageFilterResult = 1;
         }
 
-        internal override IPageConfig GetPageConfigFake() =>
-            Commom.GetPageConfigFake();
+        internal override Expression<Func<FakeObject, bool>> GetFakeExpression() =>
+            Commom.GetFakeExpression();
 
         internal override FakeFilter GetFilterFake() =>
             Commom.GetFilterFake();
@@ -31,17 +31,17 @@ namespace Generic.Repository.Test.Repository
         internal override IEnumerable<FakeObject> GetListFake() =>
             Commom.GetListFake();
 
-        internal override Expression<Func<FakeObject, bool>> GetFakeExpression() =>
-            Commom.GetFakeExpression();
-
-        protected override Expression<Func<FakeObject, bool>> GetFakeExpression(FakeObject value) =>
-            Commom.GetFakeExpression(value);
+        internal override IPageConfig GetPageConfigFake() =>
+                                    Commom.GetPageConfigFake();
 
         protected override FakeObject CreateFakeValue() =>
             new FakeObject
             {
                 Value = Commom.GetFakeName()
             };
+
+        protected override Expression<Func<FakeObject, bool>> GetFakeExpression(FakeObject value) =>
+                    Commom.GetFakeExpression(value);
 
         protected override FakeObject UpdateFakeValue(FakeObject value)
         {

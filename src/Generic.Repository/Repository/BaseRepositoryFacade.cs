@@ -2,7 +2,7 @@
 using Generic.Repository.Extension.Filter;
 using Generic.Repository.Extension.Page;
 using Generic.Repository.Models.Filter;
-using Generic.Repository.Models.Page;
+using Generic.Repository.Models.PageAggregation;
 using Generic.Repository.Models.PageAggregation.PageConfig;
 using Generic.Repository.Validations.ThrowError;
 using System;
@@ -24,17 +24,10 @@ namespace Generic.Repository.Repository
 
         #region public Methods
 
-        protected override async Task StartCache(CancellationToken token)
-        {
-            await base.StartCache(token);
-            await _cache.AddGet<TFilter>(token);
-            await _cache.AddAttribute<TFilter>(token);
-        }
-
         /// <summary>Initializers the specified context.</summary>
         /// <param name="context">The context.</param>
         /// <param name="cache">The cache.</param>
-        /// <param name="enableAsNoTracking">if set to <c>true</c> [enable as no tracking].</param>
+        /// <param name="enableAsNotTracking">if set to <c>true</c> [enable as no tracking].</param>
         /// <param name="funcSetInclude">The function set include.</param>
         /// <returns></returns>
         public new static async Task<BaseRepositoryFacade<TValue, TFilter>> Initializer(
@@ -59,7 +52,7 @@ namespace Generic.Repository.Repository
             IPageConfig config,
             CancellationToken token) =>
                 await Task.Run(() => query.
-                    ToPageFiltred<TValue, TFilter>(_cache, config), token);
+                    ToPageFiltered<TValue, TFilter>(_cache, config), token);
 
         public new async Task<IPage<TResult>> GetPage<TResult>(
             IQueryable<TValue> query,
@@ -68,9 +61,16 @@ namespace Generic.Repository.Repository
             CancellationToken token)
             where TResult : class =>
                 await Task.Run(() => query.
-                    ToPageFiltred<TValue, TFilter, TResult>(_cache, mapping, config), token);
+                    ToPageFiltered<TValue, TFilter, TResult>(_cache, mapping, config), token);
 
-        #endregion
+        protected override async Task StartCache(CancellationToken token)
+        {
+            await base.StartCache(token);
+            await _cache.AddGet<TFilter>(token);
+            await _cache.AddAttribute<TFilter>(token);
+        }
+
+        #endregion public Methods
     }
 
     public class BaseRepositoryFacade<TValue>
@@ -88,17 +88,10 @@ namespace Generic.Repository.Repository
 
         #region public Methods
 
-        protected virtual async Task StartCache(CancellationToken token)
-        {
-            await _cache.AddGet<TValue>(token);
-            await _cache.AddSet<TValue>(token);
-            await _cache.AddProperty<TValue>(token);
-        }
-
         /// <summary>Initializers the specified context.</summary>
         /// <param name="context">The context.</param>
         /// <param name="cache">The cache.</param>
-        /// <param name="enableAsNoTracking">if set to <c>true</c> [enable as no tracking].</param>
+        /// <param name="enableAsNotTracking">if set to <c>true</c> [enable as no tracking].</param>
         /// <param name="funcSetInclude">The function set include.</param>
         /// <returns></returns>
         public static async Task<BaseRepositoryFacade<TValue>> Initializer(
@@ -111,7 +104,6 @@ namespace Generic.Repository.Repository
 
             return instance;
         }
-
 
         public virtual async Task<IPage<TValue>> GetPage(
             IQueryable<TValue> query,
@@ -127,6 +119,13 @@ namespace Generic.Repository.Repository
             where TResult : class =>
                 await Task.Run(() => query.ToPage(_cache, config, mapping), token);
 
-        #endregion
+        protected virtual async Task StartCache(CancellationToken token)
+        {
+            await _cache.AddGet<TValue>(token);
+            await _cache.AddSet<TValue>(token);
+            await _cache.AddProperty<TValue>(token);
+        }
+
+        #endregion public Methods
     }
 }

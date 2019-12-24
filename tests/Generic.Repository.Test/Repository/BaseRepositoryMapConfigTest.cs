@@ -14,15 +14,11 @@ namespace Generic.Repository.Test.Repository
         where TResult : class
         where TFilter : class, IFilter
     {
+        protected BaseRepositoryAsync<TValue, TFilter, DbInMemoryContext<TValue>> Repository;
+
         [SetUp]
         public void ChildBaseUp() =>
             Repository = GetRepositoryFake();
-
-
-        protected BaseRepositoryAsync<TValue, TFilter, DbInMemoryContext<TValue>> Repository;
-
-        private BaseRepositoryAsync<TValue, TFilter, DbInMemoryContext<TValue>> GetRepositoryFake() =>
-            new BaseRepositoryAsync<TValue, TFilter, DbInMemoryContext<TValue>>(DbContext, Cache);
 
         protected abstract TResult MapperDate(TValue value);
 
@@ -30,5 +26,7 @@ namespace Generic.Repository.Test.Repository
 
         protected abstract TValue MapperReturnToDate(TResult value);
 
+        private BaseRepositoryAsync<TValue, TFilter, DbInMemoryContext<TValue>> GetRepositoryFake() =>
+                                    new BaseRepositoryAsync<TValue, TFilter, DbInMemoryContext<TValue>>(DbContext, Cache);
     }
 }

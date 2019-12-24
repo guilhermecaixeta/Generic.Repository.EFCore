@@ -32,18 +32,15 @@ namespace Generic.Repository.Extension.Filter.Facade
                     Invoke(predicateA, parameter),
                     Invoke(predicateB, parameter));
 
-        private static BinaryExpression OrElse<TValue>(
-            this Expression<Func<TValue, bool>> predicateA,
-            Expression<Func<TValue, bool>> predicateB,
-            ParameterExpression parameter) where TValue : class =>
-                    Expression.AndAlso(
-                        Invoke(predicateA, parameter),
-                        Invoke(predicateB, parameter));
-
         private static Expression<Func<TValue, bool>> CreateExpression<TValue>(
             this Expression expression,
             ParameterExpression parameter) where TValue : class =>
                 Expression.Lambda<Func<TValue, bool>>(expression, parameter);
+
+        private static InvocationExpression Invoke<TValue>(
+            Expression<Func<TValue, bool>> predicate,
+            ParameterExpression parameter) =>
+                Expression.Invoke(predicate, parameter);
 
         private static Expression<Func<TValue, bool>> JoinExpressions<TValue>(
             Expression<Func<TValue, bool>> predicateA,
@@ -56,16 +53,19 @@ namespace Generic.Repository.Extension.Filter.Facade
                 var expression = AndAlso(predicateA, predicateB, parameter);
                 return expression.CreateExpression<TValue>(parameter);
             }
-            else 
+            else
             {
                 var expression = OrElse(predicateA, predicateB, parameter);
                 return CreateExpression<TValue>(expression, parameter);
             }
         }
 
-        private static InvocationExpression Invoke<TValue>(
-            Expression<Func<TValue, bool>> predicate,
-            ParameterExpression parameter) =>
-                Expression.Invoke(predicate, parameter);
+        private static BinaryExpression OrElse<TValue>(
+                                    this Expression<Func<TValue, bool>> predicateA,
+            Expression<Func<TValue, bool>> predicateB,
+            ParameterExpression parameter) where TValue : class =>
+                    Expression.AndAlso(
+                        Invoke(predicateA, parameter),
+                        Invoke(predicateB, parameter));
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Generic.Repository.Cache;
-using Generic.Repository.Models.Page;
+using Generic.Repository.Models.PageAggregation;
 using Generic.Repository.Models.PageAggregation.PageConfig;
 using Generic.Repository.Validations.ThrowError;
 using Microsoft.EntityFrameworkCore;
@@ -16,16 +16,9 @@ namespace Generic.Repository.Repository
         where TValue : class
         where TContext : DbContext
     {
-        protected readonly TContext Context;
-
         protected readonly ICacheRepository CacheService;
 
-        protected IQueryable<TValue> Query { get; set; }
-
-        public IList<string> IncludesString { get; set; } = new List<string>();
-
-        public IList<Expression<Func<TValue, object>>> IncludesExp { get; set; } =
-            new List<Expression<Func<TValue, object>>>();
+        protected readonly TContext Context;
 
         public QueryAsync(TContext context, ICacheRepository cacheService)
         {
@@ -37,13 +30,49 @@ namespace Generic.Repository.Repository
             Query = Context.Set<TValue>();
         }
 
+        public IList<Expression<Func<TValue, object>>> IncludesExp { get; set; } =
+            new List<Expression<Func<TValue, object>>>();
+
+        public IList<string> IncludesString { get; set; } = new List<string>();
+
+        protected IQueryable<TValue> Query { get; set; }
+
         protected virtual async Task<BaseRepositoryFacade<TValue>> GetRepositoryFacade(
-            bool enableASNotTracking,
+            bool enableAsNotTracking,
             CancellationToken token) =>
                 await BaseRepositoryFacade<TValue>.
-                Initializer(CacheService, token);
+                    Initializer(CacheService, token).
+                        ConfigureAwait(false);
 
         #region QUERY
+
+        public virtual async Task<int> CountAsync(
+            Expression<Func<TValue, bool>> predicate,
+            CancellationToken token)
+        {
+            ThrowErrorIf.IsNullValue(predicate, nameof(predicate), nameof(CountAsync));
+
+            CreateQuery(true);
+
+            return await Query.CountAsync(predicate, token).
+                ConfigureAwait(false);
+        }
+
+        public virtual async Task<int> CountAsync(CancellationToken token)
+        {
+            CreateQuery(true);
+
+            return await Query.CountAsync(token).
+                ConfigureAwait(false);
+        }
+
+        public virtual async Task<TValue> FindAsync(
+            params object[] parameters)
+        {
+            ThrowErrorIf.IsNullValue(parameters, nameof(parameters), nameof(FindAsync));
+
+            return await Context.FindAsync<TValue>(parameters).ConfigureAwait(false);
+        }
 
         public virtual async Task<IReadOnlyList<TValue>> GetAllAsync(
             bool enableAsNotTracking,
@@ -51,7 +80,8 @@ namespace Generic.Repository.Repository
         {
             CreateQuery(enableAsNotTracking);
 
-            return await Query.ToListAsync(token);
+            return await Query.ToListAsync(token).
+                ConfigureAwait(false);
         }
 
         public virtual async Task<IReadOnlyList<TValue>> GetAllByAsync(
@@ -63,19 +93,8 @@ namespace Generic.Repository.Repository
 
             CreateQuery(enableAsNotTracking);
 
-            return await Query.Where(predicate).ToListAsync(token);
-        }
-
-        public virtual async Task<TValue> GetSingleByAsync(
-            Expression<Func<TValue, bool>> predicate,
-            bool enableAsNotTracking,
-            CancellationToken token)
-        {
-            ThrowErrorIf.IsNullValue(predicate, nameof(predicate), nameof(GetSingleByAsync));
-
-            CreateQuery(enableAsNotTracking);
-
-            return await Query.SingleOrDefaultAsync(predicate, token).ConfigureAwait(false);
+            return await Query.Where(predicate).ToListAsync(token).
+                ConfigureAwait(false);
         }
 
         public virtual async Task<TValue> GetFirstByAsync(
@@ -87,15 +106,8 @@ namespace Generic.Repository.Repository
 
             CreateQuery(enableAsNotTracking);
 
-            return await Query.FirstOrDefaultAsync(predicate, token).ConfigureAwait(false);
-        }
-
-        public virtual async Task<TValue> FindAsync(
-            params object[] parameters)
-        {
-            ThrowErrorIf.IsNullValue(parameters, nameof(parameters), nameof(FindAsync));
-
-            return await Context.FindAsync<TValue>(parameters).ConfigureAwait(false);
+            return await Query.FirstOrDefaultAsync(predicate, token).
+                ConfigureAwait(false);
         }
 
         public virtual async Task<IPage<TValue>> GetPageAsync(
@@ -105,11 +117,13 @@ namespace Generic.Repository.Repository
         {
             ThrowErrorIf.IsNullValue(config, nameof(config), nameof(GetPageAsync));
 
-            var repositoryFacade = await GetRepositoryFacade(enableAsNotTracking, token);
+            var repositoryFacade = await GetRepositoryFacade(enableAsNotTracking, token).
+                ConfigureAwait(false); ;
 
             CreateQuery(enableAsNotTracking);
 
-            return await repositoryFacade.GetPage(Query, config, token).ConfigureAwait(false);
+            return await repositoryFacade.GetPage(Query, config, token).
+                ConfigureAwait(false);
         }
 
         public virtual async Task<IPage<TValue>> GetPageAsync(
@@ -121,33 +135,32 @@ namespace Generic.Repository.Repository
             ThrowErrorIf.IsNullValue(config, nameof(config), nameof(GetPageAsync));
             ThrowErrorIf.IsNullValue(predicate, nameof(predicate), nameof(GetPageAsync));
 
-            var repositoryFacade = await GetRepositoryFacade(enableAsNotTracking, token);
-            
-            CreateQueryFiltred(predicate, enableAsNotTracking);
+            var repositoryFacade = await GetRepositoryFacade(enableAsNotTracking, token).
+                ConfigureAwait(false);
 
-            return await repositoryFacade.GetPage(Query, config, token).ConfigureAwait(false);
+            CreateQueryFiltered(predicate, enableAsNotTracking);
+
+            return await repositoryFacade.GetPage(Query, config, token).
+                ConfigureAwait(false);
         }
 
-        public virtual async Task<int> CountAsync(
+        public virtual async Task<TValue> GetSingleByAsync(
             Expression<Func<TValue, bool>> predicate,
+            bool enableAsNotTracking,
             CancellationToken token)
         {
-            ThrowErrorIf.IsNullValue(predicate, nameof(predicate), nameof(CountAsync));
+            ThrowErrorIf.IsNullValue(predicate, nameof(predicate), nameof(GetSingleByAsync));
 
-            CreateQuery(true);
+            CreateQuery(enableAsNotTracking);
 
-            return await Query.CountAsync(predicate, token).ConfigureAwait(false);
+            return await Query.SingleOrDefaultAsync(predicate, token).
+                ConfigureAwait(false);
         }
 
-        public virtual async Task<int> CountAsync(CancellationToken token)
-        {
-            CreateQuery(true);
+        #endregion QUERY
 
-            return await Query.CountAsync(token).ConfigureAwait(false);
-        }
-        #endregion
+        #region INCLUDES METHODS
 
-        #region Includes Methods
         public void AddInclude(string include) =>
             IncludesString.Add(include);
 
@@ -163,17 +176,29 @@ namespace Generic.Repository.Repository
             return query;
         }
 
-        #endregion
+        #endregion INCLUDES METHODS
 
-        #region Internal
+        #region INTERNAL
 
-        internal void CreateQueryFiltred(
-            Expression<Func<TValue, bool>> predicate,
+        internal async Task<IReadOnlyList<TValue>> CreateList(
             bool enableAsNotTracking)
         {
             CreateQuery(enableAsNotTracking);
 
-            Query = Query.Where(predicate);
+            return await Query.
+                ToListAsync().
+                ConfigureAwait(false);
+        }
+
+        internal async Task<IReadOnlyList<TValue>> CreateListFiltered(
+            Expression<Func<TValue, bool>> predicate,
+            bool enableAsNotTracking)
+        {
+            CreateQueryFiltered(predicate, enableAsNotTracking);
+
+            return await Query.
+                ToListAsync().
+                ConfigureAwait(false);
         }
 
         internal void CreateQuery(
@@ -187,27 +212,15 @@ namespace Generic.Repository.Repository
             }
         }
 
-        internal async Task<IReadOnlyList<TValue>> CreatList(
+        internal void CreateQueryFiltered(
+            Expression<Func<TValue, bool>> predicate,
             bool enableAsNotTracking)
         {
             CreateQuery(enableAsNotTracking);
 
-            return await Query.
-                ToListAsync().
-                ConfigureAwait(false);
+            Query = Query.Where(predicate);
         }
 
-        internal async Task<IReadOnlyList<TValue>> CreatList(
-            Expression<Func<TValue, bool>> predicate,
-            bool enableAsNotTracking)
-        {
-            CreateQueryFiltred(predicate, enableAsNotTracking);
-
-            return await Query.
-                ToListAsync().
-                ConfigureAwait(false);
-        }
-
-        #endregion
+        #endregion INTERNAL
     }
 }

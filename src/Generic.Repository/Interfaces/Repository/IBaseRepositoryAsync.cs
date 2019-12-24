@@ -1,6 +1,5 @@
-using Generic.Repository.Models.Page;
+using Generic.Repository.Models.PageAggregation;
 using Generic.Repository.Models.PageAggregation.PageConfig;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -9,62 +8,59 @@ using System.Threading.Tasks;
 
 namespace Generic.Repository.Interfaces.Repository
 {
-    public interface IBaseRepositoryAsync<TValue, TContext> : ICommandRepository<TValue>, IQueryAsync<TValue>
-     where TContext : DbContext
+    public interface IBaseRepositoryAsync<TValue> : ICommandRepository<TValue>, IQueryAsync<TValue>
      where TValue : class
     {
-
         #region QUERY<TReturn>
+
         ///<summary>
         /// Return all data
         ///</summary>
-        ///<param name="EnableAsNoTracking">Condition to tracking data</param>
+        ///<param name="enableAsNotTracking">Condition to tracking data</param>
         /// <returns></returns>
         Task<IReadOnlyList<TReturn>> GetAllAsync<TReturn>(
-            bool EnableAsNoTracking,
+            bool enableAsNotTracking,
             Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
-            CancellationToken token);
+            CancellationToken token) where TReturn : class;
 
         ///<summary>
         /// Return all data from predicate informed
         ///</summary>
         ///<param name="predicate">Condition to apply on data</param>
-        ///<param name="EnableAsNoTracking">Condition to tracking data</param>
+        ///<param name="enableAsNotTracking">Condition to tracking data</param>
         /// <returns></returns>
         Task<IReadOnlyList<TReturn>> GetAllByAsync<TReturn>(
             Expression<Func<TValue, bool>> predicate,
-            bool EnableAsNoTracking,
+            bool enableAsNotTracking,
             Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
-            CancellationToken token);
+            CancellationToken token) where TReturn : class;
 
         ///<summary>
         /// Return page.
         ///</summary>
         ///<param name="config">Condition to apply on data</param>
-        ///<param name="EnableAsNoTracking">Condition to tracking data</param>
+        ///<param name="enableAsNotTracking">Condition to tracking data</param>
         /// <returns></returns>
         Task<IPage<TReturn>> GetPageAsync<TReturn>(
             IPageConfig config,
-            bool EnableAsNoTracking,
+            bool enableAsNotTracking,
             Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
             CancellationToken token) where TReturn : class;
 
         ///<summary>
-        /// Return page filtred.
+        /// Return page Filtered.
         ///</summary>
         ///<param name="config">Condition to apply on data</param>
         /// <param name="predicate">Predicate to filter data</param>
-        ///<param name="EnableAsNoTracking">Condition to tracking data</param>
+        ///<param name="enableAsNotTracking">Condition to tracking data</param>
         /// <returns></returns>
         Task<IPage<TReturn>> GetPageAsync<TReturn>(
             IPageConfig config,
-            bool EnableAsNoTracking,
+            bool enableAsNotTracking,
             Expression<Func<TValue, bool>> predicate,
             Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
             CancellationToken token) where TReturn : class;
 
-        #endregion
-
+        #endregion QUERY<TReturn>
     }
-
 }

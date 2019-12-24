@@ -5,13 +5,13 @@ namespace Generic.Repository.Test.Model.Filter
 {
     public class FakeFilter : IFilter
     {
-        [Filter(MethodOption = Enums.LambdaMethod.Contains)]
-        public string Value { get; set; }
+        public FakeFilterEquals Nested { get; set; }
 
         [NoCacheable]
         public string Unkown { get; set; }
 
-        public FakeFilterEquals Nested { get; set; }
+        [Filter(MethodOption = Enums.LambdaMethod.Contains)]
+        public string Value { get; set; }
     }
 
     public class FakeFilterEquals : IFilter
@@ -26,12 +26,6 @@ namespace Generic.Repository.Test.Model.Filter
         public string Value { get; set; }
     }
 
-    public class GreaterThanOrEqual : IFilter
-    {
-        [Filter(MethodOption = Enums.LambdaMethod.GreaterThanOrEqual)]
-        public string Value { get; set; }
-    }
-
     public class FakeFilterLessThan : IFilter
     {
         [Filter(MethodOption = Enums.LambdaMethod.LessThan)]
@@ -41,6 +35,12 @@ namespace Generic.Repository.Test.Model.Filter
     public class FakeFilterLessThanOrEqual : IFilter
     {
         [Filter(MethodOption = Enums.LambdaMethod.LessThanOrEqual)]
+        public string Value { get; set; }
+    }
+
+    public class GreaterThanOrEqual : IFilter
+    {
+        [Filter(MethodOption = Enums.LambdaMethod.GreaterThanOrEqual)]
         public string Value { get; set; }
     }
 }

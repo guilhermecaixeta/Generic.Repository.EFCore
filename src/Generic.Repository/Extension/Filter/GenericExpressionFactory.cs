@@ -1,4 +1,3 @@
-using Generic.Repository.Attributes;
 using Generic.Repository.Cache;
 using Generic.Repository.Enums;
 using Generic.Repository.Extension.Filter.Facade;
@@ -19,12 +18,9 @@ namespace Generic.Repository.Extension.Filter
     /// </summary>
     internal static class GenericExpressionFactory
     {
-        private const string NameProperty = nameof(NameProperty);
-
-        private const string MethodOption = nameof(MethodOption);
-
         private const string MergeOption = nameof(MergeOption);
-
+        private const string MethodOption = nameof(MethodOption);
+        private const string NameProperty = nameof(NameProperty);
         private static readonly ExpressionTypeFacade FilterFacade = new ExpressionTypeFacade();
 
         /// <summary>Generates the predicate.</summary>
@@ -33,7 +29,7 @@ namespace Generic.Repository.Extension.Filter
         /// <param name="filter">The filter.</param>
         /// <param name="cacheRepository">The cache repository.</param>
         /// <returns></returns>
-        public async static Task<Expression<Func<TValue, bool>>> CreateGenericFilter<TValue, TFilter>(
+        public static async Task<Expression<Func<TValue, bool>>> CreateGenericFilter<TValue, TFilter>(
         this TFilter filter,
         ICacheRepository cacheRepository,
         CancellationToken token)
@@ -61,7 +57,7 @@ namespace Generic.Repository.Extension.Filter
 
                 if (!attributeCached.TryGetValue(key, out var attributes))
                 {
-                    return null;
+                    continue;
                 }
 
                 attributes.TryGetValue(MethodOption, out var attributeMethod);
@@ -87,7 +83,7 @@ namespace Generic.Repository.Extension.Filter
             return predicate;
         }
 
-        public async static Task<Expression<Func<TValue, object>>> CreateGenericOrderBy<TValue, TFilter>(
+        public static async Task<Expression<Func<TValue, object>>> CreateGenericOrderBy<TValue, TFilter>(
             this IPageConfig pageConfig,
             ICacheRepository cacheRepository,
             CancellationToken token)
@@ -103,7 +99,7 @@ namespace Generic.Repository.Extension.Filter
             return await GetGenericExpression<TValue>(order, cacheRepository, token);
         }
 
-        public async static Task<Expression<Func<TValue, object>>> CreateGenericOrderBy<TValue>(
+        public static async Task<Expression<Func<TValue, object>>> CreateGenericOrderBy<TValue>(
         this IPageConfig pageConfig,
         ICacheRepository cacheRepository,
         CancellationToken token)
@@ -111,20 +107,6 @@ namespace Generic.Repository.Extension.Filter
             var order = pageConfig.Order;
 
             return await GetGenericExpression<TValue>(order, cacheRepository, token);
-        }
-
-        private static async Task<Expression<Func<TValue, object>>> GetGenericExpression<TValue>(
-            string order,
-            ICacheRepository cacheRepository,
-            CancellationToken token)
-        {
-            var key = typeof(TValue).Name;
-
-            var parameter = Expression.Parameter(typeof(TValue));
-
-            var propertyInfo = await cacheRepository.GetProperty(key, order, token);
-
-            return CreateExpression<TValue>(parameter, propertyInfo);
         }
 
         private static Expression<Func<TValue, object>> CreateExpression<TValue>(
@@ -164,22 +146,41 @@ namespace Generic.Repository.Extension.Filter
                 case LambdaMethod.Contains:
                     var result = FilterFacade.Contains(constant, memberExpression, value);
                     return result;
+
                 case LambdaMethod.GreaterThan:
                     result = FilterFacade.GreaterThan(constant, memberExpression, value);
                     return result;
+
                 case LambdaMethod.LessThan:
                     result = FilterFacade.LessThan(constant, memberExpression, value);
                     return result;
+
                 case LambdaMethod.GreaterThanOrEqual:
                     result = FilterFacade.GreaterThanOrEqual(constant, memberExpression, value);
                     return result;
+
                 case LambdaMethod.LessThanOrEqual:
                     result = FilterFacade.LessThanOrEqual(constant, memberExpression, value);
                     return result;
+
                 default:
                     result = FilterFacade.Equal(constant, memberExpression, value);
                     return result;
             }
+        }
+
+        private static async Task<Expression<Func<TValue, object>>> GetGenericExpression<TValue>(
+            string order,
+            ICacheRepository cacheRepository,
+            CancellationToken token)
+        {
+            var key = typeof(TValue).Name;
+
+            var parameter = Expression.Parameter(typeof(TValue));
+
+            var propertyInfo = await cacheRepository.GetProperty(key, order, token);
+
+            return CreateExpression<TValue>(parameter, propertyInfo);
         }
 
         /// <summary>Determines whether [is valid value] [the specified value].</summary>
