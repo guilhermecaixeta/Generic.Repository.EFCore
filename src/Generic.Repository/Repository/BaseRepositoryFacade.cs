@@ -22,7 +22,7 @@ namespace Generic.Repository.Repository
             ICacheRepository cache) : base(cache)
         { }
 
-        #region public Methods
+        #region PUBLIC METHODS
 
         /// <summary>Initializers the specified context.</summary>
         /// <param name="context">The context.</param>
@@ -70,7 +70,7 @@ namespace Generic.Repository.Repository
             await _cache.AddAttribute<TFilter>(token);
         }
 
-        #endregion public Methods
+        #endregion PUBLIC METHODS
     }
 
     public class BaseRepositoryFacade<TValue>
@@ -86,7 +86,7 @@ namespace Generic.Repository.Repository
             _cache = cache;
         }
 
-        #region public Methods
+        #region PUBLIC METHODS
 
         /// <summary>Initializers the specified context.</summary>
         /// <param name="context">The context.</param>
@@ -126,6 +126,6 @@ namespace Generic.Repository.Repository
             await _cache.AddProperty<TValue>(token);
         }
 
-        #endregion public Methods
+        #endregion PUBLIC METHODS
     }
 }
