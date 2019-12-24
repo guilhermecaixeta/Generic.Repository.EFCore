@@ -1,276 +1,267 @@
-using Generic.Repository.Cache;
-using Generic.Repository.Extension.Error;
-using Generic.Repository.Extension.Filter;
-using Generic.Repository.Extension.Page;
-using Generic.Repository.Extension.Validation;
-using Generic.Repository.Models.Filter;
-using Generic.Repository.Models.Page;
-using Generic.Repository.Models.Page.PageConfig;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading;
-using System.Threading.Tasks;
+using Generic.Repository.Models.PageAggregation;
 
 namespace Generic.Repository.Repository
 {
-    public class BaseRepositoryAsync<TValue, TFilter> : IBaseRepositoryAsync<TValue, TFilter>
+    using Generic.Repository.Cache;
+    using Generic.Repository.Interfaces.Repository;
+    using Generic.Repository.Models.Filter;
+    using Generic.Repository.Models.PageAggregation.PageConfig;
+    using Generic.Repository.Validations.ThrowError;
+    using Microsoft.EntityFrameworkCore;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Linq.Expressions;
+    using System.Threading;
+    using System.Threading.Tasks;
+
+    public class BaseRepositoryAsync<TValue, TFilter, TContext> :
+        CommandAsync<TValue, TContext>, IBaseRepositoryAsync<TValue, TFilter>
         where TValue : class
         where TFilter : class, IFilter
+        where TContext : DbContext
     {
-        #region Attr
-
-        public IList<string> includesString { get; set; } = new List<string>();
-
-        public IList<Expression<Func<TValue, object>>> includesExp { get; set; } =
-            new List<Expression<Func<TValue, object>>>();
-
-        protected readonly ICacheRepository CacheService;
-
-        protected readonly DbContext Context;
-
-        protected readonly bool UseCommit;
-
-        #endregion
-
         #region Ctor
 
         public BaseRepositoryAsync(
-            ICacheRepository cacheService,
-            DbContext context)
+            TContext context,
+            ICacheRepository cacheService) :
+                base(context, cacheService)
         {
-            CacheService = cacheService;
-            Context = context;
-            StartCache();
         }
 
-        public BaseRepositoryAsync(
-            ICacheRepository cacheService,
-            DbContext context,
-            bool useCommit)
+        #endregion Ctor
+
+        #region Queries
+
+        public async Task<IReadOnlyList<TValue>> FilterAllAsync(
+            TFilter filter,
+            bool enableAsNotTracking,
+            CancellationToken token)
         {
-            CacheService = cacheService;
-            UseCommit = useCommit;
-            Context = context;
-            StartCache();
+            ThrowErrorIf.IsNullValue(filter, nameof(filter), nameof(FilterAllAsync));
+
+            await CreateQueryFiltered(filter, enableAsNotTracking, token).
+                                        ConfigureAwait(false);
+
+            return await Query.ToListAsync().
+                            ConfigureAwait(false);
         }
 
-        #endregion
-
-        #region QUERY
-
-        public virtual async Task<IReadOnlyList<TValue>> GetAllAsync(bool enableAsNoTracking) =>
-            await GetAllQueryable(enableAsNoTracking).ToListAsync();
-
-        public virtual async Task<IReadOnlyList<TValue>> GetAllByAsync(Expression<Func<TValue, bool>> predicate,
-            bool enableAsNoTracking)
+        public async Task<IReadOnlyList<TReturn>> FilterAllAsync<TReturn>(
+            TFilter filter,
+            bool enableAsNotTracking,
+            Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
+            CancellationToken token)
         {
-            var queryList = GetAllQueryable(enableAsNoTracking);
+            ThrowErrorIf.IsNullValue(filter, nameof(filter), nameof(FilterAllAsync));
+            ThrowErrorIf.IsNullValue(mapper, nameof(mapper), nameof(FilterAllAsync));
 
-            if (predicate.IsNull())
-            {
-                return await queryList.ToListAsync();
-            }
-            return await queryList.Where(predicate).ToListAsync();
-        }
-        public virtual async Task<IReadOnlyList<TValue>> FilterAllAsync(TFilter filter, bool enableAsNoTracking) =>
-            await GetAllByAsync(GetExpressionByFilter(filter), enableAsNoTracking);
+            await CreateQueryFiltered(filter, enableAsNotTracking, token).
+                                        ConfigureAwait(false);
 
-        public virtual async Task<TValue> GetSingleByAsync(Expression<Func<TValue, bool>> predicate,
-            bool enableAsNoTracking)
-        {
-            ThrowErrorNullValue(predicate, nameof(predicate), nameof(GetSingleByAsync));
+            var list = await CreateList(enableAsNotTracking);
 
-            return await GetAllQueryable(enableAsNoTracking).SingleOrDefaultAsync(predicate);
+            return mapper(list).ToList();
         }
 
-        public virtual async Task<TValue> GetFirstByAsync(Expression<Func<TValue, bool>> predicate,
-            bool enableAsNoTracking)
+        public async Task<IReadOnlyList<TReturn>> GetAllAsync<TReturn>(
+            bool enableAsNotTracking,
+            Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
+            CancellationToken token)
         {
-            ThrowErrorNullValue(predicate, nameof(predicate), nameof(GetFirstByAsync));
+            ThrowErrorIf.IsNullValue(mapper, nameof(mapper), nameof(FilterAllAsync));
 
-            return await GetAllQueryable(enableAsNoTracking).FirstOrDefaultAsync(predicate);
+            var list = await CreateList(enableAsNotTracking);
+
+            return mapper(list).ToList();
         }
 
-        public virtual async Task<IPage<TValue>> GetPageAsync(
-            IPageConfig config,
-            bool enableAsNoTracking) =>
-                await Task.Run(() =>
-                    GetPage(GetAllQueryable(enableAsNoTracking), config));
+        public async Task<IReadOnlyList<TReturn>> GetAllByAsync<TReturn>(
+            bool enableAsNotTracking,
+            Expression<Func<TValue, bool>> predicate,
+            Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
+            CancellationToken token)
+        {
+            CreateQueryFiltered(predicate, enableAsNotTracking);
 
-        public virtual async Task<IPage<TValue>> GetPageAsync(
+            var list = await CreateList(enableAsNotTracking);
+
+            return mapper(list).ToList();
+        }
+
+        public async Task<IPage<TValue>> GetPageAsync(
             IPageConfig config,
             TFilter filter,
-            bool enableAsNoTracking) =>
-                 await Task.Run(() =>
-                     GetPage(GetAllQueryable(enableAsNoTracking)
-                     .Where(GetExpressionByFilter(filter)), config));
+            bool enableAsNotTracking,
+            CancellationToken token)
+        {
+            ThrowErrorIf.IsNullValue(filter, nameof(filter), nameof(FilterAllAsync));
+            ThrowErrorIf.IsNullValue(config, nameof(config), nameof(FilterAllAsync));
 
-        public virtual async Task<IPage<TValue>> GetPageAsync(
+            await CreateQueryFiltered(filter, enableAsNotTracking, token).
+                    ConfigureAwait(false);
+
+            var repositoryFacade = await GetRepositoryFacade(enableAsNotTracking, token);
+
+            return await repositoryFacade.GetPage(Query, config, token).
+                            ConfigureAwait(false);
+        }
+
+        public async Task<IPage<TReturn>> GetPageAsync<TReturn>(
             IPageConfig config,
+            bool enableAsNotTracking,
+            Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
+            CancellationToken token) where TReturn : class
+        {
+            var repositoryFacade = await GetRepositoryFacade(enableAsNotTracking, token).
+                                            ConfigureAwait(false);
+
+            CreateQuery(enableAsNotTracking);
+
+            return await repositoryFacade.GetPage(Query, config, mapper, token).
+                            ConfigureAwait(false);
+        }
+
+        public async Task<IPage<TReturn>> GetPageAsync<TReturn>(
+            IPageConfig config,
+            TFilter filter,
+            bool enableAsNotTracking,
+            Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
+            CancellationToken token) where TReturn : class
+        {
+            var repositoryFacade = await GetRepositoryFacade(enableAsNotTracking, token).
+                                            ConfigureAwait(false);
+
+            await CreateQueryFiltered(filter, enableAsNotTracking, token).
+                        ConfigureAwait(false);
+
+            return await repositoryFacade.GetPage(Query, config, mapper, token).
+                            ConfigureAwait(false);
+        }
+
+        public async Task<IPage<TReturn>> GetPageAsync<TReturn>(
+            IPageConfig config,
+            bool enableAsNotTracking,
             Expression<Func<TValue, bool>> predicate,
-            bool enableAsNoTracking) =>
-                await Task.Run(() => GetPage(GetAllQueryable(enableAsNoTracking)
-                    .Where(predicate), config));
-
-        public virtual async Task<int> CountAsync(Expression<Func<TValue, bool>> predicate)
+            Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
+            CancellationToken token) where TReturn : class
         {
-            ThrowErrorNullValue(predicate, nameof(predicate), nameof(GetSingleByAsync));
+            var repositoryFacade = await GetRepositoryFacade(enableAsNotTracking, token).
+                ConfigureAwait(false);
 
-            return await GetAllQueryable(true).CountAsync(predicate);
+            CreateQueryFiltered(predicate, enableAsNotTracking);
+
+            return await repositoryFacade.GetPage(Query, config, mapper, token).
+                        ConfigureAwait(false);
         }
 
-        public virtual async Task<int> CountAsync() => await GetAllQueryable(true).CountAsync();
+        protected new async Task<BaseRepositoryFacade<TValue, TFilter>> GetRepositoryFacade(
+            CancellationToken token) =>
+                await BaseRepositoryFacade<TValue, TFilter>.
+                    Initializer(CacheService, token);
 
-        #endregion
+        #endregion Queries
 
-        #region Includes Methods
-        public void AddInclude(string include) => includesString.Add(include);
+        #region Internals Methods
 
-        public void AddInclude(Expression<Func<TValue, object>> predicate) => includesExp.Add(predicate);
-        #endregion
-
-        #region COMMAND - (CREAT, UPDATE, DELETE) With CancellationToken
-        public virtual async Task<TValue> CreateAsync(TValue entity, CancellationToken token)
+        internal async Task CreateQueryFiltered(
+            TFilter filter,
+            bool enableAsNotTracking,
+            CancellationToken token)
         {
-            ThrowErrorNullValue(entity, nameof(entity), nameof(CreateAsync));
+            var repositoryFacade = await GetRepositoryFacade(token).
+                        ConfigureAwait(false);
 
-            SetState(EntityState.Added, entity);
-            if (!UseCommit)
-            {
-                await SaveChangesAsync(token).ConfigureAwait(false);
-            }
-            return entity;
+            var predicate = await repositoryFacade.GetExpressionByFilter(filter, token).
+                                    ConfigureAwait(false);
+
+            base.CreateQueryFiltered(predicate, enableAsNotTracking);
         }
 
-        public virtual async Task CreateAsync(IEnumerable<TValue> entityList, CancellationToken token)
+        #endregion Internals Methods
+    }
+
+    public class BaseRepositoryAsync<TValue, TContext> :
+        CommandAsync<TValue, TContext>, IBaseRepositoryAsync<TValue>
+    where TContext : DbContext
+    where TValue : class
+    {
+        #region Ctor
+
+        public BaseRepositoryAsync(
+            TContext context,
+            ICacheRepository cacheService) : base(context, cacheService)
         {
-            ThrowErrorNullOrEmptyList(entityList, nameof(entityList), nameof(CreateAsync));
-
-            await Context.AddRangeAsync(entityList);
-
-            if (!UseCommit)
-            {
-                await SaveChangesAsync(token).ConfigureAwait(false);
-            }
-
         }
 
-        public virtual async Task UpdateAsync(TValue entity, CancellationToken token)
+        public async Task<IReadOnlyList<TReturn>> GetAllAsync<TReturn>(
+            bool enableAsNotTracking,
+            Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
+            CancellationToken token)
+            where TReturn : class
         {
-            ThrowErrorNullValue(entity, nameof(entity), nameof(UpdateAsync));
+            ThrowErrorIf.IsNullValue(mapper, nameof(mapper), nameof(GetAllAsync));
 
-            SetState(EntityState.Modified, entity);
-            if (!UseCommit)
-            {
-                await SaveChangesAsync(token).ConfigureAwait(false);
-            }
+            var list = await CreateList(enableAsNotTracking);
+
+            return mapper(list).ToList();
         }
 
-        public virtual async Task UpdateAsync(IEnumerable<TValue> entityList, CancellationToken token)
+        public async Task<IReadOnlyList<TReturn>> GetAllByAsync<TReturn>(
+            Expression<Func<TValue, bool>> predicate,
+            bool enableAsNotTracking,
+            Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
+            CancellationToken token)
+            where TReturn : class
         {
-            ThrowErrorNullOrEmptyList(entityList, nameof(entityList), nameof(UpdateAsync));
+            ThrowErrorIf.IsNullValue(mapper, nameof(mapper), nameof(GetPageAsync));
+            ThrowErrorIf.IsNullValue(predicate, nameof(predicate), nameof(GetPageAsync));
 
-            Context.UpdateRange(entityList);
-            if (!UseCommit)
-            {
-                await SaveChangesAsync(token).ConfigureAwait(false);
-            }
+            var list = await CreateListFiltered(predicate, enableAsNotTracking).
+                ConfigureAwait(false);
+
+            return mapper(list).ToList();
         }
 
-        public virtual async Task DeleteAsync(TValue entity, CancellationToken token)
+        public async Task<IPage<TReturn>> GetPageAsync<TReturn>(
+            IPageConfig config,
+            bool enableAsNotTracking,
+            Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
+            CancellationToken token) where TReturn : class
         {
-            ThrowErrorNullValue(entity, nameof(entity), nameof(DeleteAsync));
+            ThrowErrorIf.IsNullValue(config, nameof(config), nameof(GetPageAsync));
+            ThrowErrorIf.IsNullValue(mapper, nameof(mapper), nameof(GetPageAsync));
 
-            Context.Remove(entity);
-            if (!UseCommit)
-            {
-                await SaveChangesAsync(token).ConfigureAwait(false);
-            }
+            var repositoryFacade = await GetRepositoryFacade(enableAsNotTracking, token).
+                                            ConfigureAwait(false);
+
+            CreateQuery(enableAsNotTracking);
+
+            return await repositoryFacade.GetPage(Query, config, mapper, token).
+                ConfigureAwait(false);
         }
 
-        public virtual async Task DeleteAsync(IEnumerable<TValue> entityList, CancellationToken token)
+        public async Task<IPage<TReturn>> GetPageAsync<TReturn>(
+            IPageConfig config,
+            bool enableAsNotTracking,
+            Expression<Func<TValue, bool>> predicate,
+            Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
+            CancellationToken token) where TReturn : class
         {
-            ThrowErrorNullOrEmptyList(entityList, nameof(entityList), nameof(DeleteAsync));
+            ThrowErrorIf.IsNullValue(config, nameof(config), nameof(GetPageAsync));
+            ThrowErrorIf.IsNullValue(mapper, nameof(mapper), nameof(GetPageAsync));
+            ThrowErrorIf.IsNullValue(predicate, nameof(predicate), nameof(GetPageAsync));
 
-            Context.RemoveRange(entityList);
-            if (!UseCommit)
-            {
-                await SaveChangesAsync(token).ConfigureAwait(false);
-            }
-        }
-        #endregion
+            var repositoryFacade = await GetRepositoryFacade(enableAsNotTracking, token).
+                                            ConfigureAwait(false);
 
-        #region COMMAND - (CREAT, UPDATE, DELETE) Without CancellationToken
-        public virtual async Task<TValue> CreateAsync(TValue entity) =>
-        await CreateAsync(entity, default(CancellationToken)).ConfigureAwait(false);
+            CreateQueryFiltered(predicate, enableAsNotTracking);
 
-        public virtual async Task CreateAsync(IEnumerable<TValue> entityList) =>
-        await CreateAsync(entityList, default(CancellationToken)).ConfigureAwait(false);
-
-        public virtual async Task UpdateAsync(TValue entity) =>
-        await UpdateAsync(entity, default(CancellationToken)).ConfigureAwait(false);
-
-        public virtual async Task UpdateAsync(IEnumerable<TValue> entityList) =>
-        await UpdateAsync(entityList, default(CancellationToken)).ConfigureAwait(false);
-
-        public virtual async Task DeleteAsync(TValue entity) =>
-        await DeleteAsync(entity, default(CancellationToken)).ConfigureAwait(false);
-
-        public virtual async Task DeleteAsync(IEnumerable<TValue> entityList) =>
-        await DeleteAsync(entityList, default(CancellationToken)).ConfigureAwait(false);
-        #endregion
-
-        #region COMMIT
-        public Task SaveChangesAsync() =>
-            SaveChangesAsync(default);
-
-        public Task SaveChangesAsync(CancellationToken cancellationToken) =>
-         Context.SaveChangesAsync(cancellationToken);
-        #endregion
-
-        #region Protected Methods
-        protected IQueryable<TValue> SetIncludes(IQueryable<TValue> query) =>
-        !includesString.IsNull() && includesString.Any() ?
-                includesString.
-                    Aggregate(query, (current, include) => current.Include(include)) :
-                !includesExp.IsNull() && includesExp.Any() ?
-                includesExp.Aggregate(query, (current, include) => current.Include(include)) :
-                query;
-
-        protected IQueryable<TValue> GetAllQueryable(bool enableAsNoTracking)
-        {
-            var query = SetIncludes(Context.Set<TValue>());
-            if (enableAsNoTracking)
-            {
-                query = query.AsNoTracking();
-            }
-            return query;
+            return await repositoryFacade.GetPage(Query, config, mapper, token).
+                ConfigureAwait(false);
         }
 
-        protected void StartCache()
-        {
-            CacheService.Add<TValue>();
-            CacheService.Add<TFilter>();
-        }
-
-        protected void SetState(EntityState state, TValue item) =>
-            Context.Attach(item).State = state;
-
-        protected Expression<Func<TValue, bool>> GetExpressionByFilter(TFilter filter) =>
-            filter.GeneratePredicate<TValue, TFilter>(CacheService);
-
-        private IPage<TValue> GetPage(IQueryable<TValue> query, IPageConfig config) => 
-            query.ToPage(CacheService, config);
-
-        protected void ThrowErrorNullValue(object obj, string nameAttribute, string nameMethod) =>
-            obj.ThrowErrorNullValue(nameAttribute, nameMethod);
-
-        protected void ThrowErrorNullOrEmptyList(IEnumerable<TValue> list, string nameParameter ,string nameMethod) =>
-            list.ThrowErrorNullOrEmptyList(nameParameter, nameMethod);
-
-        #endregion
+        #endregion Ctor
     }
 }

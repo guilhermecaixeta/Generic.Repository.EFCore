@@ -1,9 +1,9 @@
 namespace Generic.Repository.Test.Repository
 {
-    using Generic.Repository.Test.Repository.Commom;
-    using Generic.Repository.Models.Page.PageConfig;
+    using Generic.Repository.Models.PageAggregation.PageConfig;
     using Generic.Repository.Test.Model;
     using Generic.Repository.Test.Model.Filter;
+    using Generic.Repository.Test.Repository.Commom;
     using NUnit.Framework;
     using System;
     using System.Collections.Generic;
@@ -22,8 +22,8 @@ namespace Generic.Repository.Test.Repository
             ComparablePageFilterResult = 1;
         }
 
-        internal override IPageConfig GetPageConfigFake() =>
-            Commom.GetPageConfigFake();
+        internal override Expression<Func<FakeObject, bool>> GetFakeExpression() =>
+            Commom.GetFakeExpression();
 
         internal override FakeFilter GetFilterFake() =>
             Commom.GetFilterFake();
@@ -31,11 +31,8 @@ namespace Generic.Repository.Test.Repository
         internal override IEnumerable<FakeObject> GetListFake() =>
             Commom.GetListFake();
 
-        internal override Expression<Func<FakeObject, bool>> GetFakeExpression() =>
-            Commom.GetFakeExpression();
-
-        protected override Expression<Func<FakeObject, bool>> GetFakeExpression(FakeObject value) =>
-            Commom.GetFakeExpression(value);
+        internal override IPageConfig GetPageConfigFake() =>
+                                    Commom.GetPageConfigFake();
 
         protected override FakeObject CreateFakeValue() =>
             new FakeObject
@@ -43,13 +40,16 @@ namespace Generic.Repository.Test.Repository
                 Value = Commom.GetFakeName()
             };
 
+        protected override Expression<Func<FakeObject, bool>> GetFakeExpression(FakeObject value) =>
+                    Commom.GetFakeExpression(value);
+
         protected override FakeObject UpdateFakeValue(FakeObject value)
         {
             var data = Commom.GetFakeName();
 
             if (data.Equals(value.Value))
             {
-                UpdateFakeValue(value);
+                _ = UpdateFakeValue(value);
             }
 
             value.Value = data;

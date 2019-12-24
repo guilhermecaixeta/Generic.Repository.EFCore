@@ -1,4 +1,4 @@
-﻿using Generic.Repository.Models.Page.PageConfig;
+﻿using Generic.Repository.Models.PageAggregation.PageConfig;
 using Generic.Repository.Test.Model;
 using Generic.Repository.Test.Model.Filter;
 using System;
@@ -10,30 +10,27 @@ namespace Generic.Repository.Test.Repository.Commom
 {
     internal class CommomMethods
     {
+        public readonly int SizeListTest = 50;
+        private const string Chars = @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        private const int SizeName = 5;
+        private readonly Random _random = new Random();
         private string _fakeSearchValue;
 
-        public readonly int SizeListTest = 500;
-
-        private const int SizeName = 5;
-
-        private const string Chars = @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-
-        private readonly Random _random = new Random();
-
-        public FakeFilter GetFilterFake() =>
-            new FakeFilter { Value = _fakeSearchValue };
-
-        public IPageConfig GetPageConfigFake() =>
-            new PageConfig
-            {
-                order = "Value",
-                page = 0,
-                size = 5,
-                sort = "ASC"
-            };
+        public Expression<Func<FakeObject, bool>> GetExpression(Expression<Func<FakeObject, bool>> expression) =>
+            expression;
 
         public Expression<Func<FakeObject, bool>> GetFakeExpression() =>
-            GetExpression(x => _fakeSearchValue.Contains(x.Value));
+GetExpression(x => _fakeSearchValue.Contains(x.Value));
+
+        public Expression<Func<FakeObject, bool>> GetFakeExpression(FakeObject value) =>
+GetExpression(x => x.Id == value.Id);
+
+        public string GetFakeName() =>
+new string(Enumerable.Repeat(Chars, SizeName)
+.Select(s => s[_random.Next(s.Length)]).ToArray());
+
+        public FakeFilter GetFilterFake() =>
+                                    new FakeFilter { Value = _fakeSearchValue };
 
         public IEnumerable<FakeObject> GetListFake()
         {
@@ -50,14 +47,13 @@ namespace Generic.Repository.Test.Repository.Commom
             }
         }
 
-        public Expression<Func<FakeObject, bool>> GetFakeExpression(FakeObject value) =>
-            GetExpression(x => x.Id == value.Id);
-
-        public Expression<Func<FakeObject, bool>> GetExpression(Expression<Func<FakeObject, bool>> expression) =>
-            expression;
-
-        public string GetFakeName() =>
-            new string(Enumerable.Repeat(Chars, SizeName)
-                .Select(s => s[_random.Next(s.Length)]).ToArray());
+        public IPageConfig GetPageConfigFake() =>
+            new PageConfig
+            {
+                Order = "Value",
+                Page = 0,
+                Size = 5,
+                Sort = Enums.PageSort.ASC
+            };
     }
 }
