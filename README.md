@@ -45,7 +45,7 @@ Dependencies:
   * Add GetPageAsync on Repository;
   * Add unity test; 
   * Add possibility to return data mapped, adding the method responsible for mapping on the constructor.
-  * V.1.0.2 - Lastest
+* V.1.0.2 - Lastest
  Improvements in this version:
   * Update package to .Net Framework 2.1 and EFCore Dependency to 3.0.0
   * Specialization of DBContext in implementation of IBaseRepository
