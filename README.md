@@ -38,7 +38,6 @@ Dependencies:
 
 ## Versions 
 * V.1.0.0 - (DEPRECATED)
- * Pilot
 * V.1.0.1 - (DEPRECATED)
  New features and fixs:
   * Fix include validation;
