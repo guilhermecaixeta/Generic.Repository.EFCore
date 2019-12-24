@@ -37,39 +37,40 @@ Dependencies:
    * Microsoft.EntityFrameworkCore (>= 3.0.0)
 
 ## Versions 
-* V.1.0.0(DEPRECATED) - PILOT
+* V.1.0.0 - (DEPRECATED)
+ * Pilot
 * V.1.0.1 - (DEPRECATED)
-    New features and fixs:
-        Fix include validation;
-        * Add GetPageAsync on Repository;
-        * Add unity test; 
-        * Add possibility to return data mapped, adding the method responsible for mapping on the constructor.
-* V.1.0.2 - Lastest
-    Improvements in this version:
-        * Update package to .Net Framework 2.1 and EFCore Dependency to 3.0.0
-        * Specialization of DBContext in implementation of IBaseRepository
-        * Fix cache issue
-        * Improve pagination
-        * Default values in PageConfig (Sort: "Id", Order: "ASC", Page: 0, Size: 10)
-        * Rename LambdaAttribute to FilterAttribute
-        * Name property now can be used to define the name property used in pagination order
-        * Add NoCacheableAttribute can be applied to attribute or object
-        * Add restrictions to attribute to be cached
-            * Need be a primitive types or a String or a derived types as StringBuilder...
-            * Not be a IEnumerable, Array or any type of list
-            * Can be a nullable primitive type
-        * Add the methods with specific return
-        * Validation method - "ThrowError" throw error if the condition is true
-        * Specifics exceptions:
-            * CacheNotInitializedException, throwed if the cache is not initialized
-            * InvalidTypeException, if the type of object is forbiden for this action
-            * LessThanOrEqualsZeroException, as the name says is throwed if the value is less or than zero
-            * LessThanZero, throwed if value is less than zero
-            * ListNullOrEmptyException, if the list is null or empty the exception is thrown
-            * NotEqualsFieldException, if the value of the fields is not equals
-        * Implemantation of BaseRepositoryAsync with filter has been separeted providing more abstraction
+ New features and fixs:
+  * Fix include validation;
+  * Add GetPageAsync on Repository;
+  * Add unity test; 
+  * Add possibility to return data mapped, adding the method responsible for mapping on the constructor.
+  * V.1.0.2 - Lastest
+ Improvements in this version:
+  * Update package to .Net Framework 2.1 and EFCore Dependency to 3.0.0
+  * Specialization of DBContext in implementation of IBaseRepository
+  * Fix cache issue
+  * Improve pagination
+  * Default values in PageConfig (Sort: "Id", Order: "ASC", Page: 0, Size: 10)
+  * Rename LambdaAttribute to FilterAttribute
+  * Name property now can be used to define the name property used in pagination order
+  * Add NoCacheableAttribute can be applied to attribute or object
+  * Add restrictions to attribute to be cached
+      * Need be a primitive types or a String or a derived types as StringBuilder...
+      * Not be a IEnumerable, Array or any type of list
+      * Can be a nullable primitive type
+  * Add the methods with specific return
+  * Validation method - "ThrowError" throw error if the condition is true
+  * Specifics exceptions:
+      * CacheNotInitializedException, throwed if the cache is not initialized
+      * InvalidTypeException, if the type of object is forbiden for this action
+      * LessThanOrEqualsZeroException, as the name says is throwed if the value is less or than zero
+      * LessThanZero, throwed if value is less than zero
+      * ListNullOrEmptyException, if the list is null or empty the exception is thrown
+      * NotEqualsFieldException, if the value of the fields is not equals
+  * Implemantation of BaseRepositoryAsync with filter has been separeted providing more abstraction
 
- ## DOC
+## DOC
 This documentation has been updated with the version 1.0.2
 
  ### 1
