@@ -25,7 +25,7 @@
 
         private static DbContextOptions<DbInMemoryContext<TValue>> GetDbContextOptionsFake() =>
             new DbContextOptionsBuilder<DbInMemoryContext<TValue>>()
-                .UseInMemoryDatabase(databaseName: "MemoryBase")
+                .UseInMemoryDatabase("MemoryBase")
                 .Options;
     }
 }

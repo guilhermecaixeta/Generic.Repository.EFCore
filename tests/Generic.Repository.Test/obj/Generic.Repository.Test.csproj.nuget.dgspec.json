@@ -1,0 +1,174 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\tests\\Generic.Repository.Test\\Generic.Repository.Test.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj": {
+      "version": "1.0.1",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj",
+        "projectName": "Generic.RepositoryAsync.EFCore",
+        "projectPath": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj",
+        "packagesPath": "C:\\Users\\ctw00503\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\src\\Generic.Repository\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Microsoft\\Xamarin\\NuGet\\",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\ctw00503\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netstandard2.1"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://bmw.myget.org/F/mobilitygraph/api/v3/index.json": {},
+          "https://bmw.myget.org/F/omc/api/v3/index.json": {},
+          "https://bmw.myget.org/F/sharedcode/api/v3/index.json": {}
+        },
+        "frameworks": {
+          "netstandard2.1": {
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netstandard2.1": {
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[3.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "NETStandard.Library": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.100\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\tests\\Generic.Repository.Test\\Generic.Repository.Test.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\tests\\Generic.Repository.Test\\Generic.Repository.Test.csproj",
+        "projectName": "Generic.Repository.Test",
+        "projectPath": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\tests\\Generic.Repository.Test\\Generic.Repository.Test.csproj",
+        "packagesPath": "C:\\Users\\ctw00503\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\tests\\Generic.Repository.Test\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Microsoft\\Xamarin\\NuGet\\",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\ctw00503\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp3.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://bmw.myget.org/F/mobilitygraph/api/v3/index.json": {},
+          "https://bmw.myget.org/F/omc/api/v3/index.json": {},
+          "https://bmw.myget.org/F/sharedcode/api/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp3.0": {
+            "projectReferences": {
+              "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj": {
+                "projectPath": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp3.0": {
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore.InMemory": {
+              "target": "Package",
+              "version": "[3.0.0, )"
+            },
+            "Microsoft.Extensions.Logging": {
+              "target": "Package",
+              "version": "[3.0.0, )"
+            },
+            "Microsoft.NET.Test.Sdk": {
+              "target": "Package",
+              "version": "[16.3.0, )"
+            },
+            "NUnit3TestAdapter": {
+              "target": "Package",
+              "version": "[3.15.1, )"
+            },
+            "nunit": {
+              "target": "Package",
+              "version": "[3.12.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[3.0.1, 3.0.1]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[3.0.0, 3.0.0]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[3.0.0, 3.0.0]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.100\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

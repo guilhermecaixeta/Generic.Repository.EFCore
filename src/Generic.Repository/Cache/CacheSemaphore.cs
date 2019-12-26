@@ -8,6 +8,8 @@ namespace Generic.Repository.Cache
 
         public static bool Signal = true;
 
+        public static int Timeout = 10;
+
         private const int MaxValue = 1;
 
         private const int MinValue = 1;
@@ -24,7 +26,7 @@ namespace Generic.Repository.Cache
 
         public static void WaitOne()
         {
-            Signal = Semaphore.WaitOne(5);
+            Signal = Semaphore.WaitOne(Timeout);
         }
     }
 }

@@ -32,7 +32,7 @@ script:
      - bash ./build.sh
     # - dotnet restore
     # - dotnet build
-    # - cd tests/Generic.Repository.Test
+    # - cd tests/Generic.Repository.UnitTest
     # - dotnet test
 
 global:

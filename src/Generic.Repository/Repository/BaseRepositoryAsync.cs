@@ -156,7 +156,7 @@ namespace Generic.Repository.Repository
                         ConfigureAwait(false);
         }
 
-        protected new async Task<BaseRepositoryFacade<TValue, TFilter>> GetRepositoryFacade(
+        internal async Task<BaseRepositoryFacade<TValue, TFilter>> GetRepositoryFacade(
             CancellationToken token) =>
                 await BaseRepositoryFacade<TValue, TFilter>.
                     Initializer(CacheService, token);
@@ -205,9 +205,11 @@ namespace Generic.Repository.Repository
              CancellationToken token)
              where TReturn : class
         {
-            ThrowErrorIf.IsNullValue(mapper, nameof(mapper), nameof(GetAllAsync));
+            ThrowErrorIf.
+                IsNullValue(mapper, nameof(mapper), nameof(GetAllAsync));
 
-            var list = await CreateList(enableAsNotTracking);
+            var list = await CreateList(enableAsNotTracking).
+                ConfigureAwait(false);
 
             return mapper(list).ToList();
         }
@@ -219,8 +221,11 @@ namespace Generic.Repository.Repository
             CancellationToken token)
             where TReturn : class
         {
-            ThrowErrorIf.IsNullValue(mapper, nameof(mapper), nameof(GetPageAsync));
-            ThrowErrorIf.IsNullValue(predicate, nameof(predicate), nameof(GetPageAsync));
+            ThrowErrorIf.
+                IsNullValue(mapper, nameof(mapper), nameof(GetPageAsync));
+
+            ThrowErrorIf.
+                IsNullValue(predicate, nameof(predicate), nameof(GetPageAsync));
 
             var list = await CreateListFiltered(predicate, enableAsNotTracking).
                 ConfigureAwait(false);
@@ -234,8 +239,11 @@ namespace Generic.Repository.Repository
             Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
             CancellationToken token) where TReturn : class
         {
-            ThrowErrorIf.IsNullValue(config, nameof(config), nameof(GetPageAsync));
-            ThrowErrorIf.IsNullValue(mapper, nameof(mapper), nameof(GetPageAsync));
+            ThrowErrorIf.
+                IsNullValue(config, nameof(config), nameof(GetPageAsync));
+
+            ThrowErrorIf.
+                IsNullValue(mapper, nameof(mapper), nameof(GetPageAsync));
 
             var repositoryFacade = await GetRepositoryFacade(enableAsNotTracking, token).
                                             ConfigureAwait(false);
@@ -253,9 +261,14 @@ namespace Generic.Repository.Repository
             Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
             CancellationToken token) where TReturn : class
         {
-            ThrowErrorIf.IsNullValue(config, nameof(config), nameof(GetPageAsync));
-            ThrowErrorIf.IsNullValue(mapper, nameof(mapper), nameof(GetPageAsync));
-            ThrowErrorIf.IsNullValue(predicate, nameof(predicate), nameof(GetPageAsync));
+            ThrowErrorIf.
+                IsNullValue(config, nameof(config), nameof(GetPageAsync));
+
+            ThrowErrorIf.
+                IsNullValue(mapper, nameof(mapper), nameof(GetPageAsync));
+
+            ThrowErrorIf.
+                IsNullValue(predicate, nameof(predicate), nameof(GetPageAsync));
 
             var repositoryFacade = await GetRepositoryFacade(enableAsNotTracking, token).
                                             ConfigureAwait(false);

@@ -22,8 +22,11 @@ namespace Generic.Repository.Repository
 
         public QueryAsync(TContext context, ICacheRepository cacheService)
         {
-            ThrowErrorIf.InitializeCache(cacheService);
-            ThrowErrorIf.IsNullValue(context, nameof(context), typeof(QueryAsync<,>).Name);
+            ThrowErrorIf.
+                InitializeCache(cacheService);
+
+            ThrowErrorIf.
+                IsNullValue(context, nameof(context), typeof(QueryAsync<,>).Name);
 
             Context = context;
             CacheService = cacheService;
@@ -37,7 +40,7 @@ namespace Generic.Repository.Repository
 
         protected IQueryable<TValue> Query { get; set; }
 
-        protected virtual async Task<BaseRepositoryFacade<TValue>> GetRepositoryFacade(
+        internal virtual async Task<BaseRepositoryFacade<TValue>> GetRepositoryFacade(
             bool enableAsNotTracking,
             CancellationToken token) =>
                 await BaseRepositoryFacade<TValue>.
@@ -69,9 +72,11 @@ namespace Generic.Repository.Repository
         public virtual async Task<TValue> FindAsync(
             params object[] parameters)
         {
-            ThrowErrorIf.IsNullValue(parameters, nameof(parameters), nameof(FindAsync));
+            ThrowErrorIf.
+                IsNullValue(parameters, nameof(parameters), nameof(FindAsync));
 
-            return await Context.FindAsync<TValue>(parameters).ConfigureAwait(false);
+            return await Context.FindAsync<TValue>(parameters).
+                ConfigureAwait(false);
         }
 
         public virtual async Task<IReadOnlyList<TValue>> GetAllAsync(
@@ -102,7 +107,8 @@ namespace Generic.Repository.Repository
             bool enableAsNotTracking,
             CancellationToken token)
         {
-            ThrowErrorIf.IsNullValue(predicate, nameof(predicate), nameof(GetFirstByAsync));
+            ThrowErrorIf.
+                IsNullValue(predicate, nameof(predicate), nameof(GetFirstByAsync));
 
             CreateQuery(enableAsNotTracking);
 
@@ -118,7 +124,7 @@ namespace Generic.Repository.Repository
             ThrowErrorIf.IsNullValue(config, nameof(config), nameof(GetPageAsync));
 
             var repositoryFacade = await GetRepositoryFacade(enableAsNotTracking, token).
-                ConfigureAwait(false); ;
+                ConfigureAwait(false);
 
             CreateQuery(enableAsNotTracking);
 
@@ -132,8 +138,11 @@ namespace Generic.Repository.Repository
             bool enableAsNotTracking,
             CancellationToken token)
         {
-            ThrowErrorIf.IsNullValue(config, nameof(config), nameof(GetPageAsync));
-            ThrowErrorIf.IsNullValue(predicate, nameof(predicate), nameof(GetPageAsync));
+            ThrowErrorIf.
+                IsNullValue(config, nameof(config), nameof(GetPageAsync));
+
+            ThrowErrorIf.
+                IsNullValue(predicate, nameof(predicate), nameof(GetPageAsync));
 
             var repositoryFacade = await GetRepositoryFacade(enableAsNotTracking, token).
                 ConfigureAwait(false);
@@ -149,7 +158,8 @@ namespace Generic.Repository.Repository
             bool enableAsNotTracking,
             CancellationToken token)
         {
-            ThrowErrorIf.IsNullValue(predicate, nameof(predicate), nameof(GetSingleByAsync));
+            ThrowErrorIf.
+                IsNullValue(predicate, nameof(predicate), nameof(GetSingleByAsync));
 
             CreateQuery(enableAsNotTracking);
 
@@ -169,9 +179,11 @@ namespace Generic.Repository.Repository
 
         internal IQueryable<TValue> SetIncludes(IQueryable<TValue> query)
         {
-            query = IncludesString.Aggregate(query, (current, include) => current.Include(include));
+            query = IncludesString.
+                Aggregate(query, (current, include) => current.Include(include));
 
-            query = IncludesExp.Aggregate(query, (current, include) => current.Include(include));
+            query = IncludesExp.
+                Aggregate(query, (current, include) => current.Include(include));
 
             return query;
         }
@@ -202,7 +214,7 @@ namespace Generic.Repository.Repository
         }
 
         internal void CreateQuery(
-            bool enableAsNotTracking)
+                            bool enableAsNotTracking)
         {
             Query = SetIncludes(Query);
 

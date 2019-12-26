@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Generic.Repository.Test.Data
 {
@@ -13,5 +14,13 @@ namespace Generic.Repository.Test.Data
         { }
 
         private DbSet<T> Value { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.
+                ConfigureWarnings(warn => warn.Ignore(InMemoryEventId.TransactionIgnoredWarning));
+
+            base.OnConfiguring(optionsBuilder);
+        }
     }
 }
