@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Generic.Repository.Interfaces.Repository
 {
@@ -50,11 +52,16 @@ namespace Generic.Repository.Interfaces.Repository
 
         #region COMMIT - (SAVECHANGES)
 
-        /// <summary>
-        /// Commit async transaction if useCommit is true
-        /// </summary>
+        /// <summary>Saves the changes asynchronous.</summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         Task SaveChangesAsync(CancellationToken cancellationToken);
+
+        /// <summary>  Exceute the specified actions inside a transaction.</summary>
+        /// <param name="transaction">The transaction.</param>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
+        Task TransactionAsync(Action<DbSet<TValue>> transaction, CancellationToken token);
 
         #endregion COMMIT - (SAVECHANGES)
     }

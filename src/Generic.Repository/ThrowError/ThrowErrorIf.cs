@@ -8,7 +8,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    /// <summary>Static class to check if is needed to trow a Exception.</summary>
+    /// <summary>Throw an error if the condition is attempt.</summary>
     public static class ThrowErrorIf
     {
         private static ICacheRepository CacheRepository;

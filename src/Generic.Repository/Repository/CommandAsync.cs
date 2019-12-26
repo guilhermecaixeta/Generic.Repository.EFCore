@@ -1,4 +1,5 @@
-﻿using Generic.Repository.Cache;
+﻿using System;
+using Generic.Repository.Cache;
 using Generic.Repository.Validations.ThrowError;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -82,6 +83,27 @@ namespace Generic.Repository.Repository
 
         public Task SaveChangesAsync(CancellationToken cancellationToken) =>
          Context.SaveChangesAsync(cancellationToken);
+
+        public async Task TransactionAsync(Action<DbSet<TValue>> transaction, CancellationToken token)
+        {
+            ThrowErrorIf.
+                IsNullValue(transaction, nameof(transaction), nameof(TransactionAsync));
+
+            using (var contextTransaction = await Context.Database.BeginTransactionAsync().
+                ConfigureAwait(false))
+            {
+                try
+                {
+                    transaction(Context.Set<TValue>());
+
+                    await contextTransaction.CommitAsync();
+                }
+                catch (Exception)
+                {
+                    await contextTransaction.RollbackAsync();
+                }
+            }
+        }
 
         #endregion COMMIT
     }
