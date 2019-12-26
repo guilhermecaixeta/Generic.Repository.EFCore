@@ -5,14 +5,14 @@ namespace Generic.Repository.Test.Cache
     using NUnit.Framework;
 
     [TestFixture]
-    public class CacheRepositoryTest : CacheRepositoryExceptionTest<FakeFilter>
+    public class CacheRepositoryTest : CacheRepositoryIOAccessTest<FakeFilter>
     {
-
         [SetUp]
         public void CacheSetUp()
         {
             NameProperty = nameof(FakeFilter.Value);
-            NameAttribute = nameof(LambdaAttribute.MethodOption);
+            NoCacheableProperty = nameof(FakeFilter.Unkown);
+            NameAttribute = nameof(FilterAttribute.MethodOption);
         }
     }
 }
