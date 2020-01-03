@@ -24,7 +24,7 @@ namespace Generic.Repository.Cache
 
         public static void WaitOne()
         {
-            Signal = Semaphore.WaitOne(5);
+            Signal = Semaphore.WaitOne(10);
         }
     }
 }
