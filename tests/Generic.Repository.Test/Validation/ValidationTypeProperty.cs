@@ -1,10 +1,10 @@
-﻿using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
+using NUnit.Framework;
 
-namespace Generic.Repository.Test.Validation
+namespace Generic.Repository.UnitTest.Validation
 {
     [TestFixture]
     public class ValidationTypeProperty

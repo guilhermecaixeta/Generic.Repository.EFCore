@@ -1,12 +1,12 @@
-namespace Generic.Repository.Test.Repository
-{
-    using Generic.Repository.Exceptions;
-    using Generic.Repository.Models.Filter;
-    using NUnit.Framework;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq.Expressions;
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using Generic.Repository.Exceptions;
+using Generic.Repository.Models.Filter;
+using NUnit.Framework;
 
+namespace Generic.Repository.UnitTest.Repository
+{
     [TestFixture]
     public abstract class BaseRepositoryExceptionTest<TValue, TFilter> : BaseRepositoryAsyncQueryTest<TValue, TFilter>
         where TValue : class

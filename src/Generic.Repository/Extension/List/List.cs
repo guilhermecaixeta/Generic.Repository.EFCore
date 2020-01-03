@@ -1,6 +1,6 @@
-﻿using Generic.Repository.Validations.ThrowError;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Generic.Repository.ThrowError;
 
 namespace Generic.Repository.Extension.List
 {

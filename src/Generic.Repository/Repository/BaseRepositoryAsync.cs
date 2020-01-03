@@ -1,4 +1,5 @@
 using Generic.Repository.Models.PageAggregation;
+using Generic.Repository.ThrowError;
 
 namespace Generic.Repository.Repository
 {
@@ -6,7 +7,6 @@ namespace Generic.Repository.Repository
     using Generic.Repository.Interfaces.Repository;
     using Generic.Repository.Models.Filter;
     using Generic.Repository.Models.PageAggregation.PageConfig;
-    using Generic.Repository.Validations.ThrowError;
     using Microsoft.EntityFrameworkCore;
     using System;
     using System.Collections.Generic;

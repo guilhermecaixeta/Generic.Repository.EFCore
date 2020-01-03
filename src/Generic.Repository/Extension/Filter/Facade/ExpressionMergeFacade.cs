@@ -1,7 +1,7 @@
 ﻿using Generic.Repository.Enums;
-using Generic.Repository.Validations.Extension.Validation;
 using System;
 using System.Linq.Expressions;
+using Generic.Repository.Extension.Validation;
 
 namespace Generic.Repository.Extension.Filter.Facade
 {

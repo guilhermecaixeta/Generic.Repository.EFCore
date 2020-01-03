@@ -1,9 +1,9 @@
-﻿using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using NUnit.Framework;
 
-namespace Generic.Repository.Test.Cache
+namespace Generic.Repository.UnitTest.Cache
 {
     public abstract class CacheRepositoryIOAccessTest<T>
         : CacheRepositoryExceptionTest<T>

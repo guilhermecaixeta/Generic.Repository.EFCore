@@ -1,13 +1,13 @@
-﻿namespace Generic.Repository.Validations.ThrowError
-{
-    using Generic.Repository.Cache;
-    using Generic.Repository.Exceptions;
-    using Generic.Repository.Validations.Extension.Validation;
-    using System;
-    using System.Collections.Generic;
-    using System.Threading;
-    using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Generic.Repository.Cache;
+using Generic.Repository.Exceptions;
+using Generic.Repository.Extension.Validation;
 
+namespace Generic.Repository.ThrowError
+{
     /// <summary>Throw an error if the condition is attempt.</summary>
     public static class ThrowErrorIf
     {

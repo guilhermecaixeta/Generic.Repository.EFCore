@@ -1,11 +1,11 @@
-﻿namespace Generic.Repository.Test.Repository
-{
-    using Generic.Repository.Models.Filter;
-    using Generic.Repository.Repository;
-    using Generic.Repository.Test.Data;
-    using Generic.Repository.Test.Repository.Commom;
-    using NUnit.Framework;
+﻿using Generic.Repository.Models.Filter;
+using Generic.Repository.Repository;
+using Generic.Repository.UnitTest.Data;
+using Generic.Repository.UnitTest.Repository.Commom;
+using NUnit.Framework;
 
+namespace Generic.Repository.UnitTest.Repository
+{
     public abstract class BaseRepositoryConfigTest<TValue, TFilter> :
         BaseRepositoryCommomConfig<TValue>
         where TValue : class

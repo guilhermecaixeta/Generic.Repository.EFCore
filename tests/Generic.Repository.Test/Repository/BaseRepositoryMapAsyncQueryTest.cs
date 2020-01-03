@@ -1,12 +1,12 @@
-﻿using Generic.Repository.Models.Filter;
-using Generic.Repository.Models.PageAggregation.PageConfig;
-using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Generic.Repository.Models.Filter;
+using Generic.Repository.Models.PageAggregation.PageConfig;
+using NUnit.Framework;
 
-namespace Generic.Repository.Test.Repository
+namespace Generic.Repository.UnitTest.Repository
 {
     [TestFixture]
     public abstract class BaseRepositoryMapAsyncQueryTest<TValue, TResult, TFilter>

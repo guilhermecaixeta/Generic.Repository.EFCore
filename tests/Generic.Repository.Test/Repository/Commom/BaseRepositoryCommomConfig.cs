@@ -1,10 +1,10 @@
-﻿namespace Generic.Repository.Test.Repository.Commom
-{
-    using Generic.Repository.Cache;
-    using Generic.Repository.Test.Data;
-    using Microsoft.EntityFrameworkCore;
-    using NUnit.Framework;
+﻿using Generic.Repository.Cache;
+using Generic.Repository.UnitTest.Data;
+using Microsoft.EntityFrameworkCore;
+using NUnit.Framework;
 
+namespace Generic.Repository.UnitTest.Repository.Commom
+{
     public abstract class BaseRepositoryCommomConfig<TValue>
     where TValue : class
     {

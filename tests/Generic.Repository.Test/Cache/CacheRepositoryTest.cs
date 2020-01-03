@@ -1,9 +1,9 @@
-namespace Generic.Repository.Test.Cache
-{
-    using Generic.Repository.Attributes;
-    using Generic.Repository.Test.Model.Filter;
-    using NUnit.Framework;
+using Generic.Repository.Attributes;
+using Generic.Repository.UnitTest.Model.Filter;
+using NUnit.Framework;
 
+namespace Generic.Repository.UnitTest.Cache
+{
     [TestFixture]
     public class CacheRepositoryTest : CacheRepositoryIOAccessTest<FakeFilter>
     {

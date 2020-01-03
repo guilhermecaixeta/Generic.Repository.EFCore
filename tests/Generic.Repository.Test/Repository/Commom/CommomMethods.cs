@@ -1,12 +1,12 @@
-﻿using Generic.Repository.Models.PageAggregation.PageConfig;
-using Generic.Repository.Test.Model;
-using Generic.Repository.Test.Model.Filter;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using Generic.Repository.Models.PageAggregation.PageConfig;
+using Generic.Repository.UnitTest.Model;
+using Generic.Repository.UnitTest.Model.Filter;
 
-namespace Generic.Repository.Test.Repository.Commom
+namespace Generic.Repository.UnitTest.Repository.Commom
 {
     internal class CommomMethods
     {
