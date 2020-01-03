@@ -14,3 +14,7 @@ tests/Generic\.Repository\.UnitTest/obj/
 tests/Generic\.Repository\.UnitTest/bin/
 
 TestResults/
+
+tests/Generic.Repository.Test/bin/
+
+tests/Generic.Repository.Test/obj/
