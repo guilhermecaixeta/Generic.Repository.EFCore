@@ -18,14 +18,14 @@ jobs:
     
     name: ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    env:
+        DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+        DOTNET_CLI_TELEMETRY_OPTOUT: 1
     steps:
     - run: |
         dotnet --info
     - uses: actions/checkout@master
     - uses: actions/setup-dotnet@v1
-    - env:
-        DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-        DOTNET_CLI_TELEMETRY_OPTOUT: 1
     - if: contains(matrix.os, 'windows')
       run: build.bat
     - if: contains(matrix.os, 'macOS') || contains(matrix.os, 'ubuntu')
