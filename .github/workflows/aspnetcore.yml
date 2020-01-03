@@ -13,7 +13,7 @@ jobs:
   build:  
     strategy:
       matrix:
-        core_version: [2.2.108]
+        core_version: [3.0.1]
         os: [ubuntu-latest, windows-latest, macOS-latest]
     
     name: ${{ matrix.os }}
