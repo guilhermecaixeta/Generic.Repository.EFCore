@@ -1,4 +1,5 @@
 using Generic.Repository.Attributes;
+using Generic.Repository.ThrowError;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -7,7 +8,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Generic.Repository.ThrowError;
 
 namespace Generic.Repository.Cache
 {

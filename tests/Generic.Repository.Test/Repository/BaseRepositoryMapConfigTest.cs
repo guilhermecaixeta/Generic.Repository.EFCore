@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using Generic.Repository.Models.Filter;
+﻿using Generic.Repository.Models.Filter;
 using Generic.Repository.Repository;
 using Generic.Repository.UnitTest.Data;
 using Generic.Repository.UnitTest.Repository.Commom;
 using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace Generic.Repository.UnitTest.Repository
 {

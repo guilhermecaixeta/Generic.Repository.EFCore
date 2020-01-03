@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Generic.Repository.Models.PageAggregation.PageConfig;
+using Generic.Repository.UnitTest.Model;
+using Generic.Repository.UnitTest.Model.Filter;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using Generic.Repository.Models.PageAggregation.PageConfig;
-using Generic.Repository.UnitTest.Model;
-using Generic.Repository.UnitTest.Model.Filter;
 
 namespace Generic.Repository.UnitTest.Repository.Commom
 {

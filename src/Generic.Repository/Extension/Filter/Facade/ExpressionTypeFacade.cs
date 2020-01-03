@@ -1,7 +1,7 @@
 ﻿using Generic.Repository.Enums;
+using Generic.Repository.ThrowError;
 using System;
 using System.Linq.Expressions;
-using Generic.Repository.ThrowError;
 
 namespace Generic.Repository.Extension.Filter.Facade
 {

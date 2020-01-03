@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Generic.Repository.ThrowError;
+using System.Collections.Generic;
 using System.Linq;
-using Generic.Repository.ThrowError;
 
 namespace Generic.Repository.Extension.List
 {

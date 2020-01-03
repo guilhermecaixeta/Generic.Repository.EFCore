@@ -1,9 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
 using Generic.Repository.Exceptions;
 using Generic.Repository.Models.Filter;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace Generic.Repository.UnitTest.Repository
 {

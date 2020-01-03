@@ -1,6 +1,6 @@
 using Generic.Repository.Enums;
-using System;
 using Generic.Repository.ThrowError;
+using System;
 
 namespace Generic.Repository.Models.PageAggregation.PageConfig
 {

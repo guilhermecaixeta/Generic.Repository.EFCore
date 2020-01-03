@@ -1,8 +1,8 @@
-﻿using System;
+﻿using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
-using NUnit.Framework;
 
 namespace Generic.Repository.UnitTest.Validation
 {

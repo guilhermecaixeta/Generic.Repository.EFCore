@@ -3,12 +3,12 @@ using Generic.Repository.Enums;
 using Generic.Repository.Extension.Filter;
 using Generic.Repository.Models.Filter;
 using Generic.Repository.Models.PageAggregation.PageConfig;
+using Generic.Repository.ThrowError;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Generic.Repository.ThrowError;
 
 namespace Generic.Repository.Models.PageAggregation
 {

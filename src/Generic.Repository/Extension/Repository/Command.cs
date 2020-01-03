@@ -1,10 +1,10 @@
-﻿using System;
-using Generic.Repository.Extension.List;
+﻿using Generic.Repository.Extension.List;
 using Generic.Repository.Interfaces.Repository;
+using Generic.Repository.ThrowError;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Generic.Repository.ThrowError;
 
 namespace Generic.Repository.Extension.Repository
 {
@@ -23,14 +23,11 @@ namespace Generic.Repository.Extension.Repository
             CancellationToken token)
             where TValue : class
         {
-            ThrowErrorIf.
-                IsNullOrEmptyList(list, nameof(list), nameof(BulkDeleteAsync));
+            ThrowErrorIf.IsNullOrEmptyList(list, nameof(list), nameof(BulkDeleteAsync));
 
-            ThrowErrorIf.
-                IsLessThanOrEqualsZero(chunkSize);
+            ThrowErrorIf.IsLessThanOrEqualsZero(chunkSize);
 
-            await repository.
-                ProcessInternalTask(repository.DeleteAsync, list, chunkSize, token);
+            await repository.ProcessInternalTask(repository.DeleteAsync, list, chunkSize, token);
         }
 
         /// <summary>Bulks the insert asynchronous.</summary>
@@ -46,14 +43,11 @@ namespace Generic.Repository.Extension.Repository
             CancellationToken token)
             where TValue : class
         {
-            ThrowErrorIf.
-                IsNullOrEmptyList(list, nameof(list), nameof(BulkInsertAsync));
+            ThrowErrorIf.IsNullOrEmptyList(list, nameof(list), nameof(BulkInsertAsync));
 
-            ThrowErrorIf.
-                IsLessThanOrEqualsZero(chunkSize);
+            ThrowErrorIf.IsLessThanOrEqualsZero(chunkSize);
 
-            await repository.
-                ProcessInternalTask(repository.CreateAsync, list, chunkSize, token);
+            await repository.ProcessInternalTask(repository.CreateAsync, list, chunkSize, token);
         }
 
         /// <summary>Bulks the update asynchronous.</summary>
@@ -69,14 +63,11 @@ namespace Generic.Repository.Extension.Repository
             CancellationToken token)
             where TValue : class
         {
-            ThrowErrorIf.
-                IsNullOrEmptyList(list, nameof(list), nameof(BulkUpdateAsync));
+            ThrowErrorIf.IsNullOrEmptyList(list, nameof(list), nameof(BulkUpdateAsync));
 
-            ThrowErrorIf.
-                IsLessThanOrEqualsZero(chunkSize);
+            ThrowErrorIf.IsLessThanOrEqualsZero(chunkSize);
 
-            await repository.
-                ProcessInternalTask(repository.UpdateAsync, list, chunkSize, token);
+            await repository.ProcessInternalTask(repository.UpdateAsync, list, chunkSize, token);
         }
 
         /// <summary>Processes the internal task.</summary>
@@ -94,14 +85,11 @@ namespace Generic.Repository.Extension.Repository
             CancellationToken token)
             where TValue : class
         {
-            ThrowErrorIf.
-                IsNullValue(funcCrud, nameof(funcCrud), nameof(ProcessInternalTask));
+            ThrowErrorIf.IsNullValue(funcCrud, nameof(funcCrud), nameof(ProcessInternalTask));
 
-            ThrowErrorIf.
-                IsNullOrEmptyList(list, nameof(list), nameof(ProcessInternalTask));
+            ThrowErrorIf.IsNullOrEmptyList(list, nameof(list), nameof(ProcessInternalTask));
 
-            ThrowErrorIf.
-                IsLessThanOrEqualsZero(chunkSize);
+            ThrowErrorIf.IsLessThanOrEqualsZero(chunkSize);
 
             await repository.MultiTransactionsAsync(
                 async ctx =>
