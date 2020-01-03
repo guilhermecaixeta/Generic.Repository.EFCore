@@ -29,5 +29,5 @@ jobs:
     - if: contains(matrix.os, 'windows')
       run: ./build.ps1
       shell: pwsh
-    - if: contains(matrix.os, 'macOS') || contains(matrix.os, 'ubuntu')
-      run: ./build.sh
+    # - if: contains(matrix.os, 'macOS') || contains(matrix.os, 'ubuntu')
+    #  run: ./build.sh
