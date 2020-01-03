@@ -13,7 +13,7 @@ jobs:
   build:  
     strategy:
       matrix:
-        core_version: [3.0.0]
+        core_version: [3.1]
         os: [ubuntu-latest, windows-latest, macOS-latest]
     
     name: ${{ matrix.os }}
@@ -27,6 +27,7 @@ jobs:
     - uses: actions/checkout@master
     - uses: actions/setup-dotnet@v1
     - if: contains(matrix.os, 'windows')
-      run: build.bat
+      shell: pwsh
+      run: build.ps1
     - if: contains(matrix.os, 'macOS') || contains(matrix.os, 'ubuntu')
       run: ./build.sh
