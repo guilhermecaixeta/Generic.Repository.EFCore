@@ -3,23 +3,29 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <RepositoryUrl>https://github.com/guilhermecaixeta/Generic.Repository.EFCore</RepositoryUrl>
-    <PackageTags>Generics Repository, Async, Pagination, reactive programmation, crud, solid, filter</PackageTags>
+    <PackageTags>Generics Repository, Async, Pagination, Async, CRUD, Filter</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <AssemblyVersion>1.0.0.1</AssemblyVersion>
-    <FileVersion>1.0.0.1</FileVersion>
+    <AssemblyVersion>1.0.0.2</AssemblyVersion>
+    <FileVersion>1.0.0.2</FileVersion>
     <PackageProjectUrl>https://github.com/guilhermecaixeta/Generic.Repository.EFCore</PackageProjectUrl>
-    <PackageReleaseNotes>V.1.0.1
-Fix bugs, fix cache use and add new features.</PackageReleaseNotes>
+    <PackageReleaseNotes>V.1.0.2
+Improvements in pagination, cache and the repository.</PackageReleaseNotes>
     <PackageId>Generic.RepositoryAsync.EFCore</PackageId>
     <Authors>GuiCaixeta</Authors>
     <Product>Generic.RepositoryAsync.EFCore</Product>
-    <Description>Generic repository, implemented using the best of programmation.</Description>
-    <Version>1.0.1</Version>
+    <Description>Generic Repository Pattern implemented for EFCore 3.0 and .Net standart 2.1.
+Content:
+All methods to make a CRUD is asynchronously.
+Pagination (Async and with dynamic search and dynamic sort)
+Dynamic Filter (Need implement a interface to work)
+Cache (It's used by default for the repository)
+and more...</Description>
+    <Version>1.0.2</Version>
     <LangVersion>7.1</LangVersion>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.0" />
   </ItemGroup>
-
 </Project>
