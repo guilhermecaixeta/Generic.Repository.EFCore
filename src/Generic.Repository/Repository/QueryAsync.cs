@@ -178,7 +178,7 @@ namespace Generic.Repository.Repository
 
         #endregion INCLUDES METHODS
 
-        #region INTERNAL
+        #region INTERNAL - SET QUERY
 
         internal async Task<IReadOnlyList<TValue>> CreateList(
             bool enableAsNotTracking)

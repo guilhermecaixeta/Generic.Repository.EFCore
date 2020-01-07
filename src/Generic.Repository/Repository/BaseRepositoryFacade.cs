@@ -124,6 +124,7 @@ namespace Generic.Repository.Repository
             await _cache.AddGet<TValue>(token);
             await _cache.AddSet<TValue>(token);
             await _cache.AddProperty<TValue>(token);
+            await _cache.AddAttribute<TValue>(token);
         }
 
         #endregion PUBLIC METHODS
