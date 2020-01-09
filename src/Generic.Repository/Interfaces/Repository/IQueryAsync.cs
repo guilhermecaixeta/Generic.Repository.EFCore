@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Generic.Repository.Interfaces.Repository
 {
     public interface IQueryAsync<TValue>
-     where TValue : class
+        where TValue : class
     {
         #region ATTR
 

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Generic.Repository.Interfaces.Repository
 {
     public interface ICommandRepository<TValue>
-     where TValue : class
+        where TValue : class
     {
         #region COMMAND - (CREAT, UPDATE, DELETE) With CancellationToken
 

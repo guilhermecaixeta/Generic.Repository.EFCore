@@ -1,10 +1,11 @@
-﻿using Generic.Repository.Extension.List;
-using Generic.Repository.Interfaces.Repository;
-using Generic.Repository.ThrowError;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Generic.Repository.Extension.List;
+using Generic.Repository.Interfaces.Repository;
+using Generic.Repository.ThrowError;
+using Microsoft.EntityFrameworkCore;
 
 namespace Generic.Repository.Extension.Repository
 {
@@ -16,12 +17,13 @@ namespace Generic.Repository.Extension.Repository
         /// <param name="list">The list.</param>
         /// <param name="chunkSize">Size of the chunk.</param>
         /// <param name="token">The token.</param>
-        public static async Task BulkDeleteAsync<TValue>(
-            this IBaseRepositoryAsync<TValue> repository,
+        public static async Task BulkDeleteAsync<TValue, TContext>(
+            this IBaseRepositoryAsync<TValue, TContext> repository,
             IEnumerable<TValue> list,
             int chunkSize,
             CancellationToken token)
             where TValue : class
+            where TContext : DbContext
         {
             ThrowErrorIf.IsNullOrEmptyList(list, nameof(list), nameof(BulkDeleteAsync));
 
@@ -36,12 +38,13 @@ namespace Generic.Repository.Extension.Repository
         /// <param name="list">The list.</param>
         /// <param name="chunkSize">Size of the chunk.</param>
         /// <param name="token">The token.</param>
-        public static async Task BulkInsertAsync<TValue>(
-            this IBaseRepositoryAsync<TValue> repository,
+        public static async Task BulkInsertAsync<TValue, TContext>(
+            this IBaseRepositoryAsync<TValue, TContext> repository,
             IEnumerable<TValue> list,
             int chunkSize,
             CancellationToken token)
             where TValue : class
+            where TContext : DbContext
         {
             ThrowErrorIf.IsNullOrEmptyList(list, nameof(list), nameof(BulkInsertAsync));
 
@@ -56,12 +59,13 @@ namespace Generic.Repository.Extension.Repository
         /// <param name="list">The list.</param>
         /// <param name="chunkSize">Size of the chunk.</param>
         /// <param name="token">The token.</param>
-        public static async Task BulkUpdateAsync<TValue>(
-            this IBaseRepositoryAsync<TValue> repository,
+        public static async Task BulkUpdateAsync<TValue, TContext>(
+            this IBaseRepositoryAsync<TValue, TContext> repository,
             IEnumerable<TValue> list,
             int chunkSize,
             CancellationToken token)
             where TValue : class
+            where TContext : DbContext
         {
             ThrowErrorIf.IsNullOrEmptyList(list, nameof(list), nameof(BulkUpdateAsync));
 
@@ -77,13 +81,14 @@ namespace Generic.Repository.Extension.Repository
         /// <param name="list">The list.</param>
         /// <param name="chunkSize">Size of the chunk.</param>
         /// <param name="token">The token.</param>
-        internal static async Task ProcessInternalTask<TValue>(
-            this IBaseRepositoryAsync<TValue> repository,
+        internal static async Task ProcessInternalTask<TValue, TContext>(
+            this IBaseRepositoryAsync<TValue, TContext> repository,
             Func<IEnumerable<TValue>, CancellationToken, Task> funcCrud,
             IEnumerable<TValue> list,
             int chunkSize,
             CancellationToken token)
             where TValue : class
+            where TContext : DbContext
         {
             ThrowErrorIf.IsNullValue(funcCrud, nameof(funcCrud), nameof(ProcessInternalTask));
 
