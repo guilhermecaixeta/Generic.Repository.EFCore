@@ -4,6 +4,8 @@ namespace Generic.Repository.Cache
 {
     internal static class CacheSemaphore
     {
+        public static int TimeToLeave = 20;
+        
         public static Semaphore Semaphore;
 
         public static bool Signal = true;
@@ -24,7 +26,7 @@ namespace Generic.Repository.Cache
 
         public static void WaitOne()
         {
-            Signal = Semaphore.WaitOne(10);
+            Signal = Semaphore.WaitOne(TimeToLeave);
         }
     }
 }
