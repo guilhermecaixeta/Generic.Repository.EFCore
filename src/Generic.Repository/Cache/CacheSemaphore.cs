@@ -14,7 +14,7 @@ namespace Generic.Repository.Cache
 
         public static void InitializeSemaphore()
         {
-            Semaphore = new Semaphore(MinValue, MaxValue, "CacheAccess");
+            Semaphore = new Semaphore(MinValue, MaxValue);
         }
 
         public static void Release()
