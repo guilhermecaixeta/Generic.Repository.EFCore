@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Generic.Repository.IntTest.Command
 {
-    [TestFixture]
+    //[TestFixture]
     public class CommandTest
     {
         public IBaseRepositoryAsync<FakeInt, IntegrationContext> RepositoryAsync { get; set; }

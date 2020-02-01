@@ -18,7 +18,7 @@ namespace Generic.Repository.Repository
 
         protected readonly TContext Context;
 
-        public QueryAsync(TContext context, ICacheRepository cacheService)
+        protected QueryAsync(TContext context, ICacheRepository cacheService)
         {
             ThrowErrorIf.
                 InitializeCache(cacheService);

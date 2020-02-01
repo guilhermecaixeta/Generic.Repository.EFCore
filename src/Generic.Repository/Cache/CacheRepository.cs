@@ -21,15 +21,17 @@ namespace Generic.Repository.Cache
         private IDictionary<string, Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>> CacheAttribute { get; set; }
 
         private ICacheRepositoryFacade CacheFacade { get; } = new CacheRepositoryFacade();
+        
         private IDictionary<string, Dictionary<string, Func<object, object>>> CacheGet { get; set; }
 
         private IDictionary<string, Dictionary<string, PropertyInfo>> CacheProperties { get; set; }
+        
         private IDictionary<string, Dictionary<string, Action<object, object>>> CacheSet { get; set; }
 
         public async Task AddAttribute<TValue>(
             CancellationToken token)
         {
-            void ActionAdd()
+            await CacheFacade.RunActionInSemaphore(() =>
             {
                 var values = GetValues<TValue>();
 
@@ -48,15 +50,13 @@ namespace Generic.Repository.Cache
                 {
                     SetCacheAttributes(property, values.typeName);
                 }
-            }
-
-            await CacheFacade.RunActionInSemaphore(ActionAdd, token);
+            }, token);
         }
 
         public async Task AddGet<TValue>(
             CancellationToken token)
         {
-            void ActionAdd()
+            await CacheFacade.RunActionInSemaphore(() =>
             {
                 var values = GetValues<TValue>();
 
@@ -68,17 +68,15 @@ namespace Generic.Repository.Cache
                 }
 
                 var dictionary = values.properties.
-                       ToDictionary(g => g.Name, m => CacheFacade.CreateFunction<TValue>(m));
+                    ToDictionary(g => g.Name, m => CacheFacade.CreateFunction<TValue>(m));
                 CacheGet.Add(values.typeName, dictionary);
-            }
-
-            await CacheFacade.RunActionInSemaphore(ActionAdd, token);
+            }, token);
         }
 
         public async Task AddProperty<TValue>(
             CancellationToken token)
         {
-            void ActionAdd()
+            await CacheFacade.RunActionInSemaphore(() =>
             {
                 var values = GetValues<TValue>();
 
@@ -90,31 +88,28 @@ namespace Generic.Repository.Cache
                 }
 
                 CacheProperties.Add(values.typeName, values.properties.ToDictionary(p => p.Name, p => p));
-            }
-
-            await CacheFacade.RunActionInSemaphore(ActionAdd, token);
+            }, token);
         }
 
         public async Task AddSet<TValue>(
             CancellationToken token)
         {
-            void ActionAdd()
+            await CacheFacade.RunActionInSemaphore(() =>
             {
-                var values = GetValues<TValue>();
+                var (typeName, properties, isCacheable) = GetValues<TValue>();
 
-                var valid = CacheSet.ContainsKey(values.typeName);
+                var valid = CacheSet.ContainsKey(typeName);
 
-                if (valid || !values.isCacheable)
+                if (valid || !isCacheable)
                 {
                     return;
                 }
 
-                var dictionary = values.properties.
-                                        ToDictionary(s => s.Name, m => CacheFacade.CreateAction<TValue>(m));
-                CacheSet.Add(values.typeName, dictionary);
-            }
+                var dictionary = properties.
+                    ToDictionary(s => s.Name, m => CacheFacade.CreateAction<TValue>(m));
 
-            await CacheFacade.RunActionInSemaphore(ActionAdd, token);
+                CacheSet.Add(typeName, dictionary);
+            }, token);
         }
 
         public void ClearCache()
@@ -196,7 +191,7 @@ namespace Generic.Repository.Cache
         }
 
         public async Task<Func<object, object>> GetMethodGet(
-                                                                                                    string objectKey,
+            string objectKey,
             string propertyKey,
             CancellationToken token)
         {
@@ -239,19 +234,19 @@ namespace Generic.Repository.Cache
 
         public async Task<bool> HasAttribute(
             CancellationToken token) =>
-            await CacheFacade.RunFunctionInSemaphore(() => CacheAttribute.Any(), token);
+            await Task.Run(() => CacheAttribute.Any(), token);
 
         public async Task<bool> HasMethodGet(
             CancellationToken token) =>
-            await CacheFacade.RunFunctionInSemaphore(() => CacheGet.Any(), token);
+            await Task.Run(() => CacheGet.Any(), token);
 
         public async Task<bool> HasMethodSet(
-                            CancellationToken token) =>
-            await CacheFacade.RunFunctionInSemaphore(() => CacheSet.Any(), token);
+            CancellationToken token) =>
+            await Task.Run(() => CacheSet.Any(), token);
 
         public async Task<bool> HasProperty(
             CancellationToken token) =>
-            await CacheFacade.RunFunctionInSemaphore(() => CacheProperties.Any(), token);
+            await Task.Run(() => CacheProperties.Any(), token);
 
         /// <summary>Gets the values from TValue</summary>
         /// <typeparam name="TValue">The type of the value.</typeparam>
@@ -296,9 +291,9 @@ namespace Generic.Repository.Cache
         }
 
         /// <summary>Validates the property.</summary>
-        /// <param name="property">The property.</param>
+        /// <param name="properties">The property.</param>
         /// <returns></returns>
-        private IEnumerable<PropertyInfo> ValidateProperty(PropertyInfo[] properties)
+        private IEnumerable<PropertyInfo> ValidateProperty(IEnumerable<PropertyInfo> properties)
         {
             foreach (var property in properties)
             {
@@ -307,9 +302,9 @@ namespace Generic.Repository.Cache
                 var type = property.PropertyType;
 
                 var isPrimitive = type.IsSubclassOf(typeof(ValueType)) ||
-                    type.Equals(typeof(string)) ||
-                    type.Equals(typeof(StringBuilder)) ||
-                    type.Equals(typeof(StringDictionary));
+                                          type == typeof(string) ||
+                                          type == typeof(StringBuilder) ||
+                                          type == typeof(StringDictionary);
 
                 if (!isPrimitive || !isCacheable)
                 {

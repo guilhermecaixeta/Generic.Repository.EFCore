@@ -17,7 +17,7 @@ namespace Generic.Repository.Repository
         where TValue : class
         where TContext : DbContext
     {
-        public Pageable(TContext context, ICacheRepository cacheService) : base(context, cacheService)
+        protected Pageable(TContext context, ICacheRepository cacheService) : base(context, cacheService)
         {
 
         }
@@ -59,7 +59,7 @@ namespace Generic.Repository.Repository
         where TFilter : class, IFilter
         where TContext : DbContext
     {
-        public Pageable(TContext context, ICacheRepository cacheService) : base(context, cacheService)
+        protected Pageable(TContext context, ICacheRepository cacheService) : base(context, cacheService)
         {
 
         }

@@ -9,6 +9,8 @@ namespace Generic.Repository.Cache
 {
     internal class CacheRepositoryFacade : ICacheRepositoryFacade
     {
+        private readonly object _delegateLock = new object();
+
         public Action<object, object> CreateAction<TValue>(PropertyInfo property)
         {
             ThrowErrorIf.
@@ -61,9 +63,9 @@ namespace Generic.Repository.Cache
             return GetterDelegate;
         }
 
-        public async Task<R> GetData<R>(IDictionary<string, R> dictionary, string key, CancellationToken token)
+        public async Task<TReturn> GetData<TReturn>(IDictionary<string, TReturn> dictionary, string key, CancellationToken token)
         {
-            R FuncGet()
+            return await Task.Run(() =>
             {
                 ThrowErrorIf.
                     IsEmptyOrNullString(key, nameof(key), nameof(GetData));
@@ -76,31 +78,17 @@ namespace Generic.Repository.Cache
                 }
 
                 return result;
-            }
-
-            return await RunFunctionInSemaphore(FuncGet, token);
+            }, token);
         }
 
         public async Task RunActionInSemaphore(Action @delegate, CancellationToken token)
         {
-            CacheSemaphore.InitializeSemaphore();
             await Task.Run(() =>
             {
-                CacheSemaphore.WaitOne();
-                @delegate();
-                CacheSemaphore.Release();
-            }, token);
-        }
-
-        public async Task<R> RunFunctionInSemaphore<R>(Func<R> @delegate, CancellationToken token)
-        {
-            CacheSemaphore.InitializeSemaphore();
-            return await Task.Run(() =>
-            {
-                CacheSemaphore.WaitOne();
-                var result = @delegate();
-                CacheSemaphore.Release();
-                return result;
+                lock (_delegateLock)
+                {
+                    @delegate();
+                }
             }, token);
         }
 

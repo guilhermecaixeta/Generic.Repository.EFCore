@@ -12,7 +12,7 @@ namespace Generic.Repository.Repository
         where TValue : class
         where TContext : DbContext
     {
-        public CommandAsync(TContext context, ICacheRepository cacheService)
+        protected CommandAsync(TContext context, ICacheRepository cacheService)
             : base(context, cacheService)
         {
         }
