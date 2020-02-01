@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Generic.Repository.Repository
 {
-    public class CommandAsync<TValue, TContext> : QueryAsync<TValue, TContext>
+    public abstract class CommandAsync<TValue, TContext> : QueryAsync<TValue, TContext>
         where TValue : class
         where TContext : DbContext
     {
@@ -96,27 +96,31 @@ namespace Generic.Repository.Repository
         #region COMMIT
 
         public async Task MultiTransactionsAsync(
-            Action<DbContext> transaction,
+            Func<DbContext, Task> transaction,
             CancellationToken token)
         {
             ThrowErrorIf.
                 IsNullValue(transaction, nameof(transaction), nameof(MultiTransactionsAsync));
 
-            using (var contextTransaction = await Context.Database.BeginTransactionAsync().
-                ConfigureAwait(false))
+            using (var contextTransaction = Context.Database.BeginTransaction())
             {
                 try
                 {
-                    transaction(Context);
+                    await transaction(Context).
+                        ConfigureAwait(false);
 
-                    await contextTransaction.CommitAsync().
+                    //await Context.SaveChangesAsync(token);
+
+                    await contextTransaction.
+                        CommitAsync(token).
                         ConfigureAwait(false);
                 }
-                catch
+                catch (Exception e)
                 {
-                    await contextTransaction.RollbackAsync().
+                    await contextTransaction.RollbackAsync(token).
                         ConfigureAwait(false);
-                    throw;
+
+                    throw e;
                 }
             }
         }

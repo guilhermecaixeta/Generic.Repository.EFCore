@@ -5,6 +5,8 @@ using Generic.Repository.Models.PageAggregation.PageConfig;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Generic.Repository.Extension.Page
 {
@@ -21,16 +23,17 @@ namespace Generic.Repository.Extension.Page
         /// <param name="cacheRepository">The cache repository.</param>
         /// <param name="config">The configuration.</param>
         /// <returns></returns>
-        public static IPage<TValue> ToPage<TValue>(
+        public static async Task<IPage<TValue>> ToPage<TValue>(
             this IQueryable<TValue> listEntities,
             ICacheRepository cacheRepository,
-            IPageConfig config
-            )
+            IPageConfig config,
+            CancellationToken token)
             where TValue : class =>
-            new Page<TValue>(
-                cacheRepository,
-                listEntities,
-                config);
+                await new Page<TValue>(
+                    cacheRepository,
+                    listEntities,
+                    config).Init(token).
+                            ConfigureAwait(false);
 
         #endregion Page<TValue>
 
@@ -42,18 +45,20 @@ namespace Generic.Repository.Extension.Page
         /// <param name="config">The configuration.</param>
         /// <param name="mapping">The mapping.</param>
         /// <returns></returns>
-        public static IPage<TResult> ToPage<TValue, TResult>(
+        public static async Task<IPage<TResult>> ToPage<TValue, TResult>(
             this IQueryable<TValue> listEntities,
             ICacheRepository cacheRepository,
             IPageConfig config,
-            Func<IEnumerable<object>, IEnumerable<TResult>> mapping)
+            Func<IEnumerable<object>, IEnumerable<TResult>> mapping,
+            CancellationToken token)
             where TValue : class
             where TResult : class =>
-            new Page<TValue, TResult>(
-                cacheRepository,
-                listEntities,
-                config,
-                mapping);
+                await new Page<TValue, TResult>(
+                    cacheRepository,
+                    listEntities,
+                    config,
+                    mapping).Init(token).
+                        ConfigureAwait(false);
 
         #region Page<TValue, TFilter>
 
@@ -64,16 +69,18 @@ namespace Generic.Repository.Extension.Page
         /// <param name="cacheRepository">The cache repository.</param>
         /// <param name="config">The configuration.</param>
         /// <returns></returns>
-        public static IPage<TValue> ToPageFiltered<TValue, TFilter>(
+        public static async Task<IPage<TValue>> ToPageFiltered<TValue, TFilter>(
             this IQueryable<TValue> listEntities,
             ICacheRepository cacheRepository,
-            IPageConfig config)
+            IPageConfig config,
+            CancellationToken token)
             where TValue : class
             where TFilter : class, IFilter =>
-            new PageFiltered<TValue, TFilter>(
-                cacheRepository,
-                listEntities,
-                config);
+                await new PageFiltered<TValue, TFilter>(
+                    cacheRepository,
+                    listEntities,
+                    config).Init(token).
+                        ConfigureAwait(false);
 
         #endregion Page<TValue, TFilter>
 
@@ -88,19 +95,21 @@ namespace Generic.Repository.Extension.Page
         /// <param name="mapperTo">The mapper to.</param>
         /// <param name="config">The configuration.</param>
         /// <returns></returns>
-        public static IPage<TResult> ToPageFiltered<TValue, TFilter, TResult>(
+        public static async Task<IPage<TResult>> ToPageFiltered<TValue, TFilter, TResult>(
             this IQueryable<TValue> listEntities,
             ICacheRepository cacheRepository,
             Func<IEnumerable<object>, IEnumerable<TResult>> mapping,
-            IPageConfig config)
+            IPageConfig config,
+            CancellationToken token)
             where TValue : class
             where TResult : class
             where TFilter : class, IFilter =>
-                new PageFiltered<TValue, TFilter, TResult>(
+                await new PageFiltered<TValue, TFilter, TResult>(
                     cacheRepository,
                     listEntities,
                     mapping,
-                    config);
+                    config).Init(token).
+                        ConfigureAwait(false);
 
         #endregion Page<TValue, TFilter, TResult>
     }

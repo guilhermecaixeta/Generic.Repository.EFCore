@@ -52,11 +52,14 @@ namespace Generic.Repository.Interfaces.Repository
 
         #region COMMIT - (SAVECHANGES)
 
-        /// <summary>  Execute the specified actions inside a transaction asynchronous.</summary>
+
+        /// <summary>Multis the transactions asynchronous.</summary>
         /// <param name="transaction">The transaction.</param>
         /// <param name="token">The token.</param>
         /// <returns></returns>
-        Task MultiTransactionsAsync(Action<DbContext> transaction, CancellationToken token);
+        Task MultiTransactionsAsync(
+            Func<DbContext, Task> transaction,
+            CancellationToken token);
 
         /// <summary>Saves the changes asynchronous.</summary>
         /// <param name="cancellationToken">The cancellation token.</param>

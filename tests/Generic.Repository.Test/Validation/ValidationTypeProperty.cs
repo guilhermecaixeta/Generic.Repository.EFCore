@@ -18,7 +18,7 @@ namespace Generic.Repository.UnitTest.Validation
         }
 
         [Test]
-        public void TypeProperty_IsPrimitive()
+        public void TypeProperty_ShouldBe_IsPrimitive()
         {
             Assert.IsFalse(IsAcceptableType(typeof(IEnumerable<string>)));
             Assert.IsFalse(IsAcceptableType(typeof(IEnumerable<int>)));

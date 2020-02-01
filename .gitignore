@@ -18,3 +18,5 @@ TestResults/
 tests/Generic.Repository.Test/bin/
 
 tests/Generic.Repository.Test/obj/
+Generic.Repository.IntTest/bin
+Generic.Repository.IntTest/obj

@@ -66,7 +66,7 @@ namespace Generic.Repository.Cache
             R FuncGet()
             {
                 ThrowErrorIf.
-                IsEmptyOrNullString(key, nameof(key), nameof(GetData));
+                    IsEmptyOrNullString(key, nameof(key), nameof(GetData));
 
                 var isValid = dictionary.TryGetValue(key, out var result);
 
