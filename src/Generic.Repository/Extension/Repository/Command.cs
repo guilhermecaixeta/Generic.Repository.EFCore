@@ -3,7 +3,6 @@ using Generic.Repository.Interfaces.Repository;
 using Generic.Repository.ThrowError;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -38,7 +37,9 @@ namespace Generic.Repository.Extension.Repository
 
                     foreach (var split in listSplit)
                     {
-                        ctx.Set<TValue>().RemoveRange(split);
+                        await Task.
+                            Run(() => ctx.Set<TValue>().RemoveRange(split), token).
+                            ConfigureAwait(false);
                     }
                 }, token).ConfigureAwait(false);
         }
@@ -70,21 +71,14 @@ namespace Generic.Repository.Extension.Repository
             {
                 var i = 0;
                 //await ctx.SaveChangesAsync(token);
-                //foreach (var split in listSplit)
-                //{
-                list.ToList().ForEach(async x =>
-                    {
-                        if (i <= 5)
-                        {
-                            await ctx.Set<TValue>().AddAsync(x, token).
-                                ConfigureAwait(false);
+                foreach (var split in listSplit)
+                {
+                    await ctx.Set<TValue>().AddRangeAsync(split, token).
+                                    ConfigureAwait(false);
 
-                            await ctx.SaveChangesAsync(token).
-                                ConfigureAwait(false);
-                        }
-                        i++;
-                    });
-                //}
+                    await ctx.SaveChangesAsync(token).
+                        ConfigureAwait(false);
+                }
             }, token).
             ConfigureAwait(false);
         }

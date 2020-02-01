@@ -11,10 +11,10 @@ namespace Generic.Repository.UnitTest.Cache
         public async Task ClearCache_Valid()
         {
             Cache.ClearCache();
-            Assert.IsFalse(await Cache.HasMethodGet(default));
-            Assert.IsFalse(await Cache.HasMethodGet(default));
-            Assert.IsFalse(await Cache.HasAttribute(default));
-            Assert.IsFalse(await Cache.HasProperty(default));
+            Assert.IsFalse(await Cache.HasMethodGet(default).ConfigureAwait(false));
+            Assert.IsFalse(await Cache.HasMethodGet(default).ConfigureAwait(false));
+            Assert.IsFalse(await Cache.HasAttribute(default).ConfigureAwait(false));
+            Assert.IsFalse(await Cache.HasProperty(default).ConfigureAwait(false));
         }
 
         [Test]
@@ -83,10 +83,10 @@ namespace Generic.Repository.UnitTest.Cache
         [Test]
         public async Task ValidateValues_ValidValue()
         {
-            Assert.IsTrue(await Cache.HasMethodGet(default));
-            Assert.IsTrue(await Cache.HasMethodSet(default));
-            Assert.IsTrue(await Cache.HasProperty(default));
-            Assert.IsTrue(await Cache.HasAttribute(default));
+            Assert.IsTrue(await Cache.HasMethodGet(default).ConfigureAwait(false));
+            Assert.IsTrue(await Cache.HasMethodSet(default).ConfigureAwait(false));
+            Assert.IsTrue(await Cache.HasProperty(default).ConfigureAwait(false));
+            Assert.IsTrue(await Cache.HasAttribute(default).ConfigureAwait(false));
         }
     }
 }

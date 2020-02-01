@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading;
-using System.Threading.Tasks;
 using Generic.Repository.Cache;
 using Generic.Repository.Extension.Filter;
 using Generic.Repository.Extension.Page;
@@ -13,6 +7,12 @@ using Generic.Repository.Models.PageAggregation;
 using Generic.Repository.Models.PageAggregation.PageConfig;
 using Generic.Repository.ThrowError;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Generic.Repository.Repository
 {
@@ -44,7 +44,8 @@ namespace Generic.Repository.Repository
                 CreateGenericFilter<TValue, TFilter>(CacheService, token).
                 ConfigureAwait(false);
 
-            await CreateQueryFiltered(predicate, notTracking, token);
+            await CreateQueryFiltered(predicate, notTracking, token).
+                ConfigureAwait(false);
         }
 
         #endregion INTERNALS METHODS
@@ -74,7 +75,7 @@ namespace Generic.Repository.Repository
 
             await CreateQueryFiltered(filter, notTracking, token).ConfigureAwait(false);
 
-            var list = await CreateList(notTracking, token);
+            var list = await CreateList(notTracking, token).ConfigureAwait(false);
 
             return mapper(list).ToList();
         }
@@ -86,7 +87,7 @@ namespace Generic.Repository.Repository
         {
             ThrowErrorIf.IsNullValue(mapper, nameof(mapper), nameof(FilterAllAsync));
 
-            var list = await CreateList(notTracking, token);
+            var list = await CreateList(notTracking, token).ConfigureAwait(false);
 
             return mapper(list).ToList();
         }
@@ -99,7 +100,7 @@ namespace Generic.Repository.Repository
         {
             await CreateQueryFiltered(predicate, notTracking, token);
 
-            var list = await CreateList(notTracking, token);
+            var list = await CreateList(notTracking, token).ConfigureAwait(false);
 
             return mapper(list).ToList();
         }
@@ -110,7 +111,7 @@ namespace Generic.Repository.Repository
             Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
             CancellationToken token) where TReturn : class
         {
-            await CreateQuery(notTracking, token);
+            await CreateQuery(notTracking, token).ConfigureAwait(false);
 
             return await Query.
                 ToPageFiltered<TValue, TFilter, TReturn>(CacheService, mapper, config, token).
@@ -138,7 +139,7 @@ namespace Generic.Repository.Repository
             Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
             CancellationToken token) where TReturn : class
         {
-            await CreateQueryFiltered(predicate, notTracking, token);
+            await CreateQueryFiltered(predicate, notTracking, token).ConfigureAwait(false);
 
             return await Query.
                 ToPageFiltered<TValue, TFilter, TReturn>(CacheService, mapper, config, token).
@@ -148,6 +149,7 @@ namespace Generic.Repository.Repository
         #endregion QUERIES
 
         #region OVERRIDE
+
         internal override async Task InitializeCache(CancellationToken token)
         {
             await CacheService.AddGet<TFilter>(token).
@@ -162,8 +164,10 @@ namespace Generic.Repository.Repository
             await CacheService.AddAttribute<TFilter>(token).
                 ConfigureAwait(false);
 
-            await base.InitializeCache(token);
+            await base.InitializeCache(token).
+                ConfigureAwait(false);
         }
+
         #endregion OVERRIDE
     }
 
@@ -223,8 +227,7 @@ namespace Generic.Repository.Repository
 
             ThrowErrorIf.IsNullValue(mapper, nameof(mapper), nameof(GetPageAsync));
 
-
-            await CreateQuery(notTracking, token);
+            await CreateQuery(notTracking, token).ConfigureAwait(false);
 
             return await Query.ToPage(CacheService, config, mapper, token).ConfigureAwait(false);
         }
@@ -242,7 +245,7 @@ namespace Generic.Repository.Repository
 
             ThrowErrorIf.IsNullValue(predicate, nameof(predicate), nameof(GetPageAsync));
 
-            await CreateQueryFiltered(predicate, notTracking, token);
+            await CreateQueryFiltered(predicate, notTracking, token).ConfigureAwait(false);
 
             return await Query.ToPage(CacheService, config, mapper, token).ConfigureAwait(false);
         }

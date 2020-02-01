@@ -41,6 +41,5 @@ namespace Generic.Repository.Cache
         /// <param name="token">The token.</param>
         /// <returns></returns>
         Task RunActionInSemaphore(Action @delegate, CancellationToken token);
-
     }
 }

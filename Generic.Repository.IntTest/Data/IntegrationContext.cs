@@ -9,12 +9,12 @@ namespace Generic.Repository.IntTest.Data
                : base(options)
         { }
 
+        public DbSet<FakeInt> FakeInt { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
             optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         }
-
-        public DbSet<FakeInt> FakeInt { get; set; }
     }
 }

@@ -24,84 +24,84 @@ namespace Generic.Repository.UnitTest.Repository
         public void Create_NullValue() =>
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
-                await Repository.CreateAsync(_value, default);
+                await Repository.CreateAsync(_value, default).ConfigureAwait(false);
             });
 
         [Test]
         public void CreateList_EmptyList() =>
             Assert.ThrowsAsync<ListNullOrEmptyException>(async () =>
             {
-                await Repository.CreateAsync(new List<TValue>(), default);
+                await Repository.CreateAsync(new List<TValue>(), default).ConfigureAwait(false);
             });
 
         [Test]
         public void CreateList_NullList() =>
             Assert.ThrowsAsync<ListNullOrEmptyException>(async () =>
             {
-                await Repository.CreateAsync((IEnumerable<TValue>)null, default);
+                await Repository.CreateAsync((IEnumerable<TValue>)null, default).ConfigureAwait(false);
             });
 
         [Test]
         public void Delete_NullValue() =>
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
-                await Repository.DeleteAsync(_value, default);
+                await Repository.DeleteAsync(_value, default).ConfigureAwait(false);
             });
 
         [Test]
         public void DeleteList_EmptyList() =>
             Assert.ThrowsAsync<ListNullOrEmptyException>(async () =>
             {
-                await Repository.DeleteAsync(new List<TValue>(), default);
+                await Repository.DeleteAsync(new List<TValue>(), default).ConfigureAwait(false);
             });
 
         [Test]
         public void DeleteList_NullList() =>
             Assert.ThrowsAsync<ListNullOrEmptyException>(async () =>
             {
-                await Repository.DeleteAsync((IEnumerable<TValue>)null, default);
+                await Repository.DeleteAsync((IEnumerable<TValue>)null, default).ConfigureAwait(false);
             });
 
         [Test]
         public void GetFirstAsync_NullPredicate() =>
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
-                await Repository.GetFirstByAsync(null, true, default);
+                await Repository.GetFirstByAsync(null, true, default).ConfigureAwait(false);
             });
 
         [Test]
         public void GetPage_NullConfig() =>
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
-                await Repository.GetPageAsync(null, true, default);
+                await Repository.GetPageAsync(null, true, default).ConfigureAwait(false);
             });
 
         [Test]
         public void GetPage_NullFilter() =>
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
-                await Repository.GetPageAsync(GetPageConfigFake(), null, true, default);
+                await Repository.GetPageAsync(GetPageConfigFake(), null, true, default).ConfigureAwait(false);
             });
 
         [Test]
         public void GetPage_NullPredicate() =>
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
-                await Repository.GetPageAsync(GetPageConfigFake(), (Expression<Func<TValue, bool>>)null, true, default);
+                await Repository.GetPageAsync(GetPageConfigFake(), (Expression<Func<TValue, bool>>)null, true, default).ConfigureAwait(false);
             });
 
         [Test]
         public void GetSingleAsync_NullPredicate() =>
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
-                await Repository.GetSingleByAsync(null, true, default);
+                await Repository.GetSingleByAsync(null, true, default).ConfigureAwait(false);
             });
 
         [Test]
         public void Update_NullValue() =>
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
-                await Repository.UpdateAsync(_value, default);
+                await Repository.UpdateAsync(_value, default).ConfigureAwait(false);
             });
     }
 }

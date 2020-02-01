@@ -1,17 +1,16 @@
-﻿using System;
+﻿using Generic.Repository.Models.Filter;
+using Generic.Repository.Models.PageAggregation;
+using Generic.Repository.Models.PageAggregation.PageConfig;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Generic.Repository.Models.Filter;
-using Generic.Repository.Models.PageAggregation;
-using Generic.Repository.Models.PageAggregation.PageConfig;
-using Generic.Repository.Repository;
-using Microsoft.EntityFrameworkCore;
 
 namespace Generic.Repository.Interfaces.Repository
 {
-    public interface IBaseRepositoryAsync<TValue, TFilter, TContext> : 
+    public interface IBaseRepositoryAsync<TValue, TFilter, TContext> :
         IPageable<TValue, TFilter>, ICommandRepository<TValue>, IQueryAsync<TValue>
         where TValue : class
         where TFilter : class, IFilter

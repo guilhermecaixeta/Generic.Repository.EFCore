@@ -17,7 +17,6 @@ namespace Generic.Repository.Models.PageAggregation
             IQueryable<TValue> listEntities,
             IPageConfig config
         ) : base(listEntities, config, cacheRepository) { }
-
     }
 
     public abstract class PageAbstract<TValue, TResult> : PageAttrAbstract<TValue, TResult>
@@ -43,13 +42,14 @@ namespace Generic.Repository.Models.PageAggregation
             ThrowErrorIf.IsNullValue(mapping, nameof(mapping), typeof(PageAbstract<,>).Name);
             Mapping = mapping;
         }
-        #endregion Ctor
+
+        #endregion CTOR
 
         /// <summary>Gets the items.</summary>
         /// <returns></returns>
         protected new async Task<IReadOnlyList<TResult>> GetItems(CancellationToken token)
         {
-            var result = await GetQueryable(token);
+            var result = await GetQueryable(token).ConfigureAwait(false);
 
             return Mapping(result).ToList();
         }

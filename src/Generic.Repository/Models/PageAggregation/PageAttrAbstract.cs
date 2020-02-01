@@ -39,6 +39,9 @@ namespace Generic.Repository.Models.PageAggregation
 
         #region PARAMETERS CTOR
 
+        /// <summary>The cache repository.</summary>
+        protected ICacheRepository Cache;
+
         /// <summary>The count</summary>
         protected int Count;
 
@@ -47,9 +50,6 @@ namespace Generic.Repository.Models.PageAggregation
 
         /// <summary>The page configuration</summary>
         protected IPageConfig PageConfig;
-
-        /// <summary>The cache repository.</summary>
-        protected ICacheRepository Cache;
 
         #endregion PARAMETERS CTOR
 
@@ -83,9 +83,22 @@ namespace Generic.Repository.Models.PageAggregation
 
         public abstract Task<IPage<TOut>> Init(CancellationToken token);
 
+        /// <summary>Gets the items.</summary>
+        /// <returns></returns>
+        protected virtual async Task<IReadOnlyList<TIn>> GetItems(CancellationToken token)
+        {
+            var result = await GetQueryable(token).
+                ConfigureAwait(false);
+
+            return await result.ToListAsync(token).
+                ConfigureAwait(false);
+        }
+
         protected async Task<IQueryable<TIn>> GetQueryable(CancellationToken token)
         {
-            var orderBy = await PageConfig.CreateGenericOrderBy<TIn>(Cache, token);
+            var orderBy = await PageConfig.
+                        CreateGenericOrderBy<TIn>(Cache, token).
+                        ConfigureAwait(false);
 
             var list = !Sort.Equals(PageSort.ASC.ToString())
             ? ListEntities.OrderByDescending(orderBy)
@@ -95,17 +108,6 @@ namespace Generic.Repository.Models.PageAggregation
 
             var result = list.Skip(skipNumber).Take(Size);
             return result;
-        }
-
-        /// <summary>Gets the items.</summary>
-        /// <returns></returns>
-        protected virtual async Task<IReadOnlyList<TIn>> GetItems(CancellationToken token)
-        {
-            var result = await GetQueryable(token).
-                ConfigureAwait(false);
-
-            return await result.ToListAsync().
-                ConfigureAwait(false);
         }
     }
 }

@@ -21,11 +21,11 @@ namespace Generic.Repository.Cache
         private IDictionary<string, Dictionary<string, Dictionary<string, CustomAttributeTypedArgument>>> CacheAttribute { get; set; }
 
         private ICacheRepositoryFacade CacheFacade { get; } = new CacheRepositoryFacade();
-        
+
         private IDictionary<string, Dictionary<string, Func<object, object>>> CacheGet { get; set; }
 
         private IDictionary<string, Dictionary<string, PropertyInfo>> CacheProperties { get; set; }
-        
+
         private IDictionary<string, Dictionary<string, Action<object, object>>> CacheSet { get; set; }
 
         public async Task AddAttribute<TValue>(
@@ -50,7 +50,7 @@ namespace Generic.Repository.Cache
                 {
                     SetCacheAttributes(property, values.typeName);
                 }
-            }, token);
+            }, token).ConfigureAwait(false);
         }
 
         public async Task AddGet<TValue>(
@@ -70,7 +70,7 @@ namespace Generic.Repository.Cache
                 var dictionary = values.properties.
                     ToDictionary(g => g.Name, m => CacheFacade.CreateFunction<TValue>(m));
                 CacheGet.Add(values.typeName, dictionary);
-            }, token);
+            }, token).ConfigureAwait(false);
         }
 
         public async Task AddProperty<TValue>(
@@ -88,7 +88,7 @@ namespace Generic.Repository.Cache
                 }
 
                 CacheProperties.Add(values.typeName, values.properties.ToDictionary(p => p.Name, p => p));
-            }, token);
+            }, token).ConfigureAwait(false);
         }
 
         public async Task AddSet<TValue>(
@@ -109,7 +109,7 @@ namespace Generic.Repository.Cache
                     ToDictionary(s => s.Name, m => CacheFacade.CreateAction<TValue>(m));
 
                 CacheSet.Add(typeName, dictionary);
-            }, token);
+            }, token).ConfigureAwait(false);
         }
 
         public void ClearCache()
@@ -126,17 +126,17 @@ namespace Generic.Repository.Cache
             var dictionaryI = await CacheFacade
             .GetData(
                 CacheAttribute,
-                objectKey, token);
+                objectKey, token).ConfigureAwait(false);
 
             var dictionaryII = await CacheFacade
             .GetData(
                 dictionaryI,
-                propertyKey, token);
+                propertyKey, token).ConfigureAwait(false);
 
             var result = await CacheFacade
             .GetData(
                 dictionaryII,
-                customAttributeKey, token);
+                customAttributeKey, token).ConfigureAwait(false);
 
             return result;
         }
@@ -146,9 +146,11 @@ namespace Generic.Repository.Cache
             string propertyKey,
             CancellationToken token)
         {
-            var dictionaryI = await CacheFacade.GetData(CacheAttribute, objectKey, token);
+            var dictionaryI = await CacheFacade.GetData(CacheAttribute, objectKey, token).
+                ConfigureAwait(false);
 
-            var result = await CacheFacade.GetData(dictionaryI, propertyKey, token);
+            var result = await CacheFacade.GetData(dictionaryI, propertyKey, token).
+                ConfigureAwait(false);
 
             return result;
         }
@@ -157,7 +159,8 @@ namespace Generic.Repository.Cache
             string objectKey,
             CancellationToken token)
         {
-            var result = await CacheFacade.GetData(CacheAttribute, objectKey, token);
+            var result = await CacheFacade.GetData(CacheAttribute, objectKey, token).
+                ConfigureAwait(false);
 
             return result;
         }
@@ -167,7 +170,7 @@ namespace Generic.Repository.Cache
             CancellationToken token)
         {
             var dictionary = await CacheFacade.
-                GetData(CacheGet, objectKey, token);
+                GetData(CacheGet, objectKey, token).ConfigureAwait(false);
 
             return dictionary;
         }
@@ -176,7 +179,7 @@ namespace Generic.Repository.Cache
             string objectKey,
             CancellationToken token)
         {
-            var dictionary = await CacheFacade.GetData(CacheSet, objectKey, token);
+            var dictionary = await CacheFacade.GetData(CacheSet, objectKey, token).ConfigureAwait(false);
             return dictionary;
         }
 
@@ -185,7 +188,8 @@ namespace Generic.Repository.Cache
             CancellationToken token)
         {
             var result = await CacheFacade.
-                GetData(CacheProperties, objectKey, token);
+                GetData(CacheProperties, objectKey, token).
+                ConfigureAwait(false);
 
             return result;
         }
@@ -196,10 +200,12 @@ namespace Generic.Repository.Cache
             CancellationToken token)
         {
             var dicResult = await CacheFacade.
-                GetData(CacheGet, objectKey, token);
+                GetData(CacheGet, objectKey, token).
+                ConfigureAwait(false);
 
             var result = await CacheFacade.
-                GetData(dicResult, propertyKey, token);
+                GetData(dicResult, propertyKey, token).
+                ConfigureAwait(false);
 
             return result;
         }
@@ -210,10 +216,12 @@ namespace Generic.Repository.Cache
             CancellationToken token)
         {
             var dicResult = await CacheFacade.
-                GetData(CacheSet, objectKey, token);
+                GetData(CacheSet, objectKey, token).
+                ConfigureAwait(false);
 
             var result = await CacheFacade.
-                GetData(dicResult, propertyKey, token);
+                GetData(dicResult, propertyKey, token).
+                ConfigureAwait(false);
 
             return result;
         }
@@ -227,26 +235,31 @@ namespace Generic.Repository.Cache
                 GetData(CacheProperties, objectKey, token);
 
             var result = await CacheFacade.
-                GetData(dictionary, propertyKey, token);
+                GetData(dictionary, propertyKey, token).
+                ConfigureAwait(false);
 
             return result;
         }
 
         public async Task<bool> HasAttribute(
             CancellationToken token) =>
-            await Task.Run(() => CacheAttribute.Any(), token);
+            await Task.Run(() => CacheAttribute.Any(), token).
+                ConfigureAwait(false);
 
         public async Task<bool> HasMethodGet(
             CancellationToken token) =>
-            await Task.Run(() => CacheGet.Any(), token);
+            await Task.Run(() => CacheGet.Any(), token).
+                ConfigureAwait(false);
 
         public async Task<bool> HasMethodSet(
             CancellationToken token) =>
-            await Task.Run(() => CacheSet.Any(), token);
+            await Task.Run(() => CacheSet.Any(), token).
+                ConfigureAwait(false);
 
         public async Task<bool> HasProperty(
             CancellationToken token) =>
-            await Task.Run(() => CacheProperties.Any(), token);
+            await Task.Run(() => CacheProperties.Any(), token).
+                ConfigureAwait(false);
 
         /// <summary>Gets the values from TValue</summary>
         /// <typeparam name="TValue">The type of the value.</typeparam>

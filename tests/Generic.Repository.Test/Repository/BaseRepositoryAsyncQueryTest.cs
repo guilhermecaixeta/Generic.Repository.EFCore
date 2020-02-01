@@ -39,7 +39,7 @@ namespace Generic.Repository.UnitTest.Repository
         public async Task FakeDataUp()
         {
             var mockList = GetListFake();
-            await Repository.CreateAsync(mockList, default);
+            await Repository.CreateAsync(mockList, default).ConfigureAwait(false);
         }
 
         [Test]

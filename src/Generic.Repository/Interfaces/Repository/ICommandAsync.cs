@@ -52,7 +52,6 @@ namespace Generic.Repository.Interfaces.Repository
 
         #region COMMIT - (SAVECHANGES)
 
-
         /// <summary>Multis the transactions asynchronous.</summary>
         /// <param name="transaction">The transaction.</param>
         /// <param name="token">The token.</param>

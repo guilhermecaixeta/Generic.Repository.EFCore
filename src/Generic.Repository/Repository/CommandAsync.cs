@@ -109,8 +109,6 @@ namespace Generic.Repository.Repository
                     await transaction(Context).
                         ConfigureAwait(false);
 
-                    //await Context.SaveChangesAsync(token);
-
                     await contextTransaction.
                         CommitAsync(token).
                         ConfigureAwait(false);

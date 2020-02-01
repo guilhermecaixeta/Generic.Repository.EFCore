@@ -27,12 +27,12 @@ namespace Generic.Repository.Models.PageAggregation.PageConfig
         public int Size { get; set; }
         public PageSort Sort { get; set; }
 
-        public bool Equals(PageConfig pageConfig)
+        public bool Equals(PageConfig other)
         {
             ThrowErrorIf.
-               IsNullValue(pageConfig, nameof(pageConfig), nameof(Equals));
+                IsNullValue(other, nameof(other), nameof(Equals));
 
-            return pageConfig.Equals(this);
+            return other == this;
         }
     }
 }
