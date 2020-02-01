@@ -11,6 +11,11 @@ namespace Generic.Repository.IntTest.Data
     {
         private static ITestDatabase testDatabase;
 
+        public static void BaseDown()
+        {
+            testDatabase.Drop();
+        }
+
         public static IntegrationContext CreateAndGetContext()
         {
             var connectionString = "host=localhost;port=5432;Username=postgres;Password=048365;Database=Test";
@@ -39,11 +44,6 @@ namespace Generic.Repository.IntTest.Data
             injectorCtx.Database.Migrate();
 
             return new BaseRepositoryAsync<FakeInt, IntegrationContext>(injectorCtx, cache);
-        }
-
-        public static void BaseDown()
-        {
-            testDatabase.Drop();
         }
     }
 }

@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace Generic.Repository.Models.PageAggregation
 {
-
     public abstract class PageFilterAbstract<TValue, TFilter, TResult> : PageAttrAbstract<TValue, TResult>
         where TValue : class
         where TFilter : class, IFilter
@@ -51,7 +50,8 @@ namespace Generic.Repository.Models.PageAggregation
         /// <returns></returns>
         protected new async Task<IReadOnlyList<TResult>> GetItems(CancellationToken token)
         {
-            var result = await GetQueryable(token);
+            var result = await GetQueryable(token).
+                ConfigureAwait(false);
 
             return Mapping(result).ToList();
         }
@@ -71,6 +71,5 @@ namespace Generic.Repository.Models.PageAggregation
         { }
 
         #endregion CTOR
-
     }
 }

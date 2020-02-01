@@ -28,16 +28,16 @@ namespace Generic.Repository.UnitTest.Cache
                         {
                             Cache.ClearCache();
 
-                            var @task = Task.Run(async () => await Cache.AddGet<T>(default));
+                            var @task = Task.Run(async () => await Cache.AddGet<T>(default).ConfigureAwait(false));
                             listTaskIO.Add(@task);
 
-                            @task = Task.Run(async () => await Cache.AddSet<T>(default));
+                            @task = Task.Run(async () => await Cache.AddSet<T>(default).ConfigureAwait(false));
                             listTaskIO.Add(@task);
 
-                            @task = Task.Run(async () => await Cache.AddProperty<T>(default));
+                            @task = Task.Run(async () => await Cache.AddProperty<T>(default).ConfigureAwait(false));
                             listTaskIO.Add(@task);
 
-                            @task = Task.Run(async () => await Cache.AddAttribute<T>(default));
+                            @task = Task.Run(async () => await Cache.AddAttribute<T>(default).ConfigureAwait(false));
                             listTaskIO.Add(@task);
                         }
 
@@ -84,28 +84,28 @@ namespace Generic.Repository.UnitTest.Cache
                         {
                             var @task = Task.Run(async () =>
                             {
-                                var result = await Cache.GetMethodGet(NameType, NameProperty, default);
+                                var result = await Cache.GetMethodGet(NameType, NameProperty, default).ConfigureAwait(false);
                                 CheckIfIsValid(result);
                             });
                             listTaskIO.Add(@task);
 
                             @task = Task.Run(async () =>
                             {
-                                var result = await Cache.GetMethodSet(NameType, NameProperty, default);
+                                var result = await Cache.GetMethodSet(NameType, NameProperty, default).ConfigureAwait(false);
                                 CheckIfIsValid(result);
                             });
                             listTaskIO.Add(@task);
 
                             @task = Task.Run(async () =>
                             {
-                                var result = await Cache.GetProperty(NameType, NameProperty, default);
+                                var result = await Cache.GetProperty(NameType, NameProperty, default).ConfigureAwait(false);
                                 CheckIfIsValid(result);
                             });
                             listTaskIO.Add(@task);
 
                             @task = Task.Run(async () =>
                             {
-                                var result = await Cache.GetAttribute(NameType, NameProperty, NameAttribute, default);
+                                var result = await Cache.GetAttribute(NameType, NameProperty, NameAttribute, default).ConfigureAwait(false);
                                 CheckIfIsValid(result);
                             });
                             listTaskIO.Add(@task);

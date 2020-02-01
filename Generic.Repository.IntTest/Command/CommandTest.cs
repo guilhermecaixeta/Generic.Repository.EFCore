@@ -14,18 +14,6 @@ namespace Generic.Repository.IntTest.Command
     {
         public IBaseRepositoryAsync<FakeInt, IntegrationContext> RepositoryAsync { get; set; }
 
-        [SetUp]
-        public void SetUpIntTest()
-        {
-            RepositoryAsync = DataInjector.GetRepositoryAsync();
-        }
-
-        [TearDown]
-        public void SetDown()
-        {
-            DataInjector.BaseDown();
-        }
-
         [Test]
         public async Task BulkInsert_Valid()
         {
@@ -33,7 +21,7 @@ namespace Generic.Repository.IntTest.Command
             {
                 var list = FakeList.GetListFake();
 
-                await RepositoryAsync.BulkInsertAsync(list, 10, default);
+                await RepositoryAsync.BulkInsertAsync(list, 10, default).ConfigureAwait(false);
 
                 //var total = await RepositoryAsync.CountAsync(default);
 
@@ -47,6 +35,18 @@ namespace Generic.Repository.IntTest.Command
 
                 Assert.IsTrue(false);
             }
+        }
+
+        [TearDown]
+        public void SetDown()
+        {
+            DataInjector.BaseDown();
+        }
+
+        [SetUp]
+        public void SetUpIntTest()
+        {
+            RepositoryAsync = DataInjector.GetRepositoryAsync();
         }
     }
 }

@@ -78,7 +78,7 @@ namespace Generic.Repository.Cache
                 }
 
                 return result;
-            }, token);
+            }, token).ConfigureAwait(false);
         }
 
         public async Task RunActionInSemaphore(Action @delegate, CancellationToken token)
@@ -89,7 +89,7 @@ namespace Generic.Repository.Cache
                 {
                     @delegate();
                 }
-            }, token);
+            }, token).ConfigureAwait(false);
         }
 
         private object ExtractMethod<TValue>(MethodInfo method, PropertyInfo property, string nameMethod)

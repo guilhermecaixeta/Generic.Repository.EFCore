@@ -46,7 +46,7 @@ namespace Generic.Repository.Repository
         {
             ThrowErrorIf.IsNullValue(predicate, nameof(predicate), nameof(CountAsync));
 
-            await CreateQuery(true, token);
+            await CreateQuery(true, token).ConfigureAwait(false);
 
             return await Query.CountAsync(predicate, token).
                 ConfigureAwait(false);
@@ -54,7 +54,7 @@ namespace Generic.Repository.Repository
 
         public virtual async Task<int> CountAsync(CancellationToken token)
         {
-            await CreateQuery(true, token);
+            await CreateQuery(true, token).ConfigureAwait(false);
 
             return await Query.CountAsync(token).
                 ConfigureAwait(false);
@@ -74,7 +74,7 @@ namespace Generic.Repository.Repository
             bool notTracking,
             CancellationToken token)
         {
-            await CreateQuery(notTracking, token);
+            await CreateQuery(notTracking, token).ConfigureAwait(false);
 
             return await Query.ToListAsync(token).
                 ConfigureAwait(false);
@@ -87,7 +87,7 @@ namespace Generic.Repository.Repository
         {
             ThrowErrorIf.IsNullValue(predicate, nameof(predicate), nameof(GetSingleByAsync));
 
-            await CreateQuery(notTracking, token);
+            await CreateQuery(notTracking, token).ConfigureAwait(false);
 
             return await Query.Where(predicate).ToListAsync(token).
                 ConfigureAwait(false);
@@ -101,7 +101,7 @@ namespace Generic.Repository.Repository
             ThrowErrorIf.
                 IsNullValue(predicate, nameof(predicate), nameof(GetFirstByAsync));
 
-            await CreateQuery(notTracking, token);
+            await CreateQuery(notTracking, token).ConfigureAwait(false);
 
             return await Query.FirstOrDefaultAsync(predicate, token).
                 ConfigureAwait(false);
@@ -115,7 +115,7 @@ namespace Generic.Repository.Repository
             ThrowErrorIf.
                 IsNullValue(predicate, nameof(predicate), nameof(GetSingleByAsync));
 
-            await CreateQuery(notTracking, token);
+            await CreateQuery(notTracking, token).ConfigureAwait(false);
 
             return await Query.SingleOrDefaultAsync(predicate, token).
                 ConfigureAwait(false);
@@ -150,7 +150,7 @@ namespace Generic.Repository.Repository
             bool notTracking,
             CancellationToken token)
         {
-            await CreateQuery(notTracking, token);
+            await CreateQuery(notTracking, token).ConfigureAwait(false);
 
             return await Query.
                 ToListAsync(token).
@@ -162,10 +162,10 @@ namespace Generic.Repository.Repository
             bool notTracking,
             CancellationToken token)
         {
-            await CreateQueryFiltered(predicate, notTracking, token);
+            await CreateQueryFiltered(predicate, notTracking, token).ConfigureAwait(false);
 
             return await Query.
-                ToListAsync().
+                ToListAsync(token).
                 ConfigureAwait(false);
         }
 
@@ -173,7 +173,7 @@ namespace Generic.Repository.Repository
                             bool notTracking,
                             CancellationToken token)
         {
-            await InitializeCache(token);
+            await InitializeCache(token).ConfigureAwait(false);
 
             Query = SetIncludes(Query);
 
@@ -188,7 +188,7 @@ namespace Generic.Repository.Repository
             bool notTracking,
             CancellationToken token)
         {
-            await CreateQuery(notTracking, token);
+            await CreateQuery(notTracking, token).ConfigureAwait(false);
 
             Query = Query.Where(predicate);
         }
@@ -208,6 +208,6 @@ namespace Generic.Repository.Repository
                 ConfigureAwait(false);
         }
 
-        #endregion INTERNAL
+        #endregion INTERNAL - SET QUERY
     }
 }
