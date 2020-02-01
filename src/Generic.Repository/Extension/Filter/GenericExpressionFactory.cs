@@ -1,10 +1,10 @@
 using Generic.Repository.Cache;
 using Generic.Repository.Enums;
 using Generic.Repository.Extension.Filter.Facade;
+using Generic.Repository.Extension.Validation;
 using Generic.Repository.Models.Filter;
 using Generic.Repository.Models.PageAggregation.PageConfig;
-using Generic.Repository.Validations.Extension.Validation;
-using Generic.Repository.Validations.ThrowError;
+using Generic.Repository.ThrowError;
 using System;
 using System.Linq.Expressions;
 using System.Reflection;

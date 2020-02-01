@@ -1,8 +1,8 @@
-namespace Generic.Repository.Test.Cache
-{
-    using NUnit.Framework;
-    using System.Threading.Tasks;
+using NUnit.Framework;
+using System.Threading.Tasks;
 
+namespace Generic.Repository.UnitTest.Cache
+{
     [TestFixture]
     public abstract class CacheRepositoryGetSetValuesTest<T> : CacheConfigurationTest<T>
     where T : class

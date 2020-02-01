@@ -42,11 +42,5 @@ namespace Generic.Repository.Cache
         /// <returns></returns>
         Task RunActionInSemaphore(Action @delegate, CancellationToken token);
 
-        /// <summary>Processes the function in semaphore.</summary>
-        /// <typeparam name="R"></typeparam>
-        /// <param name="delegate">The delegate.</param>
-        /// <param name="token">The token.</param>
-        /// <returns></returns>
-        Task<R> RunFunctionInSemaphore<R>(Func<R> @delegate, CancellationToken token);
     }
 }

@@ -1,13 +1,13 @@
-﻿namespace Generic.Repository.Test.Repository
-{
-    using Generic.Repository.Models.Filter;
-    using Generic.Repository.Models.PageAggregation.PageConfig;
-    using NUnit.Framework;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq.Expressions;
-    using System.Threading.Tasks;
+﻿using Generic.Repository.Models.Filter;
+using Generic.Repository.Models.PageAggregation.PageConfig;
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 
+namespace Generic.Repository.UnitTest.Repository
+{
     [TestFixture]
     public abstract class BaseRepositoryAsyncQueryTest<TValue, TFilter>
         : BaseRepositoryAsyncCommandTest<TValue, TFilter>

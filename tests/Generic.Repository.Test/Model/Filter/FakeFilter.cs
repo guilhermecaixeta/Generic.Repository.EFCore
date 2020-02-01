@@ -1,7 +1,7 @@
 ﻿using Generic.Repository.Attributes;
 using Generic.Repository.Models.Filter;
 
-namespace Generic.Repository.Test.Model.Filter
+namespace Generic.Repository.UnitTest.Model.Filter
 {
     public class FakeFilter : IFilter
     {

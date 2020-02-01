@@ -1,16 +1,16 @@
-﻿namespace Generic.Repository.Test.Repository
-{
-    using Generic.Repository.Models.PageAggregation.PageConfig;
-    using Generic.Repository.Test.Model;
-    using Generic.Repository.Test.Model.DTO;
-    using Generic.Repository.Test.Model.Filter;
-    using Generic.Repository.Test.Repository.Commom;
-    using NUnit.Framework;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Linq.Expressions;
+﻿using Generic.Repository.Models.PageAggregation.PageConfig;
+using Generic.Repository.UnitTest.Model;
+using Generic.Repository.UnitTest.Model.DTO;
+using Generic.Repository.UnitTest.Model.Filter;
+using Generic.Repository.UnitTest.Repository.Commom;
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 
+namespace Generic.Repository.UnitTest.Repository
+{
     [TestFixture]
     public class BaseRepositoryMapAsyncTest :
         BaseRepositoryMapAsyncQueryTest<FakeObject, FakeDTO, FakeFilter>

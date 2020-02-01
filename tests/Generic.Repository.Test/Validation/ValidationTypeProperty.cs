@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
 
-namespace Generic.Repository.Test.Validation
+namespace Generic.Repository.UnitTest.Validation
 {
     [TestFixture]
     public class ValidationTypeProperty
@@ -18,7 +18,7 @@ namespace Generic.Repository.Test.Validation
         }
 
         [Test]
-        public void TypeProperty_IsPrimitive()
+        public void TypeProperty_ShouldBe_IsPrimitive()
         {
             Assert.IsFalse(IsAcceptableType(typeof(IEnumerable<string>)));
             Assert.IsFalse(IsAcceptableType(typeof(IEnumerable<int>)));

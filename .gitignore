@@ -5,16 +5,18 @@ src/Generic\.Repository/obj/
 
 src/Generic\.Repository/bin/
 
-src/Generic\.Repository\.Test/bin/
-
-src/Generic\.Repository\.Test/obj/
-
 \.vs/
 
 tools/
 
-tests/Generic\.Repository\.Test/obj/
+tests/Generic\.Repository\.UnitTest/obj/
 
-tests/Generic\.Repository\.Test/bin/
+tests/Generic\.Repository\.UnitTest/bin/
 
 TestResults/
+
+tests/Generic.Repository.Test/bin/
+
+tests/Generic.Repository.Test/obj/
+Generic.Repository.IntTest/bin
+Generic.Repository.IntTest/obj

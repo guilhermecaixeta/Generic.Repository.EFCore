@@ -1,9 +1,9 @@
-﻿namespace Generic.Repository.Test.Cache
-{
-    using Generic.Repository.Cache;
-    using NUnit.Framework;
-    using System.Threading.Tasks;
+﻿using Generic.Repository.Cache;
+using NUnit.Framework;
+using System.Threading.Tasks;
 
+namespace Generic.Repository.UnitTest.Cache
+{
     public abstract class CacheConfigurationTest<T>
         where T : class
     {

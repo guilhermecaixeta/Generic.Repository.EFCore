@@ -1,13 +1,12 @@
-﻿using NUnit.Framework;
+﻿using Generic.Repository.Models.Filter;
+using Generic.Repository.Repository;
+using Generic.Repository.UnitTest.Data;
+using Generic.Repository.UnitTest.Repository.Commom;
+using NUnit.Framework;
+using System.Collections.Generic;
 
-namespace Generic.Repository.Test.Repository
+namespace Generic.Repository.UnitTest.Repository
 {
-    using Generic.Repository.Models.Filter;
-    using Generic.Repository.Repository;
-    using Generic.Repository.Test.Data;
-    using Generic.Repository.Test.Repository.Commom;
-    using System.Collections.Generic;
-
     public abstract class BaseRepositoryMapConfigTest<TValue, TResult, TFilter> :
         BaseRepositoryCommomConfig<TValue>
         where TValue : class

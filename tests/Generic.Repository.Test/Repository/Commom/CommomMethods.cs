@@ -1,12 +1,12 @@
 ﻿using Generic.Repository.Models.PageAggregation.PageConfig;
-using Generic.Repository.Test.Model;
-using Generic.Repository.Test.Model.Filter;
+using Generic.Repository.UnitTest.Model;
+using Generic.Repository.UnitTest.Model.Filter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace Generic.Repository.Test.Repository.Commom
+namespace Generic.Repository.UnitTest.Repository.Commom
 {
     internal class CommomMethods
     {
@@ -20,21 +20,20 @@ namespace Generic.Repository.Test.Repository.Commom
             expression;
 
         public Expression<Func<FakeObject, bool>> GetFakeExpression() =>
-GetExpression(x => _fakeSearchValue.Contains(x.Value));
+            GetExpression(x => x.Value.Contains(_fakeSearchValue));
 
         public Expression<Func<FakeObject, bool>> GetFakeExpression(FakeObject value) =>
-GetExpression(x => x.Id == value.Id);
+            GetExpression(x => x.Id == value.Id);
 
         public string GetFakeName() =>
-new string(Enumerable.Repeat(Chars, SizeName)
-.Select(s => s[_random.Next(s.Length)]).ToArray());
+            new string(Enumerable.Repeat(Chars, SizeName).Select(s => s[_random.Next(s.Length)]).ToArray());
 
         public FakeFilter GetFilterFake() =>
-                                    new FakeFilter { Value = _fakeSearchValue };
+            new FakeFilter { Value = _fakeSearchValue };
 
         public IEnumerable<FakeObject> GetListFake()
         {
-            var numberRandom = _random.Next(SizeListTest);
+            var numberRandom = _random.Next(SizeListTest - 1);
 
             for (var i = 0; i < SizeListTest; i++)
             {

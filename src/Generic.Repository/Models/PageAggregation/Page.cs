@@ -4,6 +4,8 @@ using Generic.Repository.Models.PageAggregation.PageConfig;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Generic.Repository.Models.PageAggregation
 {
@@ -26,6 +28,13 @@ namespace Generic.Repository.Models.PageAggregation
         listEntities,
         config)
         { }
+
+        public override async Task<IPage<TValue>> Init(CancellationToken token)
+        {
+            Content = await GetItems(token).ConfigureAwait(false);
+
+            return this;
+        }
     }
 
     public class Page<TValue, TResult> : PageAbstract<TValue, TResult>
@@ -44,6 +53,15 @@ namespace Generic.Repository.Models.PageAggregation
         config,
         mapping)
         { }
+
+        public override async Task<IPage<TResult>> Init(CancellationToken token)
+        {
+            var list = await GetItems(token).ConfigureAwait(false);
+
+            Content = Mapping(list).ToList();
+
+            return this;
+        }
     }
 
     /// <summary>
@@ -67,6 +85,13 @@ namespace Generic.Repository.Models.PageAggregation
         listEntities,
         config)
         { }
+
+        public override async Task<IPage<TValue>> Init(CancellationToken token)
+        {
+            Content = await GetItems(token).ConfigureAwait(false);
+
+            return this;
+        }
     }
 
     public class PageFiltered<TValue, TFilter, TResult> : PageFilterAbstract<TValue, TFilter, TResult>
@@ -87,5 +112,14 @@ namespace Generic.Repository.Models.PageAggregation
                 mapperTo
             )
         { }
+
+        public override async Task<IPage<TResult>> Init(CancellationToken token)
+        {
+            var list = await GetItems(token).ConfigureAwait(false);
+
+            Content = Mapping(list).ToList();
+
+            return this;
+        }
     }
 }
