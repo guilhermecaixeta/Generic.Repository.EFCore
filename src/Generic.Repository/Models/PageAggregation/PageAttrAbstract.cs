@@ -4,8 +4,10 @@ using Generic.Repository.Extension.Filter;
 using Generic.Repository.Models.PageAggregation.PageConfig;
 using Generic.Repository.ThrowError;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,11 +19,11 @@ namespace Generic.Repository.Models.PageAggregation
     {
         public PageAttrAbstract(IQueryable<TIn> listEntities, IPageConfig config, ICacheRepository cache)
         {
-            ThrowErrorIf.IsNullValue(config, nameof(config), string.Empty);
+            ThrowErrorIf.IsNullValue(config, nameof(config), typeof(PageAttrAbstract<,>).Name);
 
-            ThrowErrorIf.IsNullValue(listEntities, nameof(listEntities), string.Empty);
+            ThrowErrorIf.IsNullValue(listEntities, nameof(listEntities), typeof(PageAttrAbstract<,>).Name);
 
-            ThrowErrorIf.IsNullValue(cache, nameof(cache), string.Empty);
+            ThrowErrorIf.IsNullValue(cache, nameof(cache), typeof(PageAttrAbstract<,>).Name);
 
             Cache = cache;
             PageConfig = config;
@@ -45,7 +47,7 @@ namespace Generic.Repository.Models.PageAggregation
         /// <summary>The count</summary>
         protected int Count;
 
-        /// <summary>The list entities</summary>
+        /// <summary>The orderedList entities</summary>
         protected IQueryable<TIn> ListEntities;
 
         /// <summary>The page configuration</summary>
@@ -96,18 +98,26 @@ namespace Generic.Repository.Models.PageAggregation
 
         protected async Task<IQueryable<TIn>> GetQueryable(CancellationToken token)
         {
-            var orderBy = await PageConfig.
-                        CreateGenericOrderBy<TIn>(Cache, token).
-                        ConfigureAwait(false);
+            var ordenation = await GetOrderExpressionAsync(token).
+                ConfigureAwait(false);
 
-            var list = !Sort.Equals(PageSort.ASC.ToString())
-            ? ListEntities.OrderByDescending(orderBy)
-            : ListEntities.OrderBy(orderBy);
+            var orderedQuery = GetOrderedQuery(ordenation);
 
             var skipNumber = NumberPage * Size;
 
-            var result = list.Skip(skipNumber).Take(Size);
-            return result;
+            var listOrdered = orderedQuery.Skip(skipNumber).Take(Size);
+            
+            return listOrdered;
         }
+
+        protected async Task<Expression<Func<TIn, object>>> GetOrderExpressionAsync(CancellationToken token) =>
+            await PageConfig.
+                        CreateGenericOrderBy<TIn>(Cache, token).
+                        ConfigureAwait(false);
+
+        protected IOrderedQueryable<TIn> GetOrderedQuery(Expression<Func<TIn, object>> ordenation) =>
+            Sort.Equals(PageSort.DESC.ToString())
+                ? ListEntities.OrderByDescending(ordenation)
+                : ListEntities.OrderBy(ordenation);
     }
 }

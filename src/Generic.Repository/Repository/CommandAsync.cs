@@ -96,31 +96,32 @@ namespace Generic.Repository.Repository
         #region COMMIT
 
         public async Task MultiTransactionsAsync(
-            Func<DbContext, Task> transaction,
+            Func<DbContext, Task> @action,
             CancellationToken token)
         {
             ThrowErrorIf.
-                IsNullValue(transaction, nameof(transaction), nameof(MultiTransactionsAsync));
+                IsNullValue(@action, nameof(@action), nameof(MultiTransactionsAsync));
 
-            using (var contextTransaction = Context.Database.BeginTransaction())
+            var strategy = Context.Database.CreateExecutionStrategy();
+
+            await strategy.ExecuteAsync(async () =>
             {
-                try
+                using (var transaction = await Context.Database.BeginTransactionAsync())
                 {
-                    await transaction(Context).
-                        ConfigureAwait(false);
+                    try
+                    {
+                        await @action(Context);
 
-                    await contextTransaction.
-                        CommitAsync(token).
-                        ConfigureAwait(false);
-                }
-                catch (Exception e)
-                {
-                    await contextTransaction.RollbackAsync(token).
-                        ConfigureAwait(false);
+                        await transaction.CommitAsync();
+                    }
+                    catch (Exception e)
+                    {
+                        await transaction.RollbackAsync();
 
-                    throw e;
+                        throw e;
+                    }
                 }
-            }
+            });
         }
 
         public Task SaveChangesAsync(CancellationToken cancellationToken) =>
