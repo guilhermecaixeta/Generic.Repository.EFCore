@@ -17,24 +17,14 @@ namespace Generic.Repository.IntTest.Command
         [Test]
         public async Task BulkInsert_Valid()
         {
-            try
-            {
-                var list = FakeList.GetListFake();
+            var list = FakeList.GetListFake();
 
-                await RepositoryAsync.BulkInsertAsync(list, 10, default).ConfigureAwait(false);
+            await RepositoryAsync.BulkInsertAsync(list, 10, default).ConfigureAwait(false);
 
-                //var total = await RepositoryAsync.CountAsync(default);
+            var total = await RepositoryAsync.CountAsync(default);
 
-                //Assert.AreEqual(total, 50);
+            Assert.AreEqual(total, 50);
 
-                Assert.IsTrue(true);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-
-                Assert.IsTrue(false);
-            }
         }
 
         [TearDown]
