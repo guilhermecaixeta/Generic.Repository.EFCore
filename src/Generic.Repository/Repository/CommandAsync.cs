@@ -106,17 +106,22 @@ namespace Generic.Repository.Repository
 
             await strategy.ExecuteAsync(async () =>
             {
-                using (var transaction = await Context.Database.BeginTransactionAsync())
+                using (var transaction = await Context.Database.BeginTransactionAsync().ConfigureAwait(false))
                 {
                     try
                     {
-                        await @action(Context);
+                        await @action(Context).
+                            ConfigureAwait(false);
 
-                        await transaction.CommitAsync();
+                        await transaction.
+                            CommitAsync().
+                            ConfigureAwait(false);
                     }
                     catch (Exception e)
                     {
-                        await transaction.RollbackAsync();
+                        await transaction.
+                            RollbackAsync().
+                            ConfigureAwait(false);
 
                         throw e;
                     }
