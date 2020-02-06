@@ -235,7 +235,7 @@ namespace Generic.Repository.ThrowError
                 GetMethodGet(@object.GetType().Name, nameFieldObject, token).
                 ConfigureAwait(false);
 
-            var value = funcGet(@param);
+            var value = funcGet(@object);
 
             var isEquals = value == @param;
 

@@ -37,9 +37,10 @@ namespace Generic.Repository.Extension.Repository
 
                     foreach (var split in listSplit)
                     {
-                        await Task.
-                            Run(() => ctx.Set<TValue>().RemoveRange(split), token).
-                            ConfigureAwait(false);
+                        ctx.Set<TValue>().RemoveRange(split);
+
+                        await ctx.SaveChangesAsync(token).
+                                ConfigureAwait(false);
                     }
                 }, token).ConfigureAwait(false);
         }
@@ -69,8 +70,6 @@ namespace Generic.Repository.Extension.Repository
             await repository.MultiTransactionsAsync(
             async ctx =>
             {
-                var i = 0;
-                //await ctx.SaveChangesAsync(token);
                 foreach (var split in listSplit)
                 {
                     await ctx.Set<TValue>().AddRangeAsync(split, token).
@@ -111,6 +110,9 @@ namespace Generic.Repository.Extension.Repository
                     foreach (var split in listSplit)
                     {
                         ctx.Set<TValue>().UpdateRange(split);
+
+                        await ctx.SaveChangesAsync(token).
+                                ConfigureAwait(false);
                     }
                 }, token).ConfigureAwait(false);
         }
