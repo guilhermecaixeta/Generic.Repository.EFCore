@@ -22,7 +22,7 @@ namespace Generic.Repository.Cache
             ThrowErrorIf.
                 IsNullValue(setter, nameof(setter), nameof(ExtractMethod)); ;
 
-            var result = (Action<object, object>)ExtractMethod<TValue>(setter, property, "CreateActionGeneric");
+            var result = ExtractMethod<TValue, Action<object, object>>(setter, property, "CreateActionGeneric");
 
             return result;
         }
@@ -49,7 +49,7 @@ namespace Generic.Repository.Cache
             ThrowErrorIf.
                 IsNullValue(getter, nameof(property), nameof(CreateFunction));
 
-            return (Func<object, object>)ExtractMethod<TValue>(getter, property, "CreateFunctionGeneric");
+            return ExtractMethod<TValue, Func<object, object>>(getter, property, "CreateFunctionGeneric");
         }
 
         public Func<object, object> CreateFunctionGeneric<TValue, TReturn>(MethodInfo getter)
@@ -70,15 +70,11 @@ namespace Generic.Repository.Cache
                 ThrowErrorIf.
                     IsEmptyOrNullString(key, nameof(key), nameof(GetData));
 
-                var isValid = dictionary.TryGetValue(key, out var result);
-
-                if (!isValid)
-                {
-                    throw new KeyNotFoundException($"FIELD> {nameof(key)} VALUE> {key}");
-                }
+                dictionary.TryGetValue(key, out var result);
 
                 return result;
-            }, token).ConfigureAwait(false);
+            }, token).
+            ConfigureAwait(false);
         }
 
         public async Task RunActionInSemaphore(Action @delegate, CancellationToken token)
@@ -92,7 +88,7 @@ namespace Generic.Repository.Cache
             }, token).ConfigureAwait(false);
         }
 
-        private object ExtractMethod<TValue>(MethodInfo method, PropertyInfo property, string nameMethod)
+        private TReturn ExtractMethod<TValue, TReturn>(MethodInfo method, PropertyInfo property, string nameMethod)
         {
             ThrowErrorIf.
                 IsNullValue(method, nameof(method), nameof(ExtractMethod));
@@ -102,8 +98,10 @@ namespace Generic.Repository.Cache
             var genericHelper = genericMethod?.
                 MakeGenericMethod(typeof(TValue), property.PropertyType);
 
-            return genericHelper?.
+            var extractedMethod = (TReturn)genericHelper?.
                 Invoke(this, new object[] { method });
+
+            return extractedMethod;
         }
     }
 }

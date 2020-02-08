@@ -52,12 +52,12 @@ namespace Generic.Repository.Interfaces.Repository
 
         #region COMMIT - (SAVECHANGES)
 
-        /// <summary>Multis the transactions asynchronous.</summary>
+        /// <summary>Multi transactions asynchronous. Rollback happening always when have an exception.</summary>
         /// <param name="transaction">The transaction.</param>
         /// <param name="token">The token.</param>
         /// <returns></returns>
         Task MultiTransactionsAsync(
-            Func<DbContext, Task> transaction,
+            Func<DbSet<TValue>, Task> transaction,
             CancellationToken token);
 
         /// <summary>Saves the changes asynchronous.</summary>

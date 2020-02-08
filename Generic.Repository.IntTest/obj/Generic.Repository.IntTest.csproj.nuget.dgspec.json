@@ -1,43 +1,37 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\Generic.Repository.IntTest\\Generic.Repository.IntTest.csproj": {}
+    "C:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\Generic.Repository.IntTest\\Generic.Repository.IntTest.csproj": {}
   },
   "projects": {
-    "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\Generic.Repository.IntTest\\Generic.Repository.IntTest.csproj": {
+    "C:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\Generic.Repository.IntTest\\Generic.Repository.IntTest.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\Generic.Repository.IntTest\\Generic.Repository.IntTest.csproj",
+        "projectUniqueName": "C:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\Generic.Repository.IntTest\\Generic.Repository.IntTest.csproj",
         "projectName": "Generic.Repository.IntTest",
-        "projectPath": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\Generic.Repository.IntTest\\Generic.Repository.IntTest.csproj",
-        "packagesPath": "C:\\Users\\ctw00503\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\Generic.Repository.IntTest\\obj\\",
+        "projectPath": "C:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\Generic.Repository.IntTest\\Generic.Repository.IntTest.csproj",
+        "packagesPath": "C:\\Users\\guilh\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\Generic.Repository.IntTest\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Microsoft\\Xamarin\\NuGet\\",
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\ctw00503\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+          "C:\\Users\\guilh\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.0"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "http://artifacts.connected.bmw/artifactory/api/nuget/nuget": {},
-          "https://api.nuget.org/v3/index.json": {},
-          "https://bmw.myget.org/F/mobilitygraph/api/v3/index.json": {},
-          "https://bmw.myget.org/F/omc/api/v3/index.json": {},
-          "https://bmw.myget.org/F/sharedcode/api/v3/index.json": {}
+          "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "netcoreapp3.0": {
             "projectReferences": {
-              "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj": {
-                "projectPath": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj"
+              "C:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj": {
+                "projectPath": "C:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj"
               }
             }
           }
@@ -57,11 +51,11 @@
             },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[3.1.0, )"
+              "version": "[3.1.1, )"
             },
             "Microsoft.Extensions.DependencyInjection": {
               "target": "Package",
-              "version": "[3.1.0, )"
+              "version": "[3.1.1, )"
             },
             "Microsoft.NET.Test.Sdk": {
               "target": "Package",
@@ -71,11 +65,11 @@
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[3.16.0, )"
+              "version": "[3.16.1, )"
             },
             "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",
-              "version": "[3.1.0, )"
+              "version": "[3.1.1.1, )"
             },
             "nunit": {
               "target": "Package",
@@ -115,34 +109,28 @@
         }
       }
     },
-    "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj": {
-      "version": "1.0.2",
+    "C:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj": {
+      "version": "1.0.3",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj",
+        "projectUniqueName": "C:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj",
         "projectName": "Generic.RepositoryAsync.EFCore",
-        "projectPath": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj",
-        "packagesPath": "C:\\Users\\ctw00503\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\src\\Generic.Repository\\obj\\",
+        "projectPath": "C:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj",
+        "packagesPath": "C:\\Users\\guilh\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\src\\Generic.Repository\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Microsoft\\Xamarin\\NuGet\\",
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\ctw00503\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+          "C:\\Users\\guilh\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netstandard2.1"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "http://artifacts.connected.bmw/artifactory/api/nuget/nuget": {},
-          "https://api.nuget.org/v3/index.json": {},
-          "https://bmw.myget.org/F/mobilitygraph/api/v3/index.json": {},
-          "https://bmw.myget.org/F/omc/api/v3/index.json": {},
-          "https://bmw.myget.org/F/sharedcode/api/v3/index.json": {}
+          "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "netstandard2.1": {
@@ -160,7 +148,11 @@
           "dependencies": {
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[3.1.0, )"
+              "version": "[3.1.1, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[12.0.3, )"
             }
           },
           "imports": [

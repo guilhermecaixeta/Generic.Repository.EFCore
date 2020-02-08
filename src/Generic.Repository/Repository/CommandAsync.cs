@@ -96,7 +96,7 @@ namespace Generic.Repository.Repository
         #region COMMIT
 
         public async Task MultiTransactionsAsync(
-            Func<DbContext, Task> @action,
+            Func<DbSet<TValue>, Task> @action,
             CancellationToken token)
         {
             ThrowErrorIf.
@@ -110,20 +110,20 @@ namespace Generic.Repository.Repository
                 {
                     try
                     {
-                        await @action(Context).
+                        await @action(Context.Set<TValue>()).
                             ConfigureAwait(false);
 
                         await transaction.
                             CommitAsync().
                             ConfigureAwait(false);
                     }
-                    catch (Exception e)
+                    catch
                     {
                         await transaction.
                             RollbackAsync().
                             ConfigureAwait(false);
 
-                        throw e;
+                        throw;
                     }
                 }
             });
