@@ -3,23 +3,29 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <RepositoryUrl>https://github.com/guilhermecaixeta/Generic.Repository.EFCore</RepositoryUrl>
-    <PackageTags>Generics Repository, Async, Pagination, reactive programmation, crud, solid, filter</PackageTags>
+    <PackageTags>Generics Repository, Async, Pagination, CRUD, Filter, Reactive</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <AssemblyVersion>1.0.0.1</AssemblyVersion>
-    <FileVersion>1.0.0.1</FileVersion>
+    <AssemblyVersion>1.0.0.3</AssemblyVersion>
+    <FileVersion>1.0.0.3</FileVersion>
     <PackageProjectUrl>https://github.com/guilhermecaixeta/Generic.Repository.EFCore</PackageProjectUrl>
-    <PackageReleaseNotes>V.1.0.1
-Fix bugs, fix cache use and add new features.</PackageReleaseNotes>
+    <PackageReleaseNotes>V.1.0.3
+Bug fix</PackageReleaseNotes>
     <PackageId>Generic.RepositoryAsync.EFCore</PackageId>
     <Authors>GuiCaixeta</Authors>
     <Product>Generic.RepositoryAsync.EFCore</Product>
-    <Description>Generic repository, implemented using the best of programmation.</Description>
-    <Version>1.0.1</Version>
+    <Description>Generic Repository Pattern implemented for EFCore 3.1 and .Net standart 2.1.
+Content:
+Fix package DI
+Fix access cache
+
+and more...</Description>
+    <Version>1.0.3</Version>
     <LangVersion>7.1</LangVersion>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
-
 </Project>

@@ -1,9 +1,9 @@
-namespace Generic.Repository.Validations.Extension.Validation
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
+namespace Generic.Repository.Extension.Validation
+{
     public static class Validation
     {
         /// <summary>Determines whether this instance has any.</summary>

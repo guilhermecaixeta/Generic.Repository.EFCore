@@ -1,11 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Generic.Repository.Interfaces.Repository
 {
     public interface ICommandRepository<TValue>
-     where TValue : class
+        where TValue : class
     {
         #region COMMAND - (CREAT, UPDATE, DELETE) With CancellationToken
 
@@ -50,9 +52,16 @@ namespace Generic.Repository.Interfaces.Repository
 
         #region COMMIT - (SAVECHANGES)
 
-        /// <summary>
-        /// Commit async transaction if useCommit is true
-        /// </summary>
+        /// <summary>Multi transactions asynchronous. Rollback happening always when have an exception.</summary>
+        /// <param name="transaction">The transaction.</param>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
+        Task MultiTransactionsAsync(
+            Func<DbSet<TValue>, Task> transaction,
+            CancellationToken token);
+
+        /// <summary>Saves the changes asynchronous.</summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         Task SaveChangesAsync(CancellationToken cancellationToken);
 

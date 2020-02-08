@@ -1,4 +1,4 @@
-using Generic.Repository.Validations.ThrowError;
+using Generic.Repository.ThrowError;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -9,18 +9,20 @@ namespace Generic.Repository.Cache
 {
     internal class CacheRepositoryFacade : ICacheRepositoryFacade
     {
+        private readonly object _delegateLock = new object();
+
         public Action<object, object> CreateAction<TValue>(PropertyInfo property)
         {
             ThrowErrorIf.
-                IsNullValue(property, nameof(property), nameof(ExtractMethod));
+                IsNullValue(property, nameof(property), nameof(CreateAction));
 
             var setter = property.
                 GetSetMethod(true);
 
             ThrowErrorIf.
-                IsNullValue(setter, nameof(setter), nameof(ExtractMethod)); ;
+                IsNullValue(setter, nameof(setter), nameof(CreateAction));
 
-            var result = (Action<object, object>)ExtractMethod<TValue>(setter, property, "CreateActionGeneric");
+            var result = ExtractMethod<TValue, Action<object, object>>(setter, property, nameof(CreateActionGeneric));
 
             return result;
         }
@@ -47,7 +49,7 @@ namespace Generic.Repository.Cache
             ThrowErrorIf.
                 IsNullValue(getter, nameof(property), nameof(CreateFunction));
 
-            return (Func<object, object>)ExtractMethod<TValue>(getter, property, "CreateFunctionGeneric");
+            return ExtractMethod<TValue, Func<object, object>>(getter, property, nameof(CreateFunctionGeneric));
         }
 
         public Func<object, object> CreateFunctionGeneric<TValue, TReturn>(MethodInfo getter)
@@ -61,50 +63,32 @@ namespace Generic.Repository.Cache
             return GetterDelegate;
         }
 
-        public async Task<R> GetData<R>(IDictionary<string, R> dictionary, string key, CancellationToken token)
+        public async Task<TReturn> GetData<TReturn>(IDictionary<string, TReturn> dictionary, string key, CancellationToken token)
         {
-            R FuncGet()
+            return await Task.Run(() =>
             {
                 ThrowErrorIf.
-                IsEmptyOrNullString(key, nameof(key), nameof(GetData));
+                    IsEmptyOrNullString(key, nameof(key), nameof(GetData));
 
-                var isValid = dictionary.TryGetValue(key, out var result);
-
-                if (!isValid)
-                {
-                    throw new KeyNotFoundException($"FIELD> {nameof(key)} VALUE> {key}");
-                }
+                dictionary.TryGetValue(key, out var result);
 
                 return result;
-            }
-
-            return await RunFunctionInSemaphore(FuncGet, token);
+            }, token).
+            ConfigureAwait(false);
         }
 
         public async Task RunActionInSemaphore(Action @delegate, CancellationToken token)
         {
-            CacheSemaphore.InitializeSemaphore();
             await Task.Run(() =>
             {
-                CacheSemaphore.WaitOne();
-                @delegate();
-                CacheSemaphore.Release();
-            }, token);
+                lock (_delegateLock)
+                {
+                    @delegate();
+                }
+            }, token).ConfigureAwait(false);
         }
 
-        public async Task<R> RunFunctionInSemaphore<R>(Func<R> @delegate, CancellationToken token)
-        {
-            CacheSemaphore.InitializeSemaphore();
-            return await Task.Run(() =>
-            {
-                CacheSemaphore.WaitOne();
-                var result = @delegate();
-                CacheSemaphore.Release();
-                return result;
-            }, token);
-        }
-
-        private object ExtractMethod<TValue>(MethodInfo method, PropertyInfo property, string nameMethod)
+        private TReturn ExtractMethod<TValue, TReturn>(MethodInfo method, PropertyInfo property, string nameMethod)
         {
             ThrowErrorIf.
                 IsNullValue(method, nameof(method), nameof(ExtractMethod));
@@ -114,8 +98,10 @@ namespace Generic.Repository.Cache
             var genericHelper = genericMethod?.
                 MakeGenericMethod(typeof(TValue), property.PropertyType);
 
-            return genericHelper?.
+            var extractedMethod = (TReturn)genericHelper?.
                 Invoke(this, new object[] { method });
+
+            return extractedMethod;
         }
     }
 }

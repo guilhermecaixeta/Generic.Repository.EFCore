@@ -1,6 +1,4 @@
-﻿using Generic.Repository.Models.PageAggregation;
-using Generic.Repository.Models.PageAggregation.PageConfig;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
@@ -9,7 +7,7 @@ using System.Threading.Tasks;
 namespace Generic.Repository.Interfaces.Repository
 {
     public interface IQueryAsync<TValue>
-     where TValue : class
+        where TValue : class
     {
         #region ATTR
 
@@ -18,13 +16,13 @@ namespace Generic.Repository.Interfaces.Repository
 
         #endregion ATTR
 
-        #region Includes Methods
+        #region INCLUDES METHODS
 
         void AddInclude(string include);
 
         void AddInclude(Expression<Func<TValue, object>> predicate);
 
-        #endregion Includes Methods
+        #endregion INCLUDES METHODS
 
         #region COMMONS QUERY
 
@@ -50,65 +48,41 @@ namespace Generic.Repository.Interfaces.Repository
         ///<summary>
         /// Return all data
         ///</summary>
-        ///<param name="enableAsNotTracking">Condition to tracking data</param>
+        ///<param name="notTracking">Condition to tracking data</param>
         /// <returns></returns>
-        Task<IReadOnlyList<TValue>> GetAllAsync(bool enableAsNotTracking, CancellationToken token);
+        Task<IReadOnlyList<TValue>> GetAllAsync(bool notTracking, CancellationToken token);
 
         ///<summary>
         /// Return all data from predicate informed
         ///</summary>
         ///<param name="predicate">Condition to apply on data</param>
-        ///<param name="enableAsNotTracking">Condition to tracking data</param>
+        ///<param name="notTracking">Condition to tracking data</param>
         /// <returns></returns>
         Task<IReadOnlyList<TValue>> GetAllByAsync(
             Expression<Func<TValue, bool>> predicate,
-            bool enableAsNotTracking,
+            bool notTracking,
             CancellationToken token);
 
         /// <summary>
         /// Return first data from a informed predicate.
         /// </summary>
         /// <param name="predicate"></param>
-        ///<param name="enableAsNotTracking">Condition to tracking data</param>
+        ///<param name="notTracking">Condition to tracking data</param>
         /// <returns></returns>
         Task<TValue> GetFirstByAsync(
             Expression<Func<TValue, bool>> predicate,
-            bool enableAsNotTracking,
-            CancellationToken token);
-
-        ///<summary>
-        /// Return page.
-        ///</summary>
-        ///<param name="config">Condition to apply on data</param>
-        ///<param name="enableAsNotTracking">Condition to tracking data</param>
-        /// <returns></returns>
-        Task<IPage<TValue>> GetPageAsync(
-            IPageConfig config,
-            bool enableAsNotTracking,
-            CancellationToken token);
-
-        ///<summary>
-        /// Return page Filtered.
-        ///</summary>
-        ///<param name="config">Condition to apply on data</param>
-        /// <param name="predicate">Predicate to filter data</param>
-        ///<param name="enableAsNotTracking">Condition to tracking data</param>
-        /// <returns></returns>
-        Task<IPage<TValue>> GetPageAsync(
-            IPageConfig config,
-            Expression<Func<TValue, bool>> predicate,
-            bool enableAsNotTracking,
+            bool notTracking,
             CancellationToken token);
 
         /// <summary>
         /// Return single data from a informed predicate.
         /// </summary>
         /// <param name="predicate"></param>
-        ///<param name="enableAsNotTracking">Condition to tracking data</param>
+        ///<param name="notTracking">Condition to tracking data</param>
         /// <returns></returns>
         Task<TValue> GetSingleByAsync(
             Expression<Func<TValue, bool>> predicate,
-            bool enableAsNotTracking,
+            bool notTracking,
             CancellationToken token);
 
         #endregion COMMONS QUERY

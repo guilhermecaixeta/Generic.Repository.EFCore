@@ -5,13 +5,13 @@ namespace Generic.Repository.Exceptions
     public abstract class BaseException : Exception
     {
         /// <summary>Initializes a new instance of the <see cref="BaseException"/> class.</summary>
-        public BaseException()
+        protected BaseException()
         {
         }
 
         /// <summary>Initializes a new instance of the <see cref="BaseException"/> class.</summary>
         /// <param name="message">The message.</param>
-        public BaseException(string message)
+        protected BaseException(string message)
         : base(message)
         {
         }
@@ -19,7 +19,7 @@ namespace Generic.Repository.Exceptions
         /// <summary>Initializes a new instance of the <see cref="BaseException"/> class.</summary>
         /// <param name="message">The message.</param>
         /// <param name="inner">The inner.</param>
-        public BaseException(string message, Exception inner)
+        protected BaseException(string message, Exception inner)
         : base(message, inner)
         {
         }

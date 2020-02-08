@@ -1,9 +1,9 @@
-﻿namespace Generic.Repository.Test.Cache
-{
-    using Generic.Repository.Cache;
-    using NUnit.Framework;
-    using System.Threading.Tasks;
+﻿using Generic.Repository.Cache;
+using NUnit.Framework;
+using System.Threading.Tasks;
 
+namespace Generic.Repository.UnitTest.Cache
+{
     public abstract class CacheConfigurationTest<T>
         where T : class
     {
@@ -24,10 +24,10 @@
         public async Task CacheUp()
         {
             Cache = new CacheRepository();
-            await Cache.AddGet<T>(default);
-            await Cache.AddSet<T>(default);
-            await Cache.AddProperty<T>(default);
-            await Cache.AddAttribute<T>(default);
+            await Cache.AddGet<T>(default).ConfigureAwait(false);
+            await Cache.AddSet<T>(default).ConfigureAwait(false);
+            await Cache.AddProperty<T>(default).ConfigureAwait(false);
+            await Cache.AddAttribute<T>(default).ConfigureAwait(false);
         }
     }
 }

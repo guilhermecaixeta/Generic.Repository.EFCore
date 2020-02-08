@@ -1,55 +1,50 @@
 ﻿using NUnit.Framework;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Generic.Repository.Test.Cache
+namespace Generic.Repository.UnitTest.Cache
 {
     public abstract class CacheRepositoryIOAccessTest<T>
         : CacheRepositoryExceptionTest<T>
         where T : class
     {
+        private const int MaxIterations = 10;
+
         [Test]
         public async Task CacheAccess_StressInput()
         {
             var valid = true;
-            for (int j = 0; j <= 10; j++)
+            for (var j = 0; j <= MaxIterations; j++)
             {
-                var listaTarefas = new List<Task>();
-                try
+                var scheduledListTask = new List<Task>();
+
+                var mainTask = Task.Run(async () =>
                 {
-                    var tarefaGeral = Task.Run(async () =>
+                    var listTaskIO = new List<Task>();
+
+                    for (var i = 0; i <= MaxIterations; i++)
                     {
-                        var listaTarefaIO = new List<Task>();
+                        Cache.ClearCache();
 
-                        for (int i = 0; i <= 10; i++)
-                        {
-                            Cache.ClearCache();
+                        var @task = Task.Run(async () => await Cache.AddGet<T>(default).ConfigureAwait(false));
+                        listTaskIO.Add(@task);
 
-                            var tarefa = Task.Run(async () => await Cache.AddGet<T>(default));
-                            listaTarefaIO.Add(tarefa);
+                        @task = Task.Run(async () => await Cache.AddSet<T>(default).ConfigureAwait(false));
+                        listTaskIO.Add(@task);
 
-                            tarefa = Task.Run(async () => await Cache.AddSet<T>(default));
-                            listaTarefaIO.Add(tarefa);
+                        @task = Task.Run(async () => await Cache.AddProperty<T>(default).ConfigureAwait(false));
+                        listTaskIO.Add(@task);
 
-                            tarefa = Task.Run(async () => await Cache.AddProperty<T>(default));
-                            listaTarefaIO.Add(tarefa);
+                        @task = Task.Run(async () => await Cache.AddAttribute<T>(default).ConfigureAwait(false));
+                        listTaskIO.Add(@task);
+                    }
 
-                            tarefa = Task.Run(async () => await Cache.AddAttribute<T>(default));
-                            listaTarefaIO.Add(tarefa);
-                        }
+                    await Task.WhenAll(listTaskIO).ConfigureAwait(false);
+                });
 
-                        await Task.WhenAll(listaTarefaIO);
-                    });
+                scheduledListTask.Add(mainTask);
 
-                    listaTarefas.Add(tarefaGeral);
-                }
-                catch (Exception)
-                {
-                    valid = false;
-                }
-
-                await Task.WhenAll(listaTarefas);
+                await Task.WhenAll(scheduledListTask).ConfigureAwait(false);
             }
 
             Assert.IsTrue(valid);
@@ -69,57 +64,58 @@ namespace Generic.Repository.Test.Cache
                 valid = result != null;
             }
 
-            for (int j = 0; j <= 10; j++)
+            for (var j = 0; j <= MaxIterations; j++)
             {
-                var listaTarefas = new List<Task>();
+                var scheduledListTask = new List<Task>();
                 try
                 {
-                    var tarefaGeral = Task.Run(async () =>
+                    var mainTask = Task.Run(async () =>
                     {
-                        var listaTarefaIO = new List<Task>();
+                        var listTaskIO = new List<Task>();
 
-                        for (int i = 0; i <= 10; i++)
+                        for (var i = 0; i <= MaxIterations; i++)
                         {
-                            var tarefa = Task.Run(async () =>
+                            var @task = Task.Run(async () =>
                             {
-                                var result = await Cache.GetMethodGet(NameType, NameProperty, default);
+                                var result = await Cache.GetMethodGet(NameType, NameProperty, default).ConfigureAwait(false);
                                 CheckIfIsValid(result);
                             });
-                            listaTarefaIO.Add(tarefa);
+                            listTaskIO.Add(@task);
 
-                            tarefa = Task.Run(async () =>
+                            @task = Task.Run(async () =>
                             {
-                                var result = await Cache.GetMethodSet(NameType, NameProperty, default);
+                                var result = await Cache.GetMethodSet(NameType, NameProperty, default).ConfigureAwait(false);
                                 CheckIfIsValid(result);
                             });
-                            listaTarefaIO.Add(tarefa);
+                            listTaskIO.Add(@task);
 
-                            tarefa = Task.Run(async () =>
+                            @task = Task.Run(async () =>
                             {
-                                var result = await Cache.GetProperty(NameType, NameProperty, default);
+                                var result = await Cache.GetProperty(NameType, NameProperty, default).ConfigureAwait(false);
                                 CheckIfIsValid(result);
                             });
-                            listaTarefaIO.Add(tarefa);
+                            listTaskIO.Add(@task);
 
-                            tarefa = Task.Run(async () =>
+                            @task = Task.Run(async () =>
                             {
-                                var result = await Cache.GetAttribute(NameType, NameProperty, NameAttribute, default);
+                                var result = await Cache.GetAttribute(NameType, NameProperty, NameAttribute, default).ConfigureAwait(false);
                                 CheckIfIsValid(result);
                             });
-                            listaTarefaIO.Add(tarefa);
+                            listTaskIO.Add(@task);
                         }
 
-                        await Task.WhenAll(listaTarefaIO);
+                        await Task.WhenAll(listTaskIO).ConfigureAwait(false);
                     });
 
-                    listaTarefas.Add(tarefaGeral);
+                    scheduledListTask.Add(mainTask);
                 }
-                catch (Exception)
+                catch
                 {
                     valid = false;
+                    throw;
                 }
 
-                await Task.WhenAll(listaTarefas);
+                await Task.WhenAll(scheduledListTask).ConfigureAwait(false);
             }
 
             Assert.IsTrue(valid);
