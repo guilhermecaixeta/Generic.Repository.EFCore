@@ -119,6 +119,7 @@ namespace Generic.Repository.UnitTest.Cache
                 catch
                 {
                     valid = false;
+                    throw;
                 }
 
                 await Task.WhenAll(scheduledListTask).ConfigureAwait(false);

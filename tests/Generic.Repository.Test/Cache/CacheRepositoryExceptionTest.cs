@@ -41,7 +41,6 @@ namespace Generic.Repository.UnitTest.Cache
                     ConfigureAwait(false))).
                 ConfigureAwait(false);
 
-
         [Test]
         public async Task GetMethodSet_AttributeNoCacheable() =>
             await Task.FromResult(Assert.ThrowsAsync<KeyNotFoundException>(async () =>

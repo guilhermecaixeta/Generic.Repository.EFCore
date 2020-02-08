@@ -3,8 +3,6 @@ using Generic.Repository.Exceptions;
 using Generic.Repository.Extension.Validation;
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Generic.Repository.ThrowError
 {
@@ -26,7 +24,6 @@ namespace Generic.Repository.ThrowError
                 throw new NotEqualsFieldException(value.ToString(), comparable.ToString());
             }
         }
-
 
         /// <summary>
         /// Fields the is not equals.

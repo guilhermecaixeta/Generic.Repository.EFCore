@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace Generic.Repository.Models.PageAggregation
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <typeparam name="TIn">The type of the in.</typeparam>
     /// <typeparam name="TOut">The type of the out.</typeparam>
@@ -112,7 +112,7 @@ namespace Generic.Repository.Models.PageAggregation
             var skipNumber = NumberPage * Size;
 
             var listOrdered = orderedQuery.Skip(skipNumber).Take(Size);
-            
+
             return listOrdered;
         }
 

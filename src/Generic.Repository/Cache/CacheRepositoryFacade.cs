@@ -20,7 +20,7 @@ namespace Generic.Repository.Cache
                 GetSetMethod(true);
 
             ThrowErrorIf.
-                IsNullValue(setter, nameof(setter), nameof(CreateAction)); ;
+                IsNullValue(setter, nameof(setter), nameof(CreateAction));
 
             var result = ExtractMethod<TValue, Action<object, object>>(setter, property, nameof(CreateActionGeneric));
 
