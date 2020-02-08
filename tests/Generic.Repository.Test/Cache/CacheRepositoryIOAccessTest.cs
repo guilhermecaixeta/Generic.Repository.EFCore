@@ -41,16 +41,16 @@ namespace Generic.Repository.UnitTest.Cache
                             listTaskIO.Add(@task);
                         }
 
-                        await Task.WhenAll(listTaskIO);
+                        await Task.WhenAll(listTaskIO).ConfigureAwait(false);
                     });
 
                     scheduledListTask.Add(mainTask);
 
-                    await Task.WhenAll(scheduledListTask);
+                    await Task.WhenAll(scheduledListTask).ConfigureAwait(false);
                 }
-                catch (Exception e)
+                catch
                 {
-                    throw e;
+                    throw;
                 }
             }
 
@@ -111,17 +111,17 @@ namespace Generic.Repository.UnitTest.Cache
                             listTaskIO.Add(@task);
                         }
 
-                        await Task.WhenAll(listTaskIO);
+                        await Task.WhenAll(listTaskIO).ConfigureAwait(false);
                     });
 
                     scheduledListTask.Add(mainTask);
                 }
-                catch (Exception)
+                catch
                 {
                     valid = false;
                 }
 
-                await Task.WhenAll(scheduledListTask);
+                await Task.WhenAll(scheduledListTask).ConfigureAwait(false);
             }
 
             Assert.IsTrue(valid);
