@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -18,40 +17,34 @@ namespace Generic.Repository.UnitTest.Cache
             for (var j = 0; j <= MaxIterations; j++)
             {
                 var scheduledListTask = new List<Task>();
-                try
+
+                var mainTask = Task.Run(async () =>
                 {
-                    var mainTask = Task.Run(async () =>
+                    var listTaskIO = new List<Task>();
+
+                    for (var i = 0; i <= MaxIterations; i++)
                     {
-                        var listTaskIO = new List<Task>();
+                        Cache.ClearCache();
 
-                        for (var i = 0; i <= MaxIterations; i++)
-                        {
-                            Cache.ClearCache();
+                        var @task = Task.Run(async () => await Cache.AddGet<T>(default).ConfigureAwait(false));
+                        listTaskIO.Add(@task);
 
-                            var @task = Task.Run(async () => await Cache.AddGet<T>(default).ConfigureAwait(false));
-                            listTaskIO.Add(@task);
+                        @task = Task.Run(async () => await Cache.AddSet<T>(default).ConfigureAwait(false));
+                        listTaskIO.Add(@task);
 
-                            @task = Task.Run(async () => await Cache.AddSet<T>(default).ConfigureAwait(false));
-                            listTaskIO.Add(@task);
+                        @task = Task.Run(async () => await Cache.AddProperty<T>(default).ConfigureAwait(false));
+                        listTaskIO.Add(@task);
 
-                            @task = Task.Run(async () => await Cache.AddProperty<T>(default).ConfigureAwait(false));
-                            listTaskIO.Add(@task);
+                        @task = Task.Run(async () => await Cache.AddAttribute<T>(default).ConfigureAwait(false));
+                        listTaskIO.Add(@task);
+                    }
 
-                            @task = Task.Run(async () => await Cache.AddAttribute<T>(default).ConfigureAwait(false));
-                            listTaskIO.Add(@task);
-                        }
+                    await Task.WhenAll(listTaskIO).ConfigureAwait(false);
+                });
 
-                        await Task.WhenAll(listTaskIO).ConfigureAwait(false);
-                    });
+                scheduledListTask.Add(mainTask);
 
-                    scheduledListTask.Add(mainTask);
-
-                    await Task.WhenAll(scheduledListTask).ConfigureAwait(false);
-                }
-                catch
-                {
-                    throw;
-                }
+                await Task.WhenAll(scheduledListTask).ConfigureAwait(false);
             }
 
             Assert.IsTrue(valid);
