@@ -97,7 +97,8 @@ RunTarget(target);
 /* END - RUN */
 
 /* BEGIN - METHODS */
-private bool ShouldRunRelease() => AppVeyor.IsRunningOnAppVeyor;
+private bool ShouldRunRelease() => 
+        AppVeyor.IsRunningOnAppVeyor && AppVeyor.Environment.Repository.Tag.IsTag;
 
 private string GetPackageVersion()
 {
