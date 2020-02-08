@@ -1,10 +1,10 @@
 using Generic.Repository.Cache;
 using Generic.Repository.Enums;
 using Generic.Repository.Extension.Filter.Facade;
+using Generic.Repository.Extension.Validation;
 using Generic.Repository.Models.Filter;
 using Generic.Repository.Models.PageAggregation.PageConfig;
-using Generic.Repository.Validations.Extension.Validation;
-using Generic.Repository.Validations.ThrowError;
+using Generic.Repository.ThrowError;
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -41,7 +41,7 @@ namespace Generic.Repository.Extension.Filter
             var filterName = typeof(TFilter).Name;
             var mergeOption = LambdaMerge.And;
 
-            var dictionaryMethodGet = await cacheRepository.GetDictionaryMethodGet(filterName, token);
+            var dictionaryMethodGet = await cacheRepository.GetDictionaryMethodGet(filterName, token).ConfigureAwait(false);
 
             foreach (var getFilter in dictionaryMethodGet)
             {
@@ -53,7 +53,9 @@ namespace Generic.Repository.Extension.Filter
                     continue;
                 }
 
-                var attributeCached = await cacheRepository.GetDictionaryAttribute(filterName, token);
+                var attributeCached = await cacheRepository.
+                    GetDictionaryAttribute(filterName, token).
+                    ConfigureAwait(false);
 
                 if (!attributeCached.TryGetValue(key, out var attributes))
                 {
@@ -68,7 +70,9 @@ namespace Generic.Repository.Extension.Filter
 
                 attributes.TryGetValue(NameProperty, out var attributeName);
 
-                var property = await cacheRepository.GetProperty(typeof(TValue).Name, (string)attributeName.Value ?? key, token);
+                var property = await cacheRepository.
+                    GetProperty(typeof(TValue).Name, (string)attributeName.Value ?? key, token).
+                    ConfigureAwait(false);
 
                 var expression = methodOption.CreateExpressionPerType(parameter, property, value);
 
@@ -90,13 +94,16 @@ namespace Generic.Repository.Extension.Filter
         {
             var key = typeof(TFilter).Name;
 
-            var dictionary = await cacheRepository.GetDictionaryAttribute(key, pageConfig.Order, token);
+            var dictionary = await cacheRepository.
+                GetDictionaryAttribute(key, pageConfig.Order, token).
+                ConfigureAwait(false);
 
             dictionary.TryGetValue(NameProperty, out var nameField);
 
             var order = (string)nameField.Value ?? pageConfig.Order;
 
-            return await GetGenericExpression<TValue>(order, cacheRepository, token);
+            return await GetGenericExpression<TValue>(order, cacheRepository, token).
+                ConfigureAwait(false);
         }
 
         public static async Task<Expression<Func<TValue, object>>> CreateGenericOrderBy<TValue>(
@@ -106,7 +113,8 @@ namespace Generic.Repository.Extension.Filter
         {
             var order = pageConfig.Order;
 
-            return await GetGenericExpression<TValue>(order, cacheRepository, token);
+            return await GetGenericExpression<TValue>(order, cacheRepository, token).
+                ConfigureAwait(false);
         }
 
         private static Expression<Func<TValue, object>> CreateExpression<TValue>(
@@ -178,7 +186,9 @@ namespace Generic.Repository.Extension.Filter
 
             var parameter = Expression.Parameter(typeof(TValue));
 
-            var propertyInfo = await cacheRepository.GetProperty(key, order, token);
+            var propertyInfo = await cacheRepository.
+                GetProperty(key, order, token).
+                ConfigureAwait(false);
 
             return CreateExpression<TValue>(parameter, propertyInfo);
         }

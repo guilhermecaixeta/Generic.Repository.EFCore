@@ -1,5 +1,5 @@
 ﻿using Generic.Repository.Enums;
-using Generic.Repository.Validations.ThrowError;
+using Generic.Repository.ThrowError;
 using System;
 using System.Linq.Expressions;
 

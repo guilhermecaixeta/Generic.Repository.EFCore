@@ -1,0 +1,178 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\Generic.Repository.IntTest\\Generic.Repository.IntTest.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\Generic.Repository.IntTest\\Generic.Repository.IntTest.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\Generic.Repository.IntTest\\Generic.Repository.IntTest.csproj",
+        "projectName": "Generic.Repository.IntTest",
+        "projectPath": "C:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\Generic.Repository.IntTest\\Generic.Repository.IntTest.csproj",
+        "packagesPath": "C:\\Users\\guilh\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\Generic.Repository.IntTest\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\guilh\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp3.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp3.0": {
+            "projectReferences": {
+              "C:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj": {
+                "projectPath": "C:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp3.0": {
+          "dependencies": {
+            "DoomedDatabases.Postgres": {
+              "target": "Package",
+              "version": "[0.5.0, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[3.1.1, )"
+            },
+            "Microsoft.Extensions.DependencyInjection": {
+              "target": "Package",
+              "version": "[3.1.1, )"
+            },
+            "Microsoft.NET.Test.Sdk": {
+              "target": "Package",
+              "version": "[16.4.0, )"
+            },
+            "NUnit3TestAdapter": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[3.16.1, )"
+            },
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
+              "target": "Package",
+              "version": "[3.1.1.1, )"
+            },
+            "nunit": {
+              "target": "Package",
+              "version": "[3.12.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[3.0.1, 3.0.1]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[3.0.0, 3.0.0]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[3.0.0, 3.0.0]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.101\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj": {
+      "version": "1.0.3",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj",
+        "projectName": "Generic.RepositoryAsync.EFCore",
+        "projectPath": "C:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj",
+        "packagesPath": "C:\\Users\\guilh\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\src\\Generic.Repository\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\guilh\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netstandard2.1"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netstandard2.1": {
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netstandard2.1": {
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[3.1.1, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[12.0.3, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "NETStandard.Library": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.101\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
