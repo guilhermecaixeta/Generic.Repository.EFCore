@@ -13,11 +13,17 @@ using System.Threading.Tasks;
 
 namespace Generic.Repository.Models.PageAggregation
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TIn">The type of the in.</typeparam>
+    /// <typeparam name="TOut">The type of the out.</typeparam>
+    /// <seealso cref="Generic.Repository.Models.PageAggregation.IPage{TOut}" />
     public abstract class PageAttrAbstract<TIn, TOut> : IPage<TOut>
         where TIn : class
         where TOut : class
     {
-        public PageAttrAbstract(IQueryable<TIn> listEntities, IPageConfig config, ICacheRepository cache)
+        protected PageAttrAbstract(IQueryable<TIn> listEntities, IPageConfig config, ICacheRepository cache)
         {
             ThrowErrorIf.IsNullValue(config, nameof(config), typeof(PageAttrAbstract<,>).Name);
 

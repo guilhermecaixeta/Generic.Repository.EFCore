@@ -17,11 +17,11 @@ namespace Generic.Repository.ThrowError
         /// <param name="value">The value.</param>
         /// <param name="comparable">The comparable.</param>
         /// <exception cref="NotEqualsFieldException"></exception>
-        public static void FieldIsNotEquals(
+        public static void FieldNoHasSameValue(
             object value,
             object comparable)
         {
-            if (value == comparable)
+            if (value != comparable)
             {
                 throw new NotEqualsFieldException(value.ToString(), comparable.ToString());
             }
@@ -35,12 +35,12 @@ namespace Generic.Repository.ThrowError
         /// <param name="value">The value.</param>
         /// <param name="comparable">The comparable.</param>
         /// <exception cref="TException"></exception>
-        public static void FieldIsNotEquals<TException>(
+        public static void FieldNoHasSameValue<TException>(
             object value,
             object comparable)
         where TException : Exception, new()
         {
-            if (value == comparable)
+            if (value != comparable)
             {
                 throw new TException();
             }
@@ -84,7 +84,7 @@ namespace Generic.Repository.ThrowError
         /// <exception cref="LessThanOrEqualsZeroException">val &lt;= 0</exception>
         public static void IsLessThanOrEqualsZero(int value)
         {
-            if (value < 0)
+            if (value <= 0)
             {
                 throw new LessThanOrEqualsZeroException(value.ToString());
             }

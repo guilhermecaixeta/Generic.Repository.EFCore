@@ -32,7 +32,7 @@ namespace Generic.Repository.Models.PageAggregation
 
         #region CTOR
 
-        public PageAbstract(
+        protected PageAbstract(
             ICacheRepository cacheRepository,
             IQueryable<TValue> listEntities,
             IPageConfig config,

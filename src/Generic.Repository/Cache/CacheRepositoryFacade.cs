@@ -14,15 +14,15 @@ namespace Generic.Repository.Cache
         public Action<object, object> CreateAction<TValue>(PropertyInfo property)
         {
             ThrowErrorIf.
-                IsNullValue(property, nameof(property), nameof(ExtractMethod));
+                IsNullValue(property, nameof(property), nameof(CreateAction));
 
             var setter = property.
                 GetSetMethod(true);
 
             ThrowErrorIf.
-                IsNullValue(setter, nameof(setter), nameof(ExtractMethod)); ;
+                IsNullValue(setter, nameof(setter), nameof(CreateAction)); ;
 
-            var result = ExtractMethod<TValue, Action<object, object>>(setter, property, "CreateActionGeneric");
+            var result = ExtractMethod<TValue, Action<object, object>>(setter, property, nameof(CreateActionGeneric));
 
             return result;
         }
@@ -49,7 +49,7 @@ namespace Generic.Repository.Cache
             ThrowErrorIf.
                 IsNullValue(getter, nameof(property), nameof(CreateFunction));
 
-            return ExtractMethod<TValue, Func<object, object>>(getter, property, "CreateFunctionGeneric");
+            return ExtractMethod<TValue, Func<object, object>>(getter, property, nameof(CreateFunctionGeneric));
         }
 
         public Func<object, object> CreateFunctionGeneric<TValue, TReturn>(MethodInfo getter)

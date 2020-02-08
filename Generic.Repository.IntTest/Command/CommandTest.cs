@@ -14,7 +14,7 @@ namespace Generic.Repository.IntTest.Command
     {
         public IBaseRepositoryAsync<FakeInt, IntegrationContext> RepositoryAsync { get; set; }
 
-        [Test]
+        //[Test]
         public async Task BulkInsert_Valid()
         {
             var list = FakeList.GetListFake();

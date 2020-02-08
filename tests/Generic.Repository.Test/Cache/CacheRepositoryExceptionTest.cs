@@ -41,19 +41,6 @@ namespace Generic.Repository.UnitTest.Cache
                     ConfigureAwait(false))).
                 ConfigureAwait(false);
 
-        [Test]
-        public async Task GetMethodGet_ObjectKeyNotFoundException() =>
-            await Task.FromResult(Assert.ThrowsAsync<KeyNotFoundException>(async () =>
-                await Cache.GetMethodGet(SomeKey, NameProperty, default).
-                    ConfigureAwait(false))).
-                ConfigureAwait(false);
-
-        [Test]
-        public async Task GetMethodGet_PropertyKeyNotFoundException() =>
-            await Task.FromResult(Assert.ThrowsAsync<KeyNotFoundException>(async () =>
-                await Cache.GetMethodGet(NameType, SomeKey, default).
-                    ConfigureAwait(false)))
-                .ConfigureAwait(false);
 
         [Test]
         public async Task GetMethodSet_AttributeNoCacheable() =>
