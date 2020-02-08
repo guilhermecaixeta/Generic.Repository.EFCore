@@ -44,7 +44,7 @@ Dependencies:
   * Add GetPageAsync on Repository;
   * Add unity test; 
   * Add possibility to return data mapped, adding the method responsible for mapping on the constructor.
-* V.1.0.2 - Lastest
+* V.1.0.2 (DEPRECATED)
  Improvements in this version:
   * Update package to .Net Framework 2.1 and EFCore Dependency to 3.0.0
   * Specialization of DBContext in implementation of IBaseRepository
@@ -68,9 +68,18 @@ Dependencies:
       * ListNullOrEmptyException, if the list is null or empty the exception is thrown
       * NotEqualsFieldException, if the value of the fields is not equals
   * Implemantation of BaseRepositoryAsync with filter has been separeted providing more abstraction
+* V.1.0.3
+ Improvements and bugfix
+  * Bugfixs
+    * Fix error in caused by native DI
+    * Fix error in some validations of ThrowErrorIf
+  * Improvements
+    * Pagination has been improved
+    * Add bulk insert, update and delete extesion
+    * Add multitransactions in Repository
 
 ## DOC
-This documentation has been updated with the version 1.0.2
+This documentation has been updated with the version 1.0.3
 
  ### 1
  On startup project yor will add this
@@ -79,7 +88,7 @@ This documentation has been updated with the version 1.0.2
   public void ConfigureServices(IServiceCollection services)
         {
           services.AddSingleton<ICacheRepository,CacheRepository>();
-          services.AddScoped(typeof(IBaseRepositoryAsync<>), typeof(BaseRepositoryAsync<,>));
+          services.AddScoped(typeof(IBaseRepositoryAsync<,>), typeof(BaseRepositoryAsync<,>));
          /*...configurations...*/
         }
  ```
@@ -127,6 +136,7 @@ Using the repository
     public class CustomerController : ControllerBase
     {
         /*....code...*/
+
         /*Filter example*/
         [HttpGet("filter")]
         public async Task<ActionResult<List<Customer>>> GetAllFilterAsync([FromQuery]CustomerFilter filter)
@@ -172,6 +182,12 @@ Using the repository
         }
     }
 
+```
+
+Bulk transaction 
+
+```
+    await RepositoryAsync.BulkUpdateAsync(list, ChunkSize, token);
 ```
 
 # About this project
