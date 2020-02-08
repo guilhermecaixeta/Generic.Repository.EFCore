@@ -21,7 +21,6 @@ Fix access cache
 and more...</Description>
     <Version>1.0.3</Version>
     <LangVersion>7.1</LangVersion>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <ItemGroup>
