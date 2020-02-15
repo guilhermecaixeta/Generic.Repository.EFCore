@@ -20,26 +20,26 @@ namespace Generic.Repository.UnitTest.Cache
 
                 var mainTask = Task.Run(async () =>
                 {
-                    var listTaskIO = new List<Task>();
+                    var taskListIo = new List<Task>();
 
                     for (var i = 0; i <= MaxIterations; i++)
                     {
                         Cache.ClearCache();
 
                         var @task = Task.Run(async () => await Cache.AddGet<T>(default).ConfigureAwait(false));
-                        listTaskIO.Add(@task);
+                        taskListIo.Add(@task);
 
                         @task = Task.Run(async () => await Cache.AddSet<T>(default).ConfigureAwait(false));
-                        listTaskIO.Add(@task);
+                        taskListIo.Add(@task);
 
                         @task = Task.Run(async () => await Cache.AddProperty<T>(default).ConfigureAwait(false));
-                        listTaskIO.Add(@task);
+                        taskListIo.Add(@task);
 
                         @task = Task.Run(async () => await Cache.AddAttribute<T>(default).ConfigureAwait(false));
-                        listTaskIO.Add(@task);
+                        taskListIo.Add(@task);
                     }
 
-                    await Task.WhenAll(listTaskIO).ConfigureAwait(false);
+                    await Task.WhenAll(taskListIo).ConfigureAwait(false);
                 });
 
                 scheduledListTask.Add(mainTask);
@@ -71,7 +71,7 @@ namespace Generic.Repository.UnitTest.Cache
                 {
                     var mainTask = Task.Run(async () =>
                     {
-                        var listTaskIO = new List<Task>();
+                        var taskListIo = new List<Task>();
 
                         for (var i = 0; i <= MaxIterations; i++)
                         {
@@ -80,31 +80,31 @@ namespace Generic.Repository.UnitTest.Cache
                                 var result = await Cache.GetMethodGet(NameType, NameProperty, default).ConfigureAwait(false);
                                 CheckIfIsValid(result);
                             });
-                            listTaskIO.Add(@task);
+                            taskListIo.Add(@task);
 
                             @task = Task.Run(async () =>
                             {
                                 var result = await Cache.GetMethodSet(NameType, NameProperty, default).ConfigureAwait(false);
                                 CheckIfIsValid(result);
                             });
-                            listTaskIO.Add(@task);
+                            taskListIo.Add(@task);
 
                             @task = Task.Run(async () =>
                             {
                                 var result = await Cache.GetProperty(NameType, NameProperty, default).ConfigureAwait(false);
                                 CheckIfIsValid(result);
                             });
-                            listTaskIO.Add(@task);
+                            taskListIo.Add(@task);
 
                             @task = Task.Run(async () =>
                             {
                                 var result = await Cache.GetAttribute(NameType, NameProperty, NameAttribute, default).ConfigureAwait(false);
                                 CheckIfIsValid(result);
                             });
-                            listTaskIO.Add(@task);
+                            taskListIo.Add(@task);
                         }
 
-                        await Task.WhenAll(listTaskIO).ConfigureAwait(false);
+                        await Task.WhenAll(taskListIo).ConfigureAwait(false);
                     });
 
                     scheduledListTask.Add(mainTask);

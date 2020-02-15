@@ -5,11 +5,11 @@
     <RepositoryUrl>https://github.com/guilhermecaixeta/Generic.Repository.EFCore</RepositoryUrl>
     <PackageTags>Generics Repository, Async, Pagination, CRUD, Filter, Reactive</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <AssemblyVersion>1.0.0.3</AssemblyVersion>
-    <FileVersion>1.0.0.3</FileVersion>
+    <AssemblyVersion>1.0.0.5</AssemblyVersion>
+    <FileVersion>1.0.0.5</FileVersion>
     <PackageProjectUrl>https://github.com/guilhermecaixeta/Generic.Repository.EFCore</PackageProjectUrl>
-    <PackageReleaseNotes>V.1.0.3
-Bug fix</PackageReleaseNotes>
+    <PackageReleaseNotes>V.1.0.5
+Add documentation</PackageReleaseNotes>
     <PackageId>Generic.RepositoryAsync.EFCore</PackageId>
     <Authors>GuiCaixeta</Authors>
     <Product>Generic.RepositoryAsync.EFCore</Product>
@@ -19,8 +19,10 @@ Fix package DI
 Fix access cache
 
 and more...</Description>
-    <Version>1.0.3</Version>
+    <Version>1.0.5</Version>
     <LangVersion>7.1</LangVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

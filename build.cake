@@ -17,6 +17,7 @@ var artifactDirectory = MakeAbsolute(Directory("./artifacts"));
 Setup(context =>
 {
     CleanDirectory(artifactDirectory);
+    CleanDirectories("./src/**/bin");
     CleanDirectories("./src/**/obj");
 });
 /* END */
