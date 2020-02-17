@@ -24,7 +24,7 @@ before_install:
   - git fetch origin      
 
 install:
-  - sudo apt-get install -qq dotnet-sdk-3.1.1
+  - sudo apt-get install -qq dotnet-sdk-2.1
   
 script:
 # You must run this command to give Travis permissions to execute the build.sh shell script:
