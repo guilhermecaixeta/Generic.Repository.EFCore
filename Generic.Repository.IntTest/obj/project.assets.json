@@ -1685,7 +1685,7 @@
       ]
     },
     "Microsoft.NETCore.Platforms/1.1.0": {
-      "sha512": "bLpT1f/SFlO1CzqXG12KnJzpZs6lv24uX2Rzi4Fmm0noJpNlnWRVryuO3yK18Ca04t/YHcO1e1Z0WDfjseqNzw==",
+      "sha512": "kz0PEW2lhqygehI/d6XsPCQzD7ff7gUJaVGPVETX611eadGsA3A877GdSlU0LRVMCTH/+P3o2iDTak+S08V2+A==",
       "type": "package",
       "path": "microsoft.netcore.platforms/1.1.0",
       "files": [
@@ -2720,7 +2720,7 @@
       ]
     },
     "System.ComponentModel.Primitives/4.3.0": {
-      "sha512": "KMVuoQ+8bMQ/Z59M3s64num5AD74X5YSqVc7ibwGkPTfmmkl2W8VuSxLRJtpw4KzQrSKUgR0BLbF0adPfcTSGQ==",
+      "sha512": "j8GUkCpM8V4d4vhLIIoBLGey2Z5bCkMVNjEZseyAlm4n5arcsJOeI3zkUP+zvZgzsbLTYh4lYeP/ZD/gdIAPrw==",
       "type": "package",
       "path": "system.componentmodel.primitives/4.3.0",
       "files": [
@@ -2758,7 +2758,7 @@
       ]
     },
     "System.ComponentModel.TypeConverter/4.3.0": {
-      "sha512": "16pQ6P+EdhcXzPiEK4kbA953Fu0MNG2ovxTZU81/qsCd1zPRsKc3uif5NgvllCY598k6bI0KUyKW8fanlfaDQg==",
+      "sha512": "HZiP0DwTHJ+C+rdFqP47nBYUh5283kcwXIGY2zOVVhsJmVI/2tYiX2zNRdjRQRHsTox58Ydkec6h0pWSh8wAsw==",
       "type": "package",
       "path": "system.componentmodel.typeconverter/4.3.0",
       "files": [
@@ -2902,12 +2902,11 @@
       ]
     },
     "System.Diagnostics.Process/4.3.0": {
-      "sha512": "abJW136xyLtw6yqEJZQ2BvlouZk/mMxKRfeBdmkRy1aqWklpTu5+SNyhz0MjkVEFEU1iBO6vgrU3OpX1Ckj4UQ==",
+      "sha512": "J0wOX07+QASQblsfxmIMFc9Iq7KTXYL3zs2G/Xc704Ylv3NpuVdo6gij6V3PGiptTxqsK0K7CdXenRvKUnkA2g==",
       "type": "package",
       "path": "system.diagnostics.process/4.3.0",
       "files": [
         ".nupkg.metadata",
-        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -4625,37 +4624,44 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\guilh\\.nuget\\packages\\": {},
+    "C:\\Users\\ctw00503\\.nuget\\packages\\": {},
+    "C:\\Microsoft\\Xamarin\\NuGet\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\Generic.Repository.IntTest\\Generic.Repository.IntTest.csproj",
+      "projectUniqueName": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\Generic.Repository.IntTest\\Generic.Repository.IntTest.csproj",
       "projectName": "Generic.Repository.IntTest",
-      "projectPath": "C:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\Generic.Repository.IntTest\\Generic.Repository.IntTest.csproj",
-      "packagesPath": "C:\\Users\\guilh\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\Generic.Repository.IntTest\\obj\\",
+      "projectPath": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\Generic.Repository.IntTest\\Generic.Repository.IntTest.csproj",
+      "packagesPath": "C:\\Users\\ctw00503\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\Generic.Repository.IntTest\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
+        "C:\\Microsoft\\Xamarin\\NuGet\\",
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\guilh\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\ctw00503\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp3.0"
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "https://api.nuget.org/v3/index.json": {}
+        "http://artifacts.connected.bmw/artifactory/api/nuget/nuget": {},
+        "https://api.nuget.org/v3/index.json": {},
+        "https://bmw.myget.org/F/mobilitygraph/api/v3/index.json": {},
+        "https://bmw.myget.org/F/omc/api/v3/index.json": {},
+        "https://bmw.myget.org/F/sharedcode/api/v3/index.json": {}
       },
       "frameworks": {
         "netcoreapp3.0": {
           "projectReferences": {
-            "C:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj": {
-              "projectPath": "C:\\Users\\guilh\\Documents\\My repos\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj"
+            "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj": {
+              "projectPath": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\src\\Generic.Repository\\Generic.Repository.csproj"
             }
           }
         }
@@ -4729,7 +4735,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.101\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.201\\RuntimeIdentifierGraph.json"
       }
     }
   }

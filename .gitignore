@@ -276,3 +276,5 @@ __pycache__/
 
 SISA.Web/Imagens
 .vscode
+Generic.Repository.IntTest/obj
+tools

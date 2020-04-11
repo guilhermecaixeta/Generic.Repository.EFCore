@@ -25,7 +25,13 @@ namespace Generic.Repository.Extension.Repository
             where TValue : class
             where TContext : DbContext
         {
-            await ProccessTaskAsync(repository, list, chunkSize, repository.DeleteAsync, nameof(BulkDeleteAsync), token).
+            await ProccessTaskAsync(
+                    repository,
+                    list,
+                    chunkSize,
+                    repository.DeleteAsync,
+                    nameof(BulkDeleteAsync),
+                    token).
                 ConfigureAwait(false);
         }
 
@@ -43,7 +49,13 @@ namespace Generic.Repository.Extension.Repository
             where TValue : class
             where TContext : DbContext
         {
-            await ProccessTaskAsync(repository, list, chunkSize, repository.CreateAsync, nameof(BulkInsertAsync), token).
+            await ProccessTaskAsync(
+                    repository,
+                    list,
+                    chunkSize,
+                    repository.CreateAsync,
+                    nameof(BulkInsertAsync),
+                    token).
                 ConfigureAwait(false);
         }
 
@@ -61,7 +73,13 @@ namespace Generic.Repository.Extension.Repository
             where TValue : class
             where TContext : DbContext
         {
-            await ProccessTaskAsync(repository, list, chunkSize, repository.UpdateAsync, nameof(BulkUpdateAsync), token).
+            await ProccessTaskAsync(
+                    repository,
+                    list,
+                    chunkSize,
+                    repository.UpdateAsync,
+                    nameof(BulkUpdateAsync),
+                    token).
                 ConfigureAwait(false);
         }
 
