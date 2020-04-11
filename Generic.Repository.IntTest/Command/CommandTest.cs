@@ -117,10 +117,21 @@ namespace Generic.Repository.IntTest.Command
         {
             var fake = FakeFactory.GetFake();
 
-            await RepositoryAsync.DisableAutotransactionAndBeginTransaction(_tokenDefault);
-            await RepositoryAsync.CreateAsync(fake, _tokenDefault, true);
-            await RepositoryAsync.SaveChangesAsync(_tokenDefault);
-            await RepositoryAsync.CommitAsync(_tokenDefault);
+            await RepositoryAsync.
+                DisableAutotransactionAndBeginTransaction(_tokenDefault).
+                ConfigureAwait(false);
+
+            await RepositoryAsync.
+                CreateAsync(fake, _tokenDefault, true).
+                ConfigureAwait(false);
+
+            await RepositoryAsync.
+                SaveChangesAsync(_tokenDefault).
+                ConfigureAwait(false);
+
+            await RepositoryAsync.
+                CommitAsync(_tokenDefault).
+                ConfigureAwait(false);
         }
 
         /// <summary>
@@ -135,10 +146,20 @@ namespace Generic.Repository.IntTest.Command
 
             fake = FakeFactory.UpdateFake(fake);
 
-            await RepositoryAsync.DisableAutotransactionAndBeginTransaction(_tokenDefault);
-            await RepositoryAsync.UpdateAsync(fake, _tokenDefault, true);
-            await RepositoryAsync.SaveChangesAsync(_tokenDefault);
-            await RepositoryAsync.CommitAsync(_tokenDefault);
+            await RepositoryAsync.
+                DisableAutotransactionAndBeginTransaction(_tokenDefault).
+                ConfigureAwait(false);
+
+            await RepositoryAsync.UpdateAsync(fake, _tokenDefault, true).
+                ConfigureAwait(false);
+
+            await RepositoryAsync.
+                SaveChangesAsync(_tokenDefault).
+                ConfigureAwait(false);
+
+            await RepositoryAsync.
+                CommitAsync(_tokenDefault).
+                ConfigureAwait(false);
         }
 
         /// <summary>
@@ -151,10 +172,21 @@ namespace Generic.Repository.IntTest.Command
 
             fake = await RepositoryAsync.CreateAsync(fake, _tokenDefault);
 
-            await RepositoryAsync.DisableAutotransactionAndBeginTransaction(_tokenDefault);
-            await RepositoryAsync.DeleteAsync(fake, _tokenDefault, true);
-            await RepositoryAsync.SaveChangesAsync(_tokenDefault);
-            await RepositoryAsync.CommitAsync(_tokenDefault);
+            await RepositoryAsync.
+                DisableAutotransactionAndBeginTransaction(_tokenDefault).
+                ConfigureAwait(false);
+
+            await RepositoryAsync.
+                DeleteAsync(fake, _tokenDefault, true).
+                ConfigureAwait(false);
+
+            await RepositoryAsync.
+                SaveChangesAsync(_tokenDefault).
+                ConfigureAwait(false);
+
+            await RepositoryAsync.
+                CommitAsync(_tokenDefault).
+                ConfigureAwait(false);
         }
 
         /// <summary>
@@ -165,9 +197,17 @@ namespace Generic.Repository.IntTest.Command
         {
             var fake = FakeFactory.GetFake();
 
-            await RepositoryAsync.DisableAutotransactionAndBeginTransaction(_tokenDefault);
-            await RepositoryAsync.CreateAsync(fake, _tokenDefault, true);
-            await RepositoryAsync.SaveChangesAndCommitAsync(_tokenDefault);
+            await RepositoryAsync.
+                DisableAutotransactionAndBeginTransaction(_tokenDefault).
+                ConfigureAwait(false);
+
+            await RepositoryAsync.
+                CreateAsync(fake, _tokenDefault, true).
+                ConfigureAwait(false);
+
+            await RepositoryAsync.
+                SaveChangesAndCommitAsync(_tokenDefault).
+                ConfigureAwait(false);
         }
 
         /// <summary>
