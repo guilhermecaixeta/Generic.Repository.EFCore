@@ -30,6 +30,7 @@ namespace Generic.Repository.Repository
                 typeof(UnitOfWorkAsync<>).Name);
 
             Context = context;
+            _autoTransaction = Context.Database.AutoTransactionsEnabled;
         }
 
         /// <summary>
@@ -39,8 +40,6 @@ namespace Generic.Repository.Repository
         /// <returns></returns>
         public Task DisableAutotransactionAndBeginTransaction(CancellationToken token)
         {
-            _autoTransaction = Context.Database.AutoTransactionsEnabled;
-
             Context.Database.AutoTransactionsEnabled = false;
 
             return Context.Database.BeginTransactionAsync(token);
