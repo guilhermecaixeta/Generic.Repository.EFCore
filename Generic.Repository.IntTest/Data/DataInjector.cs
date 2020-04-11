@@ -1,5 +1,4 @@
-﻿using DoomedDatabases.Postgres;
-using Generic.Repository.Cache;
+﻿using Generic.Repository.Cache;
 using Generic.Repository.Interfaces.Repository;
 using Generic.Repository.IntTest.Model;
 using Generic.Repository.Repository;
@@ -9,41 +8,64 @@ namespace Generic.Repository.IntTest.Data
 {
     public static class DataInjector
     {
-        private static ITestDatabase testDatabase;
-
+        /// <summary>
+        /// Bases down.
+        /// </summary>
         public static void BaseDown()
         {
-            testDatabase.Drop();
+            using (var ctx = CreateAndGetContext())
+            {
+                var list = ctx.FakeInt.AsNoTracking();
+                ctx.FakeInt.RemoveRange(list);
+                ctx.SaveChanges();
+            }
         }
 
+        /// <summary>
+        /// Creates the and get context.
+        /// </summary>
+        /// <returns></returns>
         public static IntegrationContext CreateAndGetContext()
         {
-            var connectionString = "host=localhost;port=5432;Username=postgres;Password=048365;Database=Test";
-
-            testDatabase = new TestDatabaseBuilder().WithConnectionString(connectionString).Build();
-
-            testDatabase.Create();
+            var connectionString = "host=localhost;port=5432;Username=postgres;Password=123456;Database=Test";
 
             var builder = new DbContextOptionsBuilder<IntegrationContext>();
 
-            builder.UseNpgsql(testDatabase.ConnectionString);
+            builder.UseNpgsql(connectionString, opt =>
+            {
+                opt.EnableRetryOnFailure();
+                opt.MaxBatchSize(100);
+            });
 
             var context = new IntegrationContext(builder.Options);
-
-            context.Database.EnsureCreated();
 
             return context;
         }
 
+        /// <summary>
+        /// Ensures the create and migrate base.
+        /// </summary>
+        public static void EnsureCreateAndMigrateBase()
+        {
+            using (var context = CreateAndGetContext())
+            {
+                context.Database.EnsureCreated();
+
+                context.Database.Migrate();
+            }
+        }
+
+        /// <summary>
+        /// Gets the repository asynchronous.
+        /// </summary>
+        /// <returns></returns>
         public static IBaseRepositoryAsync<FakeInt, IntegrationContext> GetRepositoryAsync()
         {
             var cache = new CacheRepository();
 
-            var injectorCtx = CreateAndGetContext();
+            var context = CreateAndGetContext();
 
-            injectorCtx.Database.Migrate();
-
-            return new BaseRepositoryAsync<FakeInt, IntegrationContext>(injectorCtx, cache);
+            return new BaseRepositoryAsync<FakeInt, IntegrationContext>(context, cache);
         }
     }
 }

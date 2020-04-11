@@ -29,10 +29,10 @@ namespace Generic.Repository.Cache
 
         private IDictionary<string, Dictionary<string, Action<object, object>>> CacheSet { get; set; }
 
-        public async Task AddAttribute<TValue>(
+        public Task AddAttribute<TValue>(
             CancellationToken token)
         {
-            await CacheFacade.RunActionInSemaphore(() =>
+            return CacheFacade.ProcessActionWithLock(() =>
             {
                 var values = GetValues<TValue>();
 
@@ -51,13 +51,13 @@ namespace Generic.Repository.Cache
                 {
                     SetCacheAttributes(property, values.typeName);
                 }
-            }, token).ConfigureAwait(false);
+            }, token);
         }
 
-        public async Task AddGet<TValue>(
+        public Task AddGet<TValue>(
             CancellationToken token)
         {
-            await CacheFacade.RunActionInSemaphore(() =>
+            return CacheFacade.ProcessActionWithLock(() =>
             {
                 var values = GetValues<TValue>();
 
@@ -70,14 +70,16 @@ namespace Generic.Repository.Cache
 
                 var dictionary = values.properties.
                     ToDictionary(g => g.Name, m => CacheFacade.CreateFunction<TValue>(m));
+
                 CacheGet.Add(values.typeName, dictionary);
-            }, token).ConfigureAwait(false);
+
+            }, token);
         }
 
-        public async Task AddProperty<TValue>(
+        public Task AddProperty<TValue>(
             CancellationToken token)
         {
-            await CacheFacade.RunActionInSemaphore(() =>
+            return CacheFacade.ProcessActionWithLock(() =>
             {
                 var values = GetValues<TValue>();
 
@@ -89,13 +91,13 @@ namespace Generic.Repository.Cache
                 }
 
                 CacheProperties.Add(values.typeName, values.properties.ToDictionary(p => p.Name, p => p));
-            }, token).ConfigureAwait(false);
+            }, token);
         }
 
-        public async Task AddSet<TValue>(
+        public Task AddSet<TValue>(
             CancellationToken token)
         {
-            await CacheFacade.RunActionInSemaphore(() =>
+            return CacheFacade.ProcessActionWithLock(() =>
             {
                 var (typeName, properties, isCacheable) = GetValues<TValue>();
 
@@ -110,7 +112,7 @@ namespace Generic.Repository.Cache
                     ToDictionary(s => s.Name, m => CacheFacade.CreateAction<TValue>(m));
 
                 CacheSet.Add(typeName, dictionary);
-            }, token).ConfigureAwait(false);
+            }, token);
         }
 
         public void ClearCache()
@@ -254,25 +256,21 @@ namespace Generic.Repository.Cache
             return result;
         }
 
-        public async Task<bool> HasAttribute(
+        public Task<bool> HasAttribute(
             CancellationToken token) =>
-            await Task.Run(() => CacheAttribute.Any(), token).
-                ConfigureAwait(false);
+            Task.Run(() => CacheAttribute.Any(), token);
 
-        public async Task<bool> HasMethodGet(
+        public Task<bool> HasMethodGet(
             CancellationToken token) =>
-            await Task.Run(() => CacheGet.Any(), token).
-                ConfigureAwait(false);
+            Task.Run(() => CacheGet.Any(), token);
 
-        public async Task<bool> HasMethodSet(
+        public Task<bool> HasMethodSet(
             CancellationToken token) =>
-            await Task.Run(() => CacheSet.Any(), token).
-                ConfigureAwait(false);
+            Task.Run(() => CacheSet.Any(), token);
 
-        public async Task<bool> HasProperty(
+        public Task<bool> HasProperty(
             CancellationToken token) =>
-            await Task.Run(() => CacheProperties.Any(), token).
-                ConfigureAwait(false);
+             Task.Run(() => CacheProperties.Any(), token);
 
         /// <summary>Gets the values from TValue</summary>
         /// <typeparam name="TValue">The type of the value.</typeparam>
@@ -293,9 +291,9 @@ namespace Generic.Repository.Cache
 
             ThrowErrorIf.IsNullOrEmptyList(properties, nameof(properties), string.Empty);
 
-            var propertiesList = ValidateProperty(properties);
+            var propertiesValid = ValidateProperty(properties);
 
-            return (typeName, propertiesList, true);
+            return (typeName, propertiesValid, true);
         }
 
         private void InitCache()

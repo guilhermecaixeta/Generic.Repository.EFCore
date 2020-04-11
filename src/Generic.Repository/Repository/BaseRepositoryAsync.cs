@@ -17,13 +17,19 @@ using System.Threading.Tasks;
 namespace Generic.Repository.Repository
 {
     public class BaseRepositoryAsync<TValue, TFilter, TContext> :
-        Pageable<TValue, TFilter, TContext>, IBaseRepositoryAsync<TValue, TFilter, TContext>
+            Pageable<TValue, TFilter, TContext>, 
+            IBaseRepositoryAsync<TValue, TFilter, TContext>
         where TValue : class
         where TFilter : class, IFilter
         where TContext : DbContext
     {
         #region Ctor
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BaseRepositoryAsync{TValue, TFilter, TContext}"/> class.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <param name="cacheService">The cache service.</param>
         public BaseRepositoryAsync(
             TContext context,
             ICacheRepository cacheService) :
@@ -35,10 +41,16 @@ namespace Generic.Repository.Repository
 
         #region INTERNALS METHODS
 
+        /// <summary>
+        /// Creates the query filtered.
+        /// </summary>
+        /// <param name="filter">The filter.</param>
+        /// <param name="notTracking">if set to <c>true</c> [not tracking].</param>
+        /// <param name="token">The token.</param>
         internal async Task CreateQueryFiltered(
-            TFilter filter,
-            bool notTracking,
-            CancellationToken token)
+                                            TFilter filter,
+                                            bool notTracking,
+                                            CancellationToken token)
         {
             var predicate = await filter.
                 CreateGenericFilter<TValue, TFilter>(CacheService, token).
@@ -52,25 +64,43 @@ namespace Generic.Repository.Repository
 
         #region QUERIES
 
+        /// <summary>
+        /// Return all data Filtered
+        /// </summary>
+        /// <param name="filter">Filter to apply</param>
+        /// <param name="notTracking">Condition to tracking data</param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         public async Task<IReadOnlyList<TValue>> FilterAllAsync(
-            TFilter filter,
-            bool notTracking,
-            CancellationToken token)
+                                                            TFilter filter,
+                                                            bool notTracking,
+                                                            CancellationToken token)
         {
             ThrowErrorIf.IsNullValue(filter, nameof(filter), nameof(FilterAllAsync));
 
-            await CreateQueryFiltered(filter, notTracking, token).ConfigureAwait(false);
+            await CreateQueryFiltered(filter, notTracking, token).
+                ConfigureAwait(false);
 
-            return await Query.ToListAsync().ConfigureAwait(false);
+            return await CreateList(notTracking, token).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Return all data Filtered
+        /// </summary>
+        /// <typeparam name="TReturn"></typeparam>
+        /// <param name="filter">Filter to apply</param>
+        /// <param name="notTracking">Condition to tracking data</param>
+        /// <param name="mapper"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         public async Task<IReadOnlyList<TReturn>> FilterAllAsync<TReturn>(
-            TFilter filter,
-            bool notTracking,
-            Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
-            CancellationToken token)
+                                                                        TFilter filter,
+                                                                        bool notTracking,
+                                                                        Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
+                                                                        CancellationToken token)
         {
             ThrowErrorIf.IsNullValue(filter, nameof(filter), nameof(FilterAllAsync));
+            
             ThrowErrorIf.IsNullValue(mapper, nameof(mapper), nameof(FilterAllAsync));
 
             await CreateQueryFiltered(filter, notTracking, token).ConfigureAwait(false);
@@ -81,9 +111,9 @@ namespace Generic.Repository.Repository
         }
 
         public async Task<IReadOnlyList<TReturn>> GetAllAsync<TReturn>(
-            bool notTracking,
-            Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
-            CancellationToken token)
+                                                                    bool notTracking,
+                                                                    Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
+                                                                    CancellationToken token)
         {
             ThrowErrorIf.IsNullValue(mapper, nameof(mapper), nameof(FilterAllAsync));
 
@@ -92,11 +122,20 @@ namespace Generic.Repository.Repository
             return mapper(list).ToList();
         }
 
+        /// <summary>
+        /// Return all data from predicate informed
+        /// </summary>
+        /// <typeparam name="TReturn"></typeparam>
+        /// <param name="notTracking">Condition to tracking data</param>
+        /// <param name="predicate">Condition to apply on data</param>
+        /// <param name="mapper"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         public async Task<IReadOnlyList<TReturn>> GetAllByAsync<TReturn>(
-            bool notTracking,
-            Expression<Func<TValue, bool>> predicate,
-            Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
-            CancellationToken token)
+                                                                    bool notTracking,
+                                                                    Expression<Func<TValue, bool>> predicate,
+                                                                    Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
+                                                                    CancellationToken token)
         {
             await CreateQueryFiltered(predicate, notTracking, token).ConfigureAwait(false);
 
@@ -105,11 +144,21 @@ namespace Generic.Repository.Repository
             return mapper(list).ToList();
         }
 
+        /// <summary>
+        /// Return page.
+        /// </summary>
+        /// <typeparam name="TReturn"></typeparam>
+        /// <param name="config">Condition to apply on data</param>
+        /// <param name="notTracking">Condition to tracking data</param>
+        /// <param name="mapper"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         public async Task<IPage<TReturn>> GetPageAsync<TReturn>(
-            IPageConfig config,
-            bool notTracking,
-            Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
-            CancellationToken token) where TReturn : class
+                                                            IPageConfig config,
+                                                            bool notTracking,
+                                                            Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
+                                                            CancellationToken token) 
+            where TReturn : class
         {
             await CreateQuery(notTracking, token).ConfigureAwait(false);
 
@@ -118,12 +167,23 @@ namespace Generic.Repository.Repository
                 ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Return page Filtered.
+        /// </summary>
+        /// <typeparam name="TReturn"></typeparam>
+        /// <param name="config">Condition to apply on data</param>
+        /// <param name="filter">Filter data</param>
+        /// <param name="notTracking">Condition to tracking data</param>
+        /// <param name="mapper"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         public async Task<IPage<TReturn>> GetPageAsync<TReturn>(
-            IPageConfig config,
-            TFilter filter,
-            bool notTracking,
-            Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
-            CancellationToken token) where TReturn : class
+                                                            IPageConfig config,
+                                                            bool notTracking,
+                                                            TFilter filter,
+                                                            Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
+                                                            CancellationToken token) 
+            where TReturn : class
         {
             await CreateQueryFiltered(filter, notTracking, token).ConfigureAwait(false);
 
@@ -132,12 +192,23 @@ namespace Generic.Repository.Repository
                 ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Return page Filtered.
+        /// </summary>
+        /// <typeparam name="TReturn"></typeparam>
+        /// <param name="config">Condition to apply on data</param>
+        /// <param name="notTracking">Condition to tracking data</param>
+        /// <param name="predicate">Predicate to filter data</param>
+        /// <param name="mapper"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         public async Task<IPage<TReturn>> GetPageAsync<TReturn>(
-            IPageConfig config,
-            bool notTracking,
-            Expression<Func<TValue, bool>> predicate,
-            Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
-            CancellationToken token) where TReturn : class
+                                                            IPageConfig config,
+                                                            bool notTracking,
+                                                            Expression<Func<TValue, bool>> predicate,
+                                                            Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
+                                                            CancellationToken token) 
+        where TReturn : class
         {
             await CreateQueryFiltered(predicate, notTracking, token).ConfigureAwait(false);
 
@@ -150,7 +221,7 @@ namespace Generic.Repository.Repository
 
         #region OVERRIDE
 
-        internal override async Task InitializeCache(CancellationToken token)
+        protected override async Task InitializeCache(CancellationToken token)
         {
             await CacheService.AddGet<TFilter>(token).
                 ConfigureAwait(false);
@@ -180,7 +251,8 @@ namespace Generic.Repository.Repository
 
         public BaseRepositoryAsync(
             TContext context,
-            ICacheRepository cacheService) : base(context, cacheService)
+            ICacheRepository cacheService) : 
+            base(context, cacheService)
         {
         }
 
@@ -188,10 +260,18 @@ namespace Generic.Repository.Repository
 
         #region QUERY
 
+        /// <summary>
+        /// Return all data
+        /// </summary>
+        /// <typeparam name="TReturn"></typeparam>
+        /// <param name="notTracking">Condition to tracking data</param>
+        /// <param name="mapper"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         public async Task<IReadOnlyList<TReturn>> GetAllAsync<TReturn>(
-            bool notTracking,
-            Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
-            CancellationToken token)
+                                                                    bool notTracking,
+                                                                    Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
+                                                                    CancellationToken token)
             where TReturn : class
         {
             ThrowErrorIf.IsNullValue(mapper, nameof(mapper), nameof(GetAllAsync));
@@ -201,11 +281,20 @@ namespace Generic.Repository.Repository
             return mapper(list).ToList();
         }
 
+        /// <summary>
+        /// Return all data from predicate informed
+        /// </summary>
+        /// <typeparam name="TReturn"></typeparam>
+        /// <param name="predicate">Condition to apply on data</param>
+        /// <param name="notTracking">Condition to tracking data</param>
+        /// <param name="mapper"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         public async Task<IReadOnlyList<TReturn>> GetAllByAsync<TReturn>(
-            Expression<Func<TValue, bool>> predicate,
-            bool notTracking,
-            Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
-            CancellationToken token)
+                                                                    Expression<Func<TValue, bool>> predicate,
+                                                                    bool notTracking,
+                                                                    Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
+                                                                    CancellationToken token)
             where TReturn : class
         {
             ThrowErrorIf.IsNullValue(mapper, nameof(mapper), nameof(GetPageAsync));
@@ -217,11 +306,21 @@ namespace Generic.Repository.Repository
             return mapper(list).ToList();
         }
 
+        /// <summary>
+        /// Return page.
+        /// </summary>
+        /// <typeparam name="TReturn"></typeparam>
+        /// <param name="config">Condition to apply on data</param>
+        /// <param name="notTracking">Condition to tracking data</param>
+        /// <param name="mapper"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         public async Task<IPage<TReturn>> GetPageAsync<TReturn>(
-            IPageConfig config,
-            bool notTracking,
-            Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
-            CancellationToken token) where TReturn : class
+                                                            IPageConfig config,
+                                                            bool notTracking,
+                                                            Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
+                                                            CancellationToken token) 
+        where TReturn : class
         {
             ThrowErrorIf.IsNullValue(config, nameof(config), nameof(GetPageAsync));
 
@@ -232,12 +331,23 @@ namespace Generic.Repository.Repository
             return await Query.ToPage(CacheService, config, mapper, token).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Return page Filtered.
+        /// </summary>
+        /// <typeparam name="TReturn"></typeparam>
+        /// <param name="config">Condition to apply on data</param>
+        /// <param name="notTracking">Condition to tracking data</param>
+        /// <param name="predicate">Predicate to filter data</param>
+        /// <param name="mapper"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         public async Task<IPage<TReturn>> GetPageAsync<TReturn>(
-            IPageConfig config,
-            bool notTracking,
-            Expression<Func<TValue, bool>> predicate,
-            Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
-            CancellationToken token) where TReturn : class
+                                                            IPageConfig config,
+                                                            bool notTracking,
+                                                            Expression<Func<TValue, bool>> predicate,
+                                                            Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
+                                                            CancellationToken token) 
+        where TReturn : class
         {
             ThrowErrorIf.IsNullValue(config, nameof(config), nameof(GetPageAsync));
 

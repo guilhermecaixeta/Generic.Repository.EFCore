@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Generic.Repository.Interfaces.Repository
 {
     public interface IBaseRepositoryAsync<TValue, TFilter, TContext> :
-        IPageable<TValue, TFilter>, ICommandRepository<TValue>, IQueryAsync<TValue>
+        IPageable<TValue, TFilter>, ICommandRepository<TValue>, IQueryAsync<TValue>, IUnitOfWork
         where TValue : class
         where TFilter : class, IFilter
         where TContext : DbContext
@@ -101,8 +101,8 @@ namespace Generic.Repository.Interfaces.Repository
         /// <returns></returns>
         Task<IPage<TReturn>> GetPageAsync<TReturn>(
             IPageConfig config,
-            TFilter filter,
             bool notTracking,
+            TFilter filter,
             Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
             CancellationToken token) where TReturn : class;
 

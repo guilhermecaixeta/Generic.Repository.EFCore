@@ -31,13 +31,16 @@ namespace Generic.Repository.Interfaces.Repository
         /// </summary>
         /// <param name="predicate"></param>
         /// <returns></returns>
-        Task<int> CountAsync(Expression<Func<TValue, bool>> predicate, CancellationToken token);
+        Task<int> CountAsync(
+            Expression<Func<TValue, bool>> predicate, 
+            CancellationToken token);
 
         /// <summary>
         /// Count all elements on base.
         /// </summary>
         /// <returns></returns>
-        Task<int> CountAsync(CancellationToken token);
+        Task<int> CountAsync(
+            CancellationToken token);
 
         /// <summary>Finds the asynchronous.</summary>
         /// <param name="value">The value.</param>
@@ -50,7 +53,9 @@ namespace Generic.Repository.Interfaces.Repository
         ///</summary>
         ///<param name="notTracking">Condition to tracking data</param>
         /// <returns></returns>
-        Task<IReadOnlyList<TValue>> GetAllAsync(bool notTracking, CancellationToken token);
+        Task<IReadOnlyList<TValue>> GetAllAsync(
+            bool notTracking, 
+            CancellationToken token);
 
         ///<summary>
         /// Return all data from predicate informed
@@ -69,7 +74,7 @@ namespace Generic.Repository.Interfaces.Repository
         /// <param name="predicate"></param>
         ///<param name="notTracking">Condition to tracking data</param>
         /// <returns></returns>
-        Task<TValue> GetFirstByAsync(
+        Task<TValue> GetFirstOrDefaultAsync(
             Expression<Func<TValue, bool>> predicate,
             bool notTracking,
             CancellationToken token);
@@ -80,7 +85,7 @@ namespace Generic.Repository.Interfaces.Repository
         /// <param name="predicate"></param>
         ///<param name="notTracking">Condition to tracking data</param>
         /// <returns></returns>
-        Task<TValue> GetSingleByAsync(
+        Task<TValue> GetSingleOrDefaultAsync(
             Expression<Func<TValue, bool>> predicate,
             bool notTracking,
             CancellationToken token);

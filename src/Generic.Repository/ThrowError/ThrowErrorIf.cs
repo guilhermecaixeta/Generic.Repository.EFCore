@@ -112,7 +112,7 @@ namespace Generic.Repository.ThrowError
             var result = obj.HasAny();
             if (!result)
             {
-                throw new ListNullOrEmptyException($"{nameParameter} MethodName > {nameMethod}");
+                throw new ListNullOrEmptyException(nameParameter, nameMethod);
             }
         }
 

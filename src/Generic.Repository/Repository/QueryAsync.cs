@@ -10,114 +10,198 @@ using System.Threading.Tasks;
 
 namespace Generic.Repository.Repository
 {
-    public abstract class QueryAsync<TValue, TContext>
+    public abstract class QueryAsync<TValue, TContext> : UnitOfWorkAsync<TContext>
         where TValue : class
         where TContext : DbContext
     {
+        /// <summary>
+        /// The cache service
+        /// </summary>
         protected readonly ICacheRepository CacheService;
 
-        protected readonly TContext Context;
-
-        protected QueryAsync(TContext context, ICacheRepository cacheService)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="QueryAsync{TValue, TContext}"/> class.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <param name="cacheService">The cache service.</param>
+        protected QueryAsync(
+                            TContext context,
+                            ICacheRepository cacheService) :
+            base(context)
         {
             ThrowErrorIf.
                 HasNoCache(cacheService, typeof(QueryAsync<,>).Name);
 
-            ThrowErrorIf.
-                IsNullValue(context, nameof(context), typeof(QueryAsync<,>).Name);
-
-            Context = context;
             CacheService = cacheService;
-            Query = Context.Set<TValue>().AsQueryable();
+
+            Query = Context.
+                Set<TValue>().
+                AsQueryable();
+
+            IncludesExp = new List<Expression<Func<TValue, object>>>();
+
+            IncludesString = new List<string>();
         }
 
-        public IList<Expression<Func<TValue, object>>> IncludesExp { get; set; } =
-            new List<Expression<Func<TValue, object>>>();
+        /// <summary>
+        /// Gets or sets the includes exp.
+        /// </summary>
+        /// <value>
+        /// The includes exp.
+        /// </value>
+        public IList<Expression<Func<TValue, object>>> IncludesExp { get; set; }
 
-        public IList<string> IncludesString { get; set; } = new List<string>();
+        /// <summary>
+        /// Gets or sets the includes string.
+        /// </summary>
+        /// <value>
+        /// The includes string.
+        /// </value>
+        public IList<string> IncludesString { get; set; }
 
+        /// <summary>
+        /// Gets or sets the query.
+        /// </summary>
+        /// <value>
+        /// The query.
+        /// </value>
         protected IQueryable<TValue> Query { get; set; }
 
         #region QUERY
 
+        /// <summary>
+        /// Counts the asynchronous.
+        /// </summary>
+        /// <param name="predicate">The predicate.</param>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
         public virtual async Task<int> CountAsync(
-            Expression<Func<TValue, bool>> predicate,
-            CancellationToken token)
+                                                Expression<Func<TValue, bool>> predicate,
+                                                CancellationToken token)
         {
-            ThrowErrorIf.IsNullValue(predicate, nameof(predicate), nameof(CountAsync));
+            ThrowErrorIf.IsNullValue(
+                predicate,
+                nameof(predicate),
+                nameof(CountAsync));
 
-            await CreateQuery(true, token).ConfigureAwait(false);
+            await CreateQuery(true, token).
+                ConfigureAwait(false);
 
-            return await Query.CountAsync(predicate, token).
+            return await Query.
+                CountAsync(predicate, token).
                 ConfigureAwait(false);
         }
 
-        public virtual async Task<int> CountAsync(CancellationToken token)
+        public virtual async Task<int> CountAsync(
+                                                CancellationToken token)
         {
-            await CreateQuery(true, token).ConfigureAwait(false);
+            await CreateQuery(true, token).
+                ConfigureAwait(false);
 
-            return await Query.CountAsync(token).
+            return await Query.
+                CountAsync(token).
                 ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Finds the asynchronous.
+        /// </summary>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns></returns>
         public virtual async Task<TValue> FindAsync(
-            params object[] parameters)
+                                                    params object[] parameters)
         {
             ThrowErrorIf.
                 IsNullValue(parameters, nameof(parameters), nameof(FindAsync));
 
-            return await Context.FindAsync<TValue>(parameters).
+            return await Context.
+                FindAsync<TValue>(parameters).
                 ConfigureAwait(false);
         }
 
-        public virtual async Task<IReadOnlyList<TValue>> GetAllAsync(
-            bool notTracking,
-            CancellationToken token)
+        /// <summary>
+        /// Gets all asynchronous.
+        /// </summary>
+        /// <param name="notTracking">if set to <c>true</c> [not tracking].</param>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
+        public virtual Task<IReadOnlyList<TValue>> GetAllAsync(
+                                                            bool notTracking,
+                                                            CancellationToken token)
         {
-            await CreateQuery(notTracking, token).ConfigureAwait(false);
-
-            return await Query.ToListAsync(token).
-                ConfigureAwait(false);
+            return CreateList(notTracking, token);
         }
 
-        public virtual async Task<IReadOnlyList<TValue>> GetAllByAsync(
-            Expression<Func<TValue, bool>> predicate,
-            bool notTracking,
-            CancellationToken token)
-        {
-            ThrowErrorIf.IsNullValue(predicate, nameof(predicate), nameof(GetSingleByAsync));
-
-            await CreateQuery(notTracking, token).ConfigureAwait(false);
-
-            return await Query.Where(predicate).ToListAsync(token).
-                ConfigureAwait(false);
-        }
-
-        public virtual async Task<TValue> GetFirstByAsync(
-            Expression<Func<TValue, bool>> predicate,
-            bool notTracking,
-            CancellationToken token)
+        /// <summary>
+        /// Gets all by asynchronous.
+        /// </summary>
+        /// <param name="predicate">The predicate.</param>
+        /// <param name="notTracking">if set to <c>true</c> [not tracking].</param>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
+        public virtual Task<IReadOnlyList<TValue>> GetAllByAsync(
+                                                                Expression<Func<TValue, bool>> predicate,
+                                                                bool notTracking,
+                                                                CancellationToken token)
         {
             ThrowErrorIf.
-                IsNullValue(predicate, nameof(predicate), nameof(GetFirstByAsync));
+                IsNullValue(
+                    predicate,
+                    nameof(predicate),
+                    nameof(GetSingleOrDefaultAsync));
 
-            await CreateQuery(notTracking, token).ConfigureAwait(false);
+            return CreateListFiltered(predicate, notTracking, token);
+        }
 
-            return await Query.FirstOrDefaultAsync(predicate, token).
+        /// <summary>
+        /// Gets the first by asynchronous.
+        /// </summary>
+        /// <param name="predicate">The predicate.</param>
+        /// <param name="notTracking">if set to <c>true</c> [not tracking].</param>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
+        public virtual async Task<TValue> GetFirstOrDefaultAsync(
+                                                                Expression<Func<TValue, bool>> predicate,
+                                                                bool notTracking,
+                                                                CancellationToken token)
+        {
+            ThrowErrorIf.
+                IsNullValue(
+                    predicate,
+                    nameof(predicate),
+                    nameof(GetFirstOrDefaultAsync));
+
+            await CreateQuery(notTracking, token).
+                ConfigureAwait(false);
+
+            return await Query.
+                FirstOrDefaultAsync(predicate, token).
                 ConfigureAwait(false);
         }
 
-        public virtual async Task<TValue> GetSingleByAsync(
-            Expression<Func<TValue, bool>> predicate,
-            bool notTracking,
-            CancellationToken token)
+        /// <summary>
+        /// Gets the single by asynchronous.
+        /// </summary>
+        /// <param name="predicate">The predicate.</param>
+        /// <param name="notTracking">if set to <c>true</c> [not tracking].</param>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
+        public virtual async Task<TValue> GetSingleOrDefaultAsync(
+                                                                Expression<Func<TValue, bool>> predicate,
+                                                                bool notTracking,
+                                                                CancellationToken token)
         {
             ThrowErrorIf.
-                IsNullValue(predicate, nameof(predicate), nameof(GetSingleByAsync));
+                IsNullValue(
+                    predicate,
+                    nameof(predicate),
+                    nameof(GetSingleOrDefaultAsync));
 
-            await CreateQuery(notTracking, token).ConfigureAwait(false);
+            await CreateQuery(notTracking, token).
+                ConfigureAwait(false);
 
-            return await Query.SingleOrDefaultAsync(predicate, token).
+            return await Query.
+                SingleOrDefaultAsync(predicate, token).
                 ConfigureAwait(false);
         }
 
@@ -146,54 +230,96 @@ namespace Generic.Repository.Repository
 
         #region INTERNAL - SET QUERY
 
+        /// <summary>
+        /// Creates the list.
+        /// </summary>
+        /// <param name="notTracking">if set to <c>true</c> [not tracking].</param>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
         internal async Task<IReadOnlyList<TValue>> CreateList(
-            bool notTracking,
-            CancellationToken token)
+                                                            bool notTracking,
+                                                            CancellationToken token)
         {
-            await CreateQuery(notTracking, token).ConfigureAwait(false);
+            var result = await CreateQuery(notTracking, token).
+                ContinueWith(_ =>
+                {
+                    return Query.
+                        ToListAsync(token);
+                }).
+                ConfigureAwait(false);
 
-            return await Query.
-                ToListAsync(token).
+            return await result.
                 ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Creates the list filtered.
+        /// </summary>
+        /// <param name="predicate">The predicate.</param>
+        /// <param name="notTracking">if set to <c>true</c> [not tracking].</param>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
         internal async Task<IReadOnlyList<TValue>> CreateListFiltered(
-            Expression<Func<TValue, bool>> predicate,
-            bool notTracking,
-            CancellationToken token)
+                                                                    Expression<Func<TValue, bool>> predicate,
+                                                                    bool notTracking,
+                                                                    CancellationToken token)
         {
-            await CreateQueryFiltered(predicate, notTracking, token).ConfigureAwait(false);
+            var result = await CreateQueryFiltered(
+                    predicate,
+                    notTracking,
+                    token).
+                ContinueWith(_ =>
+                   {
+                       return Query.
+                           ToListAsync(token);
+                   }).
+                ConfigureAwait(false);
 
-            return await Query.
-                ToListAsync(token).
+            return await result.
                 ConfigureAwait(false);
         }
 
-        internal async Task CreateQuery(
-                            bool notTracking,
-                            CancellationToken token)
-        {
-            await InitializeCache(token).ConfigureAwait(false);
-
-            Query = SetIncludes(Query);
-
-            if (notTracking)
+        /// <summary>
+        /// Creates the query.
+        /// </summary>
+        /// <param name="notTracking">if set to <c>true</c> [not tracking].</param>
+        /// <param name="token">The token.</param>
+        internal Task CreateQuery(
+                                bool notTracking,
+                                CancellationToken token) =>
+            InitializeCache(token).
+                ContinueWith(_ =>
             {
-                Query = Query.AsNoTracking();
-            }
-        }
+                if (notTracking)
+                {
+                    Query = Query.AsNoTracking();
+                }
 
-        internal async Task CreateQueryFiltered(
-            Expression<Func<TValue, bool>> predicate,
-            bool notTracking,
-            CancellationToken token)
-        {
-            await CreateQuery(notTracking, token).ConfigureAwait(false);
+                Query = SetIncludes(Query);
+            });
 
-            Query = Query.Where(predicate);
-        }
+        /// <summary>
+        /// Creates the query filtered.
+        /// </summary>
+        /// <param name="predicate">The predicate.</param>
+        /// <param name="notTracking">if set to <c>true</c> [not tracking].</param>
+        /// <param name="token">The token.</param>
+        internal Task CreateQueryFiltered(
+                                        Expression<Func<TValue, bool>> predicate,
+                                        bool notTracking,
+                                        CancellationToken token) =>
+                 CreateQuery(notTracking, token).
+                        ContinueWith(_ =>
+                        {
+                            Query = Query.Where(predicate);
+                        });
 
-        internal virtual async Task InitializeCache(CancellationToken token)
+        /// <summary>
+        /// Initializes the cache.
+        /// </summary>
+        /// <param name="token">The token.</param>
+        protected virtual async Task InitializeCache(
+                                                    CancellationToken token)
         {
             await CacheService.AddGet<TValue>(token).
                 ConfigureAwait(false);

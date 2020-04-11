@@ -13,7 +13,9 @@ namespace Generic.Repository.Extension.List
         /// <param name="list">The list.</param>
         /// <param name="size">The size.</param>
         /// <returns></returns>
-        public static IEnumerable<IEnumerable<TValue>> SplitList<TValue>(this IEnumerable<TValue> list, int size)
+        public static IEnumerable<IEnumerable<TValue>> SplitList<TValue>(
+            this IEnumerable<TValue> list, 
+            int size)
         {
             ThrowErrorIf.
                 IsNullOrEmptyList(list, nameof(list), nameof(SplitList));

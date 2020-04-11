@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace Generic.Repository.Cache
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <seealso cref="Generic.Repository.Cache.ICacheRepositoryFacade" />
     internal class CacheRepositoryFacade : ICacheRepositoryFacade
     {
         private readonly object _delegateLock = new object();
@@ -63,9 +67,9 @@ namespace Generic.Repository.Cache
             return GetterDelegate;
         }
 
-        public async Task<TReturn> GetData<TReturn>(IDictionary<string, TReturn> dictionary, string key, CancellationToken token)
+        public Task<TReturn> GetData<TReturn>(IDictionary<string, TReturn> dictionary, string key, CancellationToken token)
         {
-            return await Task.Run(() =>
+            return Task.Run(() =>
             {
                 ThrowErrorIf.
                     IsEmptyOrNullString(key, nameof(key), nameof(GetData));
@@ -73,21 +77,29 @@ namespace Generic.Repository.Cache
                 dictionary.TryGetValue(key, out var result);
 
                 return result;
-            }, token).
-            ConfigureAwait(false);
+            }, token);
         }
 
-        public async Task RunActionInSemaphore(Action @delegate, CancellationToken token)
+        public Task ProcessActionWithLock(Action @delegate, CancellationToken token)
         {
-            await Task.Run(() =>
-            {
-                lock (_delegateLock)
-                {
-                    @delegate();
-                }
-            }, token).ConfigureAwait(false);
+            return Task.Run(() =>
+             {
+                 lock (_delegateLock)
+                 {
+                     @delegate();
+                 }
+             }, token);
         }
 
+        /// <summary>
+        /// Extracts the method.
+        /// </summary>
+        /// <typeparam name="TValue">The type of the value.</typeparam>
+        /// <typeparam name="TReturn">The type of the return.</typeparam>
+        /// <param name="method">The method.</param>
+        /// <param name="property">The property.</param>
+        /// <param name="nameMethod">The name method.</param>
+        /// <returns></returns>
         private TReturn ExtractMethod<TValue, TReturn>(MethodInfo method, PropertyInfo property, string nameMethod)
         {
             ThrowErrorIf.

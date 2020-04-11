@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Generic.Repository.Interfaces.Repository
 {
     public interface IBaseRepositoryAsync<TValue, TContext> :
-        IPageable<TValue>, ICommandRepository<TValue>, IQueryAsync<TValue>
+        IPageable<TValue>, ICommandRepository<TValue>, IQueryAsync<TValue>, IUnitOfWork
         where TValue : class
         where TContext : DbContext
     {

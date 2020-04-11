@@ -11,7 +11,7 @@ namespace Generic.Repository.UnitTest.ThrowError
     {
         [Test]
         public void ThrowErrorIf_FieldNoHasSameValue() =>
-            Assert.Throws<NotEqualsFieldException>(() => ThrowErrorIf.FieldNoHasSameValue("", 0));
+            Assert.Throws<NotEqualsFieldException>(() => ThrowErrorIf.FieldNoHasSameValue(1, 0));
 
         [Test]
         public void ThrowErrorIf_IsEmptyOrNullString() =>
@@ -30,8 +30,7 @@ namespace Generic.Repository.UnitTest.ThrowError
             Assert.Throws<LessThanOrEqualsZeroException>(() =>
             {
                 ThrowErrorIf.IsLessThanOrEqualsZero(0);
-            }
-            );
+            });
 
         [Test]
         public void ThrowErrorIf_IsLessThanZero_InvalidValue()

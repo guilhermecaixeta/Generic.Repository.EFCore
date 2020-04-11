@@ -66,7 +66,7 @@ namespace Generic.Repository.UnitTest.Repository
         public void GetFirstAsync_NullPredicate() =>
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
-                await Repository.GetFirstByAsync(null, true, default).ConfigureAwait(false);
+                await Repository.GetFirstOrDefaultAsync(null, true, default).ConfigureAwait(false);
             });
 
         [Test]
@@ -94,7 +94,7 @@ namespace Generic.Repository.UnitTest.Repository
         public void GetSingleAsync_NullPredicate() =>
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
-                await Repository.GetSingleByAsync(null, true, default).ConfigureAwait(false);
+                await Repository.GetSingleOrDefaultAsync(null, true, default).ConfigureAwait(false);
             });
 
         [Test]

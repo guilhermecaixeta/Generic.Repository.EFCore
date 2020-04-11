@@ -12,59 +12,59 @@ namespace Generic.Repository.Interfaces.Repository
         #region COMMAND - (CREAT, UPDATE, DELETE) With CancellationToken
 
         /// <summary>
-        /// Save data async
+        /// Creates the asynchronous.
         /// </summary>
+        /// <param name="entity">The entity.</param>
+        /// <param name="token">The token.</param>
+        /// <param name="useUnitOfWork">if set to <c>true</c> [use unit of work].</param>
         /// <returns></returns>
-        Task<TValue> CreateAsync(TValue entity, CancellationToken token);
+        Task<TValue> CreateAsync(TValue entity, CancellationToken token, bool useUnitOfWork = false);
 
         /// <summary>
-        /// Save list async
+        /// Creates the asynchronous.
         /// </summary>
+        /// <param name="entityList">The entity list.</param>
+        /// <param name="token">The token.</param>
+        /// <param name="useUnitOfWork">if set to <c>true</c> [use unit of work].</param>
         /// <returns></returns>
-        Task CreateAsync(IEnumerable<TValue> entityList, CancellationToken token);
+        Task CreateAsync(IEnumerable<TValue> entityList, CancellationToken token, bool useUnitOfWork = false);
 
         /// <summary>
-        /// Delete data async
+        /// Deletes the asynchronous.
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="entity">The entity.</param>
+        /// <param name="token">The token.</param>
+        /// <param name="useUnitOfWork">if set to <c>true</c> [use unit of work].</param>
         /// <returns></returns>
-        Task DeleteAsync(TValue entity, CancellationToken token);
+        Task DeleteAsync(TValue entity, CancellationToken token, bool useUnitOfWork = false);
 
         /// <summary>
-        /// Delete list async
+        /// Deletes the asynchronous.
         /// </summary>
-        /// <param name="id"></param>
-        Task DeleteAsync(IEnumerable<TValue> entityList, CancellationToken token);
+        /// <param name="entityList">The entity list.</param>
+        /// <param name="token">The token.</param>
+        /// <param name="useUnitOfWork">if set to <c>true</c> [use unit of work].</param>
+        /// <returns></returns>
+        Task DeleteAsync(IEnumerable<TValue> entityList, CancellationToken token, bool useUnitOfWork = false);
 
         /// <summary>
-        /// Update data async
+        /// Updates the asynchronous.
         /// </summary>
+        /// <param name="entity">The entity.</param>
+        /// <param name="token">The token.</param>
+        /// <param name="useUnitOfWork">if set to <c>true</c> [use unit of work].</param>
         /// <returns></returns>
-        Task UpdateAsync(TValue entity, CancellationToken token);
+        Task UpdateAsync(TValue entity, CancellationToken token, bool useUnitOfWork = false);
 
         /// <summary>
-        /// Update list async
+        /// Updates the asynchronous.
         /// </summary>
+        /// <param name="entityList">The entity list.</param>
+        /// <param name="token">The token.</param>
+        /// <param name="useUnitOfWork">if set to <c>true</c> [use unit of work].</param>
         /// <returns></returns>
-        Task UpdateAsync(IEnumerable<TValue> entityList, CancellationToken token);
+        Task UpdateAsync(IEnumerable<TValue> entityList, CancellationToken token, bool useUnitOfWork = false);
 
         #endregion COMMAND - (CREAT, UPDATE, DELETE) With CancellationToken
-
-        #region COMMIT - (SAVECHANGES)
-
-        /// <summary>Multi transactions asynchronous. Rollback happening always when have an exception.</summary>
-        /// <param name="transaction">The transaction.</param>
-        /// <param name="token">The token.</param>
-        /// <returns></returns>
-        Task MultiTransactionsAsync(
-            Func<DbSet<TValue>, Task> transaction,
-            CancellationToken token);
-
-        /// <summary>Saves the changes asynchronous.</summary>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        Task SaveChangesAsync(CancellationToken cancellationToken);
-
-        #endregion COMMIT - (SAVECHANGES)
     }
 }

@@ -30,35 +30,6 @@ namespace Generic.Repository.UnitTest.Repository
             Assert.AreEqual(100, count);
         }
 
-        //[Test]
-        [Ignore("Need improvements")]
-        public async Task CreateTransactionAsync_ValidValue()
-        {
-            var fakeValue = CreateFakeValue();
-            var notExists = true;
-
-            await Repository.MultiTransactionsAsync(
-                async ctx =>
-                {
-                    await Repository.CreateAsync(fakeValue, default)
-                        .ConfigureAwait(false);
-
-                    fakeValue = UpdateFakeValue(fakeValue);
-
-                    await Repository.UpdateAsync(fakeValue, default)
-                        .ConfigureAwait(false);
-
-                    await Repository.DeleteAsync(fakeValue, default)
-                        .ConfigureAwait(false);
-
-                    notExists = await Repository.
-                                    FindAsync(GetFakeExpression(fakeValue)).
-                                    ConfigureAwait(false) == null;
-                }, default);
-
-            Assert.IsTrue(notExists);
-        }
-
         [Test]
         public async Task CreateValueAsync_ValidValue()
         {
@@ -98,7 +69,7 @@ namespace Generic.Repository.UnitTest.Repository
                 ConfigureAwait(false);
 
             var result = await Repository.
-                GetFirstByAsync(GetFakeExpression(value), false, default).
+                GetFirstOrDefaultAsync(GetFakeExpression(value), false, default).
                 ConfigureAwait(false);
 
             Assert.AreEqual(null, result);
@@ -138,7 +109,7 @@ namespace Generic.Repository.UnitTest.Repository
                 ConfigureAwait(false);
 
             var valueOutdated = await Repository.
-                GetFirstByAsync(GetFakeExpression(value), true, default).
+                GetFirstOrDefaultAsync(GetFakeExpression(value), true, default).
                 ConfigureAwait(false);
 
             await Repository.

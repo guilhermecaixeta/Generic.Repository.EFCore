@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Generic.Repository.Cache
 {
+    /// <summary>
+    /// Cache repository facade.
+    /// </summary>
     internal interface ICacheRepositoryFacade
     {
         /// <summary>Creates the action.</summary>
@@ -34,12 +37,22 @@ namespace Generic.Repository.Cache
         /// <returns></returns>
         Func<object, object> CreateFunctionGeneric<TValue, TReturn>(MethodInfo getter);
 
+        /// <summary>
+        /// Gets the data.
+        /// </summary>
+        /// <typeparam name="R"></typeparam>
+        /// <param name="dictionary">The dictionary.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
         Task<R> GetData<R>(IDictionary<string, R> dictionary, string key, CancellationToken token);
 
-        /// <summary>Processes the action in semaphore.</summary>
+        /// <summary>
+        /// Processes the action with lock.
+        /// </summary>
         /// <param name="delegate">The delegate.</param>
         /// <param name="token">The token.</param>
         /// <returns></returns>
-        Task RunActionInSemaphore(Action @delegate, CancellationToken token);
+        Task ProcessActionWithLock(Action @delegate, CancellationToken token);
     }
 }

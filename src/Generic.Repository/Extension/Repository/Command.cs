@@ -4,6 +4,7 @@ using Generic.Repository.ThrowError;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,14 +19,14 @@ namespace Generic.Repository.Extension.Repository
         /// <param name="chunkSize">Size of the chunk.</param>
         /// <param name="token">The token.</param>
         public static async Task BulkDeleteAsync<TValue, TContext>(
-            this IBaseRepositoryAsync<TValue, TContext> repository,
-            IEnumerable<TValue> list,
-            int chunkSize,
-            CancellationToken token)
+                                                                this IBaseRepositoryAsync<TValue, TContext> repository,
+                                                                IEnumerable<TValue> list,
+                                                                int chunkSize,
+                                                                CancellationToken token)
             where TValue : class
             where TContext : DbContext
         {
-            await ProccessTaskAsync(
+            await ProcessTaskAsync(
                     repository,
                     list,
                     chunkSize,
@@ -42,14 +43,14 @@ namespace Generic.Repository.Extension.Repository
         /// <param name="chunkSize">Size of the chunk.</param>
         /// <param name="token">The token.</param>
         public static async Task BulkInsertAsync<TValue, TContext>(
-            this IBaseRepositoryAsync<TValue, TContext> repository,
-            IEnumerable<TValue> list,
-            int chunkSize,
-            CancellationToken token)
+                                                                this IBaseRepositoryAsync<TValue, TContext> repository,
+                                                                IEnumerable<TValue> list,
+                                                                int chunkSize,
+                                                                CancellationToken token)
             where TValue : class
             where TContext : DbContext
         {
-            await ProccessTaskAsync(
+            await ProcessTaskAsync(
                     repository,
                     list,
                     chunkSize,
@@ -73,7 +74,7 @@ namespace Generic.Repository.Extension.Repository
             where TValue : class
             where TContext : DbContext
         {
-            await ProccessTaskAsync(
+            await ProcessTaskAsync(
                     repository,
                     list,
                     chunkSize,
@@ -94,11 +95,11 @@ namespace Generic.Repository.Extension.Repository
         /// <param name="task">The task.</param>
         /// <param name="className">Name of the class.</param>
         /// <param name="token">The token.</param>
-        internal static async Task ProccessTaskAsync<TValue, TContext>(
+        internal static async Task ProcessTaskAsync<TValue, TContext>(
             IBaseRepositoryAsync<TValue, TContext> repository,
             IEnumerable<TValue> list,
             int chunkSize,
-            Func<IEnumerable<TValue>, CancellationToken, Task> task,
+            Func<IEnumerable<TValue>, CancellationToken, bool, Task> task,
             string className,
             CancellationToken token)
             where TValue : class
@@ -110,16 +111,20 @@ namespace Generic.Repository.Extension.Repository
 
             ThrowErrorIf.IsLessThanOrEqualsZero(chunkSize);
 
-            await repository.MultiTransactionsAsync(
-                async ctx =>
+            await repository.UnitOfWorkScopedTransactionsAsync(
+                async () =>
                 {
                     var listSplit = list.SplitList(chunkSize);
 
-                    foreach (var split in listSplit)
+                    var tasksList = listSplit.Select(async values =>
                     {
-                        await task(split, token).
+                        await task(values, token, true).
                             ConfigureAwait(false);
-                    }
+                    }).ToList();
+
+                    await Task.WhenAll(tasksList);
+
+                    await repository.SaveChangesAsync(token);
                 }, token).ConfigureAwait(false);
         }
     }

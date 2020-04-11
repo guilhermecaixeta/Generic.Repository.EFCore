@@ -56,7 +56,7 @@ namespace Generic.Repository.UnitTest.Repository
         [Test]
         public async Task FirstAsync_DataValid()
         {
-            var value = await Repository.GetFirstByAsync(GetFakeExpression(), true, default).ConfigureAwait(false);
+            var value = await Repository.GetFirstOrDefaultAsync(GetFakeExpression(), true, default).ConfigureAwait(false);
 
             Assert.IsNotNull(value);
         }

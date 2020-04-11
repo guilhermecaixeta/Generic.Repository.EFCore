@@ -1,7 +1,6 @@
 ﻿using Generic.Repository.Cache;
 using Generic.Repository.ThrowError;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,119 +18,125 @@ namespace Generic.Repository.Repository
 
         #region COMMAND - (CREAT, UPDATE, DELETE) With CancellationToken
 
-        public virtual async Task<TValue> CreateAsync(TValue entity, CancellationToken token)
+        public virtual async Task<TValue> CreateAsync(
+            TValue entity,
+            CancellationToken token,
+            bool useUnitOfWork = false)
         {
             ThrowErrorIf.
                 IsNullValue(entity, nameof(entity), nameof(CreateAsync));
 
             Context.Attach(entity).State = EntityState.Added;
 
-            await SaveChangesAsync(token).
-                ConfigureAwait(false);
-
+            if (!useUnitOfWork)
+            {
+                await SaveChangesAsync(token).
+                    ConfigureAwait(false);
+            }
             return entity;
         }
 
         public virtual async Task CreateAsync(
             IEnumerable<TValue> entityList,
-            CancellationToken token)
+            CancellationToken token,
+            bool useUnitOfWork = false)
         {
             ThrowErrorIf.
-                IsNullOrEmptyList(entityList, nameof(entityList), nameof(CreateAsync));
+                IsNullOrEmptyList(
+                    entityList,
+                    nameof(entityList),
+                    nameof(CreateAsync));
 
             await Context.
                 AddRangeAsync(entityList, token).
                 ConfigureAwait(false);
 
-            await SaveChangesAsync(token).
+            await SaveChangesAsync(useUnitOfWork, token).
                 ConfigureAwait(false);
         }
 
-        public virtual async Task DeleteAsync(TValue entity, CancellationToken token)
+        public virtual Task DeleteAsync(
+            TValue entity,
+            CancellationToken token,
+            bool useUnitOfWork = false)
         {
             ThrowErrorIf.
-                IsNullValue(entity, nameof(entity), nameof(DeleteAsync));
+                IsNullValue(
+                entity,
+                nameof(entity),
+                nameof(DeleteAsync));
 
             Context.Remove(entity);
 
-            await SaveChangesAsync(token).
-                ConfigureAwait(false);
+            return SaveChangesAsync(useUnitOfWork, token);
         }
 
-        public virtual async Task DeleteAsync(IEnumerable<TValue> entityList, CancellationToken token)
+        public virtual Task DeleteAsync(
+            IEnumerable<TValue> entityList,
+            CancellationToken token,
+            bool useUnitOfWork = false)
         {
             ThrowErrorIf.
-                IsNullOrEmptyList(entityList, nameof(entityList), nameof(DeleteAsync));
+                IsNullOrEmptyList(
+                    entityList,
+                    nameof(entityList),
+                    nameof(DeleteAsync));
 
             Context.RemoveRange(entityList);
 
-            await SaveChangesAsync(token).
-                ConfigureAwait(false);
+            return SaveChangesAsync(useUnitOfWork, token);
         }
 
-        public virtual async Task UpdateAsync(TValue entity, CancellationToken token)
+        public virtual Task UpdateAsync(
+            TValue entity,
+            CancellationToken token,
+            bool useUnitOfWork = false)
         {
             ThrowErrorIf.
-                IsNullValue(entity, nameof(entity), nameof(UpdateAsync));
+                IsNullValue(
+                    entity,
+                    nameof(entity),
+                    nameof(UpdateAsync));
 
-            Context.Attach(entity).State = EntityState.Modified;
+            Context.
+                Attach(entity).State = EntityState.Modified;
 
-            await SaveChangesAsync(token).
-                ConfigureAwait(false);
+            return SaveChangesAsync(useUnitOfWork, token);
         }
 
-        public virtual async Task UpdateAsync(IEnumerable<TValue> entityList, CancellationToken token)
+        public virtual Task UpdateAsync(
+            IEnumerable<TValue> entityList,
+            CancellationToken token,
+            bool useUnitOfWork = false)
         {
             ThrowErrorIf.
-                IsNullOrEmptyList(entityList, nameof(entityList), nameof(UpdateAsync));
+                IsNullOrEmptyList(
+                    entityList,
+                    nameof(entityList),
+                    nameof(UpdateAsync));
 
             Context.UpdateRange(entityList);
 
-            await SaveChangesAsync(token).
-                ConfigureAwait(false);
+            return SaveChangesAsync(useUnitOfWork, token);
+        }
+
+        /// <summary>
+        /// Saves the changes.
+        /// </summary>
+        /// <param name="useUnitOfWork">if set to <c>true</c> [use unit of work].</param>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
+        private async Task SaveChangesAsync(
+            bool useUnitOfWork,
+            CancellationToken token)
+        {
+            if (!useUnitOfWork)
+            {
+                await SaveChangesAsync(token);
+            }
         }
 
         #endregion COMMAND - (CREAT, UPDATE, DELETE) With CancellationToken
 
-        #region COMMIT
-
-        public async Task MultiTransactionsAsync(
-            Func<DbSet<TValue>, Task> @action,
-            CancellationToken token)
-        {
-            ThrowErrorIf.
-                IsNullValue(@action, nameof(@action), nameof(MultiTransactionsAsync));
-
-            var strategy = Context.Database.CreateExecutionStrategy();
-
-            await strategy.ExecuteAsync(async () =>
-            {
-                using (var transaction = await Context.Database.BeginTransactionAsync().ConfigureAwait(false))
-                {
-                    try
-                    {
-                        await @action(Context.Set<TValue>()).
-                            ConfigureAwait(false);
-
-                        await transaction.
-                            CommitAsync().
-                            ConfigureAwait(false);
-                    }
-                    catch
-                    {
-                        await transaction.
-                            RollbackAsync().
-                            ConfigureAwait(false);
-
-                        throw;
-                    }
-                }
-            });
-        }
-
-        public Task SaveChangesAsync(CancellationToken cancellationToken) =>
-                 Context.SaveChangesAsync(cancellationToken);
-
-        #endregion COMMIT
     }
 }
