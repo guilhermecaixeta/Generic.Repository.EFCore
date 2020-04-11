@@ -21,84 +21,84 @@ namespace Generic.Repository.UnitTest.Repository
         }
 
         [Test]
-        public void Create_NullValue() =>
+        public void Create_NullValue_Exception() =>
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
                 await Repository.CreateAsync(_value, default).ConfigureAwait(false);
             });
 
         [Test]
-        public void CreateList_EmptyList() =>
+        public void CreateList_EmptyList_Exception() =>
             Assert.ThrowsAsync<ListNullOrEmptyException>(async () =>
             {
                 await Repository.CreateAsync(new List<TValue>(), default).ConfigureAwait(false);
             });
 
         [Test]
-        public void CreateList_NullList() =>
+        public void CreateList_NullList_Exception() =>
             Assert.ThrowsAsync<ListNullOrEmptyException>(async () =>
             {
                 await Repository.CreateAsync((IEnumerable<TValue>)null, default).ConfigureAwait(false);
             });
 
         [Test]
-        public void Delete_NullValue() =>
+        public void Delete_NullValue_Exception() =>
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
                 await Repository.DeleteAsync(_value, default).ConfigureAwait(false);
             });
 
         [Test]
-        public void DeleteList_EmptyList() =>
+        public void DeleteList_EmptyList_Exception() =>
             Assert.ThrowsAsync<ListNullOrEmptyException>(async () =>
             {
                 await Repository.DeleteAsync(new List<TValue>(), default).ConfigureAwait(false);
             });
 
         [Test]
-        public void DeleteList_NullList() =>
+        public void DeleteList_NullList_Exception() =>
             Assert.ThrowsAsync<ListNullOrEmptyException>(async () =>
             {
                 await Repository.DeleteAsync((IEnumerable<TValue>)null, default).ConfigureAwait(false);
             });
 
         [Test]
-        public void GetFirstAsync_NullPredicate() =>
+        public void GetFirstAsync_NullPredicate_Exception() =>
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
                 await Repository.GetFirstOrDefaultAsync(null, true, default).ConfigureAwait(false);
             });
 
         [Test]
-        public void GetPage_NullConfig() =>
+        public void GetPage_NullConfig_Exception_Exception() =>
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
                 await Repository.GetPageAsync(null, true, default).ConfigureAwait(false);
             });
 
         [Test]
-        public void GetPage_NullFilter() =>
+        public void GetPage_NullFilter_Exception() =>
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
                 await Repository.GetPageAsync(GetPageConfigFake(), null, true, default).ConfigureAwait(false);
             });
 
         [Test]
-        public void GetPage_NullPredicate() =>
+        public void GetPage_NullPredicate_Exception() =>
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
                 await Repository.GetPageAsync(GetPageConfigFake(), (Expression<Func<TValue, bool>>)null, true, default).ConfigureAwait(false);
             });
 
         [Test]
-        public void GetSingleAsync_NullPredicate() =>
+        public void GetSingleAsync_NullPredicate_Exception() =>
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
                 await Repository.GetSingleOrDefaultAsync(null, true, default).ConfigureAwait(false);
             });
 
         [Test]
-        public void Update_NullValue() =>
+        public void Update_NullValue_Exception() =>
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
                 await Repository.UpdateAsync(_value, default).ConfigureAwait(false);

@@ -10,6 +10,8 @@ namespace Generic.Repository.Repository
     public class UnitOfWorkAsync<TContext>
         where TContext : DbContext
     {
+        private bool _autoTransaction;
+
         /// <summary>
         /// The context
         /// </summary>
@@ -30,6 +32,25 @@ namespace Generic.Repository.Repository
             Context = context;
         }
 
+        /// <summary>
+        /// Disables the autotransaction and begin transaction.
+        /// </summary>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
+        public Task DisableAutotransactionAndBeginTransaction(CancellationToken token)
+        {
+            _autoTransaction = Context.Database.AutoTransactionsEnabled;
+
+            Context.Database.AutoTransactionsEnabled = false;
+
+            return Context.Database.BeginTransactionAsync(token);
+        }
+
+        /// <summary>
+        /// Begins the transaction asynchronous.
+        /// </summary>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
         public Task BeginTransactionAsync(CancellationToken token) =>
             Context.Database.BeginTransactionAsync(token);
 
@@ -38,8 +59,12 @@ namespace Generic.Repository.Repository
         /// </summary>
         /// <param name="token">The token.</param>
         /// <returns></returns>
-        public Task CommitAsync(CancellationToken token) =>
-           Task.Run(() => Context.Database.CommitTransaction(), token);
+        public Task CommitAsync(CancellationToken token)
+        {
+            Context.Database.AutoTransactionsEnabled = _autoTransaction;
+
+            return Task.Run(() => Context.Database.CommitTransaction(), token);
+        }
 
         /// <summary>
         /// Saves the changes and commit asynchronous.

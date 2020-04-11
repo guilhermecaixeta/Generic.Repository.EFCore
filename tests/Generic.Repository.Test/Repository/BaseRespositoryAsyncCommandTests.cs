@@ -15,7 +15,7 @@ namespace Generic.Repository.UnitTest.Repository
         where TFilter : class, IFilter
     {
         [Test]
-        public async Task CreateListAsync_ValidValue()
+        public async Task CreateListAsync_Success()
         {
             var list = GetListFake();
 
@@ -31,7 +31,7 @@ namespace Generic.Repository.UnitTest.Repository
         }
 
         [Test]
-        public async Task CreateValueAsync_ValidValue()
+        public async Task CreateValueAsync_Success()
         {
             var value = CreateFakeValue();
             value = await Repository.
@@ -42,7 +42,7 @@ namespace Generic.Repository.UnitTest.Repository
         }
 
         [Test]
-        public async Task DeleteListAsync_ValidValue()
+        public async Task DeleteListAsync_Success()
         {
             var list = await Repository.
                 GetAllAsync(false, default).
@@ -59,7 +59,7 @@ namespace Generic.Repository.UnitTest.Repository
         }
 
         [Test]
-        public async Task DeleteValueAsync_ValidValue()
+        public async Task DeleteValueAsync_Success()
         {
             var value = CreateFakeValue();
             value = await Repository.CreateAsync(value, default).
@@ -76,7 +76,7 @@ namespace Generic.Repository.UnitTest.Repository
         }
 
         [Test]
-        public async Task UpdateListAsync_ValidValue()
+        public async Task UpdateListAsync_Success()
         {
             var listOutdated = await Repository.
                 GetAllAsync(false, default).
@@ -100,7 +100,7 @@ namespace Generic.Repository.UnitTest.Repository
         }
 
         [Test]
-        public async Task UpdateValueAndGetFirstAsync_ValidValue()
+        public async Task UpdateValueAndGetFirstAsync_Success()
         {
             var value = CreateFakeValue();
 

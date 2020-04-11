@@ -8,6 +8,13 @@ namespace Generic.Repository.Interfaces.Repository
     public interface IUnitOfWork
     {
         /// <summary>
+        /// Disables the autotransaction and begin trnsaction.
+        /// </summary>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
+        Task DisableAutotransactionAndBeginTransaction(CancellationToken token);
+
+        /// <summary>
         /// Begins the transaction.
         /// </summary>
         /// <param name="token">The token.</param>

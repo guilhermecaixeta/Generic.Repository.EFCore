@@ -11,7 +11,7 @@ namespace Generic.Repository.UnitTest.Cache
         private const int MaxIterations = 10;
 
         [Test]
-        public async Task CacheAccess_StressInput()
+        public async Task CacheAccess_Input_Stress()
         {
             var valid = true;
             for (var j = 0; j <= MaxIterations; j++)
@@ -51,7 +51,7 @@ namespace Generic.Repository.UnitTest.Cache
         }
 
         [Test]
-        public async Task CacheAccess_StressOutput()
+        public async Task CacheAccess_Output_Stress()
         {
             var valid = true;
 

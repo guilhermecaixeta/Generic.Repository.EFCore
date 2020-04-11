@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Generic.Repository.IntTest.Command
@@ -16,12 +17,29 @@ namespace Generic.Repository.IntTest.Command
     [TestFixture]
     public class CommandTest
     {
+        /// <summary>
+        /// The chunck size
+        /// </summary>
         private const int _chunckSize = 10;
 
-        public IBaseRepositoryAsync<FakeInt, IntegrationContext> RepositoryAsync { get; set; }
+        /// <summary>
+        /// The token default
+        /// </summary>
+        private readonly CancellationToken _tokenDefault = default;
 
+        /// <summary>
+        /// Gets or sets the repository asynchronous.
+        /// </summary>
+        /// <value>
+        /// The repository asynchronous.
+        /// </value>
+        private IBaseRepositoryAsync<FakeInt, IntegrationContext> RepositoryAsync { get; set; }
+
+        /// <summary>
+        /// Bulks the insert success.
+        /// </summary>
         [Test]
-        public async Task BulkInsert_Valid()
+        public async Task BulkInsert_Success()
         {
             var list = FakeFactory.GetListFake();
 
@@ -30,8 +48,11 @@ namespace Generic.Repository.IntTest.Command
                 ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Bulks the delete success.
+        /// </summary>
         [Test]
-        public async Task BulkDelete_Valid()
+        public async Task BulkDelete_Success()
         {
             await FakeFactory.InsertData();
             using (var context = DataInjector.CreateAndGetContext())
@@ -43,8 +64,11 @@ namespace Generic.Repository.IntTest.Command
             }
         }
 
+        /// <summary>
+        /// Bulks the update success.
+        /// </summary>
         [Test]
-        public async Task BulkUpdate_Valid()
+        public async Task BulkUpdate_Success()
         {
             await FakeFactory.InsertData();
 
@@ -61,33 +85,103 @@ namespace Generic.Repository.IntTest.Command
 
         }
 
+        /// <summary>
+        /// Creates the transaction asynchronous success.
+        /// </summary>
         [Test]
-        public async Task CreateTransactionAsync_ValidValue()
+        public async Task CreateTransactionAsync_Success()
         {
             var fakeValue = FakeFactory.GetFake();
 
             await RepositoryAsync.UnitOfWorkTransactionsAsync(
                 async ctx =>
                 {
-                    await RepositoryAsync.CreateAsync(fakeValue, default)
+                    await RepositoryAsync.CreateAsync(fakeValue, _tokenDefault)
                         .ConfigureAwait(false);
 
                     fakeValue = FakeFactory.UpdateFake(fakeValue);
 
-                    await RepositoryAsync.UpdateAsync(fakeValue, default)
+                    await RepositoryAsync.UpdateAsync(fakeValue, _tokenDefault)
                         .ConfigureAwait(false);
 
-                    await RepositoryAsync.DeleteAsync(fakeValue, default)
+                    await RepositoryAsync.DeleteAsync(fakeValue, _tokenDefault)
                         .ConfigureAwait(false);
                 }, default);
         }
 
+        /// <summary>
+        /// Inserts the data unit of work success.
+        /// </summary>
+        [Test]
+        public async Task UnitOfWork_InsertData_Success()
+        {
+            var fake = FakeFactory.GetFake();
+
+            await RepositoryAsync.DisableAutotransactionAndBeginTransaction(_tokenDefault);
+            await RepositoryAsync.CreateAsync(fake, _tokenDefault, true);
+            await RepositoryAsync.SaveChangesAsync(_tokenDefault);
+            await RepositoryAsync.CommitAsync(_tokenDefault);
+        }
+
+        /// <summary>
+        /// Units the of work update data success.
+        /// </summary>
+        [Test]
+        public async Task UnitOfWork_UpdateData_Success()
+        {
+            var fake = FakeFactory.GetFake();
+
+            fake = await RepositoryAsync.CreateAsync(fake, _tokenDefault);
+
+            fake = FakeFactory.UpdateFake(fake);
+
+            await RepositoryAsync.DisableAutotransactionAndBeginTransaction(_tokenDefault);
+            await RepositoryAsync.UpdateAsync(fake, _tokenDefault, true);
+            await RepositoryAsync.SaveChangesAsync(_tokenDefault);
+            await RepositoryAsync.CommitAsync(_tokenDefault);
+        }
+
+        /// <summary>
+        /// Units the of work delete data success.
+        /// </summary>
+        [Test]
+        public async Task UnitOfWork_DeleteData_Success()
+        {
+            var fake = FakeFactory.GetFake();
+
+            fake = await RepositoryAsync.CreateAsync(fake, _tokenDefault);
+
+            await RepositoryAsync.DisableAutotransactionAndBeginTransaction(_tokenDefault);
+            await RepositoryAsync.DeleteAsync(fake, _tokenDefault, true);
+            await RepositoryAsync.SaveChangesAsync(_tokenDefault);
+            await RepositoryAsync.CommitAsync(_tokenDefault);
+        }
+
+        /// <summary>
+        /// Units the of work save changes and commit success.
+        /// </summary>
+        [Test]
+        public async Task UnitOfWork_SaveChangesAndCommit_Success()
+        {
+            var fake = FakeFactory.GetFake();
+
+            await RepositoryAsync.DisableAutotransactionAndBeginTransaction(_tokenDefault);
+            await RepositoryAsync.CreateAsync(fake, _tokenDefault, true);
+            await RepositoryAsync.SaveChangesAndCommitAsync(_tokenDefault);
+        }
+
+        /// <summary>
+        /// Sets down.
+        /// </summary>
         [TearDown]
         public void SetDown()
         {
             DataInjector.BaseDown();
         }
 
+        /// <summary>
+        /// Sets up int test.
+        /// </summary>
         [SetUp]
         public void SetUpIntTest()
         {
