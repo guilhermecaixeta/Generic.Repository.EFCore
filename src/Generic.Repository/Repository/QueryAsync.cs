@@ -21,14 +21,14 @@ namespace Generic.Repository.Repository
         protected QueryAsync(TContext context, ICacheRepository cacheService)
         {
             ThrowErrorIf.
-                InitializeCache(cacheService);
+                HasNoCache(cacheService, typeof(QueryAsync<,>).Name);
 
             ThrowErrorIf.
                 IsNullValue(context, nameof(context), typeof(QueryAsync<,>).Name);
 
             Context = context;
             CacheService = cacheService;
-            Query = Context.Set<TValue>();
+            Query = Context.Set<TValue>().AsQueryable();
         }
 
         public IList<Expression<Func<TValue, object>>> IncludesExp { get; set; } =

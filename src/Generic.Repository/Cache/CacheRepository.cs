@@ -1,4 +1,5 @@
 using Generic.Repository.Attributes;
+using Generic.Repository.Extension.Validation;
 using Generic.Repository.ThrowError;
 using System;
 using System.Collections.Generic;
@@ -123,19 +124,23 @@ namespace Generic.Repository.Cache
             string customAttributeKey,
             CancellationToken token)
         {
-            var dictionaryI = await CacheFacade
+            var typeDictionary = await CacheFacade
             .GetData(
                 CacheAttribute,
                 objectKey, token).ConfigureAwait(false);
 
-            var dictionaryII = await CacheFacade
+            DictionaryValidation(typeDictionary, nameof(GetDictionaryAttribute));
+
+            var attributeDictionary = await CacheFacade
             .GetData(
-                dictionaryI,
+                typeDictionary,
                 propertyKey, token).ConfigureAwait(false);
+
+            DictionaryValidation(attributeDictionary, nameof(GetDictionaryAttribute));
 
             var result = await CacheFacade
             .GetData(
-                dictionaryII,
+                attributeDictionary,
                 customAttributeKey, token).ConfigureAwait(false);
 
             return result;
@@ -146,10 +151,12 @@ namespace Generic.Repository.Cache
             string propertyKey,
             CancellationToken token)
         {
-            var dictionaryI = await CacheFacade.GetData(CacheAttribute, objectKey, token).
+            var attributeDictionary = await CacheFacade.GetData(CacheAttribute, objectKey, token).
                 ConfigureAwait(false);
 
-            var result = await CacheFacade.GetData(dictionaryI, propertyKey, token).
+            DictionaryValidation(attributeDictionary, nameof(GetDictionaryAttribute));
+
+            var result = await CacheFacade.GetData(attributeDictionary, propertyKey, token).
                 ConfigureAwait(false);
 
             return result;
@@ -199,12 +206,14 @@ namespace Generic.Repository.Cache
             string propertyKey,
             CancellationToken token)
         {
-            var dicResult = await CacheFacade.
+            var getMethodDictionary = await CacheFacade.
                 GetData(CacheGet, objectKey, token).
                 ConfigureAwait(false);
 
+            DictionaryValidation(getMethodDictionary, nameof(GetMethodGet));
+
             var result = await CacheFacade.
-                GetData(dicResult, propertyKey, token).
+                GetData(getMethodDictionary, propertyKey, token).
                 ConfigureAwait(false);
 
             return result;
@@ -215,12 +224,14 @@ namespace Generic.Repository.Cache
             string propertyKey,
             CancellationToken token)
         {
-            var dicResult = await CacheFacade.
-                GetData(CacheSet, objectKey, token).
-                ConfigureAwait(false);
+            var setMethodDictionary = await CacheFacade.
+            GetData(CacheSet, objectKey, token).
+            ConfigureAwait(false);
+
+            DictionaryValidation(setMethodDictionary, nameof(GetMethodSet));
 
             var result = await CacheFacade.
-                GetData(dicResult, propertyKey, token).
+                GetData(setMethodDictionary, propertyKey, token).
                 ConfigureAwait(false);
 
             return result;
@@ -233,6 +244,8 @@ namespace Generic.Repository.Cache
         {
             var dictionary = await CacheFacade.
                 GetData(CacheProperties, objectKey, token);
+
+            DictionaryValidation(dictionary, nameof(GetProperty));
 
             var result = await CacheFacade.
                 GetData(dictionary, propertyKey, token).
@@ -325,6 +338,14 @@ namespace Generic.Repository.Cache
                 }
 
                 yield return property;
+            }
+        }
+
+        private void DictionaryValidation<TDic>(TDic dictionary, string message)
+        {
+            if (dictionary.IsNull())
+            {
+                throw new KeyNotFoundException(message);
             }
         }
     }

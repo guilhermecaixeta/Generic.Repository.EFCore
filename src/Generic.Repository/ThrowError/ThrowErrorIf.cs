@@ -3,85 +3,59 @@ using Generic.Repository.Exceptions;
 using Generic.Repository.Extension.Validation;
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Generic.Repository.ThrowError
 {
     /// <summary>Throw an error if the condition is attempt.</summary>
     public static class ThrowErrorIf
     {
-        private static ICacheRepository CacheRepository;
-
-        /// <summary>Determines whether [is field not equals] [the specified value].</summary>
-        /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <summary>
+        /// Fields the is not equals.
+        /// </summary>
         /// <param name="value">The value.</param>
-        /// <param name="field">The field.</param>
-        /// <param name="nameField">The name field.</param>
-        /// <param name="token">The token.</param>
+        /// <param name="comparable">The comparable.</param>
         /// <exception cref="NotEqualsFieldException"></exception>
-        public static async Task FieldIsNotEquals<TEntity>(
-            TEntity value,
-            object field,
-            string nameField,
-            CancellationToken token)
-            where TEntity : class
+        public static void FieldNoHasSameValue(
+            object value,
+            object comparable)
         {
-            var result = await AreEquals(value, field, nameField, token).
-                        ConfigureAwait(false);
-
-            if (result.Item1)
+            if (value != comparable)
             {
-                throw new NotEqualsFieldException(result.Item2.ToString(), field.ToString());
+                throw new NotEqualsFieldException(value.ToString(), comparable.ToString());
             }
         }
 
-        /// <summary>Determines whether [is field not equals] [the specified value].</summary>
-        /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <summary>
+        /// Fields the is not equals.
+        /// </summary>
         /// <typeparam name="TException">The type of the exception.</typeparam>
         /// <param name="value">The value.</param>
-        /// <param name="field">The field.</param>
-        /// <param name="nameField">The name field.</param>
-        /// <param name="token">The token.</param>
+        /// <param name="comparable">The comparable.</param>
         /// <exception cref="TException"></exception>
-        public static async Task FieldIsNotEquals<TEntity, TException>(
-            TEntity value,
-            object field,
-            string nameField,
-            CancellationToken token)
+        public static void FieldNoHasSameValue<TException>(
+            object value,
+            object comparable)
         where TException : Exception, new()
-        where TEntity : class
         {
-            var result = await AreEquals(value, field, nameField, token).
-                        ConfigureAwait(false);
-
-            if (result.Item1)
+            if (value != comparable)
             {
                 throw new TException();
             }
         }
 
-        /// <summary>Initializes the cache.</summary>
-        /// <param name="cacheRepository">The cache repository.</param>
-        /// <exception cref="CacheNotInitializedException">ThrowErrorIf</exception>
-        public static void InitializeCache(ICacheRepository cacheRepository)
-        {
-            HasCache(cacheRepository);
-
-            CacheRepository = cacheRepository;
-        }
-
-        /// <summary>Throws the error if string null or empty value.</summary>
-        /// <param name="obj">The object.</param>
-        /// <param name="nameParameter">Name of the Parameter.</param>
-        /// <param name="nameMethod">Name of the method.</param>
-        /// <exception cref="ArgumentNullException">Attribute&gt; {attributeName} MethodName&gt; {methodName}</exception>
+        /// <summary>
+        /// Determines whether [is empty or null string] [the specified value].
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="nameParameter">The name parameter.</param>
+        /// <param name="nameMethod">The name method.</param>
+        /// <exception cref="ArgumentNullException"></exception>
         public static void IsEmptyOrNullString(
-            string obj,
+            string value,
             string nameParameter,
             string nameMethod)
         {
-            var result = !obj.IsStringNotNullOrEmpty();
+            var result = !value.IsStringNotNullOrEmpty();
             if (result)
             {
                 throw new ArgumentNullException($"{nameParameter} MethodName > {nameMethod}");
@@ -107,7 +81,7 @@ namespace Generic.Repository.ThrowError
         /// <exception cref="LessThanOrEqualsZeroException">val &lt;= 0</exception>
         public static void IsLessThanOrEqualsZero(int value)
         {
-            if (value < 0)
+            if (value <= 0)
             {
                 throw new LessThanOrEqualsZeroException(value.ToString());
             }
@@ -208,48 +182,21 @@ namespace Generic.Repository.ThrowError
         /// <exception cref="InvalidTypeException"></exception>
         public static void TypeIsNotAllowed<T>(object obj)
         {
-            var isTypeValid = obj.IsType<T>();
-            if (isTypeValid)
+            var isValidType = obj.IsType<T>();
+            if (isValidType)
             {
                 throw new InvalidTypeException(obj.GetType().Name);
             }
         }
 
-        /// <summary>Ares the equals.</summary>
-        /// <typeparam name="TEntity">The type of the entity.</typeparam>
-        /// <param name="object">The object.</param>
-        /// <param name="param">The parameter.</param>
-        /// <param name="nameFieldObject">The name field.</param>
-        /// <param name="token">The token.</param>
-        /// <returns></returns>
-        private static async Task<(bool, object)> AreEquals<TEntity>(
-            TEntity @object,
-            object @param,
-            string nameFieldObject,
-            CancellationToken token)
-            where TEntity : class
-        {
-            HasCache(CacheRepository);
-
-            var funcGet = await CacheRepository.
-                GetMethodGet(@object.GetType().Name, nameFieldObject, token).
-                ConfigureAwait(false);
-
-            var value = funcGet(@param);
-
-            var isEquals = value == @param;
-
-            return (isEquals, value);
-        }
-
         /// <summary>Check if cache was initialized.</summary>
         /// <param name="cacheRepository">The cache repository.</param>
         /// <exception cref="CacheNotInitializedException">ThrowErrorIf</exception>
-        private static void HasCache(ICacheRepository cacheRepository)
+        internal static void HasNoCache(ICacheRepository cacheRepository, string value)
         {
             if (cacheRepository.IsNull())
             {
-                throw new CacheNotInitializedException(nameof(ThrowErrorIf));
+                throw new CacheNotInitializedException(value);
             }
         }
     }

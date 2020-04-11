@@ -24,14 +24,6 @@ namespace Generic.Repository.Extension.Filter.Facade
             return expressionsJoined;
         }
 
-        private static BinaryExpression AndAlso<TValue>(
-            this Expression<Func<TValue, bool>> predicateA,
-            Expression<Func<TValue, bool>> predicateB,
-            ParameterExpression parameter) where TValue : class =>
-                Expression.OrElse(
-                    Invoke(predicateA, parameter),
-                    Invoke(predicateB, parameter));
-
         private static Expression<Func<TValue, bool>> CreateExpression<TValue>(
             this Expression expression,
             ParameterExpression parameter) where TValue : class =>
@@ -64,8 +56,16 @@ namespace Generic.Repository.Extension.Filter.Facade
                                     this Expression<Func<TValue, bool>> predicateA,
             Expression<Func<TValue, bool>> predicateB,
             ParameterExpression parameter) where TValue : class =>
-                    Expression.AndAlso(
+                    Expression.OrElse(
                         Invoke(predicateA, parameter),
                         Invoke(predicateB, parameter));
+
+        private static BinaryExpression AndAlso<TValue>(
+            this Expression<Func<TValue, bool>> predicateA,
+            Expression<Func<TValue, bool>> predicateB,
+            ParameterExpression parameter) where TValue : class =>
+                Expression.AndAlso(
+                    Invoke(predicateA, parameter),
+                    Invoke(predicateB, parameter));
     }
 }

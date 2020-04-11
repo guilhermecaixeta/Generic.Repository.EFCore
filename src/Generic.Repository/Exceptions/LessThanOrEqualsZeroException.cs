@@ -24,6 +24,6 @@ namespace Generic.Repository.Exceptions
         {
         }
 
-        private static string CustomMessage { get; } = "The value {0} is less than zero.";
+        private static string CustomMessage { get; } = "The value {0} is less or equal zero. Inform a value more than zero";
     }
 }

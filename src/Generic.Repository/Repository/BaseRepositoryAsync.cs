@@ -98,7 +98,7 @@ namespace Generic.Repository.Repository
             Func<IEnumerable<object>, IEnumerable<TReturn>> mapper,
             CancellationToken token)
         {
-            await CreateQueryFiltered(predicate, notTracking, token);
+            await CreateQueryFiltered(predicate, notTracking, token).ConfigureAwait(false);
 
             var list = await CreateList(notTracking, token).ConfigureAwait(false);
 
