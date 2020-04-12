@@ -7,9 +7,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{DB86AE88-20D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Generic.Repository", "src\Generic.Repository\Generic.Repository.csproj", "{22F3F94C-791E-4352-9361-039BDC9DB4B4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Generic.Repository.UnitTest", "tests\Generic.Repository.Test\Generic.Repository.UnitTest.csproj", "{593D6511-BACC-4BCF-9348-30EB1BBDD71D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Generic.RepositoryTest.Unit", "tests\Generic.Repository.Test\Generic.RepositoryTest.Unit.csproj", "{593D6511-BACC-4BCF-9348-30EB1BBDD71D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Generic.Repository.IntTest", "Generic.Repository.IntTest\Generic.Repository.IntTest.csproj", "{3D36AEDB-29C2-4DDF-8FC5-20C496B465E5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Generic.RepositoryTest.Int", "Generic.Repository.IntTest\Generic.RepositoryTest.Int.csproj", "{3D36AEDB-29C2-4DDF-8FC5-20C496B465E5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
