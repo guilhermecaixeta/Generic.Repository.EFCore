@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Generic.Repository.UnitTest.Cache
+namespace Generic.RepositoryTest.Unit.Cache
 {
     public abstract class CacheRepositoryIOAccessTest<T>
         : CacheRepositoryExceptionTest<T>

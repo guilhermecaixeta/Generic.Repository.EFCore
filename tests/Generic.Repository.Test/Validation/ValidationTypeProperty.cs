@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
 
-namespace Generic.Repository.UnitTest.Validation
+namespace Generic.RepositoryTest.Unit.Validation
 {
     [TestFixture]
     public class ValidationTypeProperty

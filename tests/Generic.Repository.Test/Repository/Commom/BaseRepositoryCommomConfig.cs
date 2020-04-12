@@ -1,9 +1,9 @@
 ﻿using Generic.Repository.Cache;
-using Generic.Repository.UnitTest.Data;
+using Generic.RepositoryTest.Unit.Data;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 
-namespace Generic.Repository.UnitTest.Repository.Commom
+namespace Generic.RepositoryTest.Unit.Repository.Commom
 {
     public abstract class BaseRepositoryCommomConfig<TValue>
     where TValue : class

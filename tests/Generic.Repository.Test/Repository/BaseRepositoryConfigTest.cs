@@ -1,10 +1,10 @@
 ﻿using Generic.Repository.Models.Filter;
 using Generic.Repository.Repository;
-using Generic.Repository.UnitTest.Data;
-using Generic.Repository.UnitTest.Repository.Commom;
+using Generic.RepositoryTest.Unit.Data;
+using Generic.RepositoryTest.Unit.Repository.Commom;
 using NUnit.Framework;
 
-namespace Generic.Repository.UnitTest.Repository
+namespace Generic.RepositoryTest.Unit.Repository
 {
     public abstract class BaseRepositoryConfigTest<TValue, TFilter> :
         BaseRepositoryCommomConfig<TValue>

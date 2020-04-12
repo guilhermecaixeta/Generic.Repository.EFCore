@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using System.Threading.Tasks;
 
-namespace Generic.Repository.UnitTest.Cache
+namespace Generic.RepositoryTest.Unit.Cache
 {
     public abstract class CacheConfigurationTest<T>
         where T : class

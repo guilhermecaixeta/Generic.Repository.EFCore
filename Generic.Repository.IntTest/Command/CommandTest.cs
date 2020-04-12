@@ -1,26 +1,23 @@
 ﻿using Generic.Repository.Extension.Repository;
 using Generic.Repository.Interfaces.Repository;
-using Generic.Repository.IntTest.Data;
-using Generic.Repository.IntTest.Model;
-using Generic.Repository.IntTest.Utils;
-using Microsoft.EntityFrameworkCore;
+using Generic.RepositoryTest.Int.Data;
+using Generic.RepositoryTest.Int.Model;
+using Generic.RepositoryTest.Int.Utils;
 using NUnit.Framework;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Generic.Repository.IntTest.Command
+namespace Generic.RepositoryTest.Int.Command
 {
     //TODO: add docker support on cake build to do this tests runs.
-    [Ignore("Need add docker support to this test.")]
+    //[Ignore("Need add docker support to this test.")]
     [TestFixture]
     public class CommandTest
     {
         /// <summary>
         /// The chunck size
         /// </summary>
-        private const int _chunckSize = 10;
+        private const int _chunckSize = 100;
 
         /// <summary>
         /// The token default
@@ -94,19 +91,19 @@ namespace Generic.Repository.IntTest.Command
             var fakeValue = FakeFactory.GetFake();
 
             await RepositoryAsync.UnitOfWorkTransactionsAsync(
-                async ctx =>
+                async (ctx, token) =>
                 {
-                    await RepositoryAsync.CreateAsync(fakeValue, _tokenDefault)
+                    await RepositoryAsync.CreateAsync(fakeValue, token)
                         .ConfigureAwait(false);
 
                     fakeValue = FakeFactory.UpdateFake(fakeValue);
 
-                    await RepositoryAsync.UpdateAsync(fakeValue, _tokenDefault)
+                    await RepositoryAsync.UpdateAsync(fakeValue, token)
                         .ConfigureAwait(false);
 
-                    await RepositoryAsync.DeleteAsync(fakeValue, _tokenDefault)
+                    await RepositoryAsync.DeleteAsync(fakeValue, token)
                         .ConfigureAwait(false);
-                }, default);
+                }, _tokenDefault);
         }
 
         /// <summary>

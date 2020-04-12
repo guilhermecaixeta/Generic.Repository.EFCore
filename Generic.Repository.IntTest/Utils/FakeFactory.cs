@@ -1,20 +1,19 @@
 ﻿using Generic.Repository.Extension.Repository;
-using Generic.Repository.Interfaces.Repository;
-using Generic.Repository.IntTest.Data;
-using Generic.Repository.IntTest.Model;
+using Generic.RepositoryTest.Int.Data;
+using Generic.RepositoryTest.Int.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Generic.Repository.IntTest.Utils
+namespace Generic.RepositoryTest.Int.Utils
 {
     public static class FakeFactory
     {
         /// <summary>
         /// The size list test
         /// </summary>
-        public const int SizeListTest = 100;
+        public const int SizeListTest = 10_000;
 
         /// <summary>
         /// The chars

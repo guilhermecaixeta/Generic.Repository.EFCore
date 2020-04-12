@@ -1,7 +1,8 @@
 ﻿using Generic.Repository.Attributes;
+using Generic.Repository.Enums;
 using Generic.Repository.Models.Filter;
 
-namespace Generic.Repository.UnitTest.Model.Filter
+namespace Generic.RepositoryTest.Unit.Model.Filter
 {
     public class FakeFilter : IFilter
     {
@@ -10,37 +11,37 @@ namespace Generic.Repository.UnitTest.Model.Filter
         [NoCacheable]
         public string Unkown { get; set; }
 
-        [Filter(MethodOption = Enums.LambdaMethod.Contains)]
+        [Filter(MethodOption = LambdaMethod.Contains)]
         public string Value { get; set; }
     }
 
     public class FakeFilterEquals : IFilter
     {
-        [Filter(MethodOption = Enums.LambdaMethod.Equals)]
+        [Filter(MethodOption = LambdaMethod.Equals)]
         public string Value { get; set; }
     }
 
     public class FakeFilterGreaterThan : IFilter
     {
-        [Filter(MethodOption = Enums.LambdaMethod.GreaterThan)]
+        [Filter(MethodOption = LambdaMethod.GreaterThan)]
         public string Value { get; set; }
     }
 
     public class FakeFilterLessThan : IFilter
     {
-        [Filter(MethodOption = Enums.LambdaMethod.LessThan)]
+        [Filter(MethodOption = LambdaMethod.LessThan)]
         public string Value { get; set; }
     }
 
     public class FakeFilterLessThanOrEqual : IFilter
     {
-        [Filter(MethodOption = Enums.LambdaMethod.LessThanOrEqual)]
+        [Filter(MethodOption = LambdaMethod.LessThanOrEqual)]
         public string Value { get; set; }
     }
 
     public class GreaterThanOrEqual : IFilter
     {
-        [Filter(MethodOption = Enums.LambdaMethod.GreaterThanOrEqual)]
+        [Filter(MethodOption = LambdaMethod.GreaterThanOrEqual)]
         public string Value { get; set; }
     }
 }

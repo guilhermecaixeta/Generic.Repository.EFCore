@@ -4,7 +4,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 
-namespace Generic.Repository.UnitTest.ThrowError
+namespace Generic.RepositoryTest.Unit.ThrowError
 {
     [TestFixture]
     public class ThrowErrorIfTest

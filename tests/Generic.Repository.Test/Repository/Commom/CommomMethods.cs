@@ -1,12 +1,13 @@
-﻿using Generic.Repository.Models.PageAggregation.PageConfig;
-using Generic.Repository.UnitTest.Model;
-using Generic.Repository.UnitTest.Model.Filter;
+﻿using Generic.Repository.Enums;
+using Generic.Repository.Models.PageAggregation.PageConfig;
+using Generic.RepositoryTest.Unit.Model;
+using Generic.RepositoryTest.Unit.Model.Filter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace Generic.Repository.UnitTest.Repository.Commom
+namespace Generic.RepositoryTest.Unit.Repository.Commom
 {
     internal class CommomMethods
     {
@@ -52,7 +53,7 @@ namespace Generic.Repository.UnitTest.Repository.Commom
                 Order = "Value",
                 Page = 0,
                 Size = 5,
-                Sort = Enums.PageSort.ASC
+                Sort = PageSort.ASC
             };
     }
 }

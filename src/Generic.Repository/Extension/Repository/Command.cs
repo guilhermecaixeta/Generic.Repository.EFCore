@@ -3,6 +3,7 @@ using Generic.Repository.Interfaces.Repository;
 using Generic.Repository.ThrowError;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -67,10 +68,10 @@ namespace Generic.Repository.Extension.Repository
         /// <param name="chunkSize">Size of the chunk.</param>
         /// <param name="token">The token.</param>
         public static async Task BulkUpdateAsync<TValue, TContext>(
-            this IBaseRepositoryAsync<TValue, TContext> repository,
-            IEnumerable<TValue> list,
-            int chunkSize,
-            CancellationToken token)
+                                                                this IBaseRepositoryAsync<TValue, TContext> repository,
+                                                                IEnumerable<TValue> list,
+                                                                int chunkSize,
+                                                                CancellationToken token)
             where TValue : class
             where TContext : DbContext
         {
@@ -112,19 +113,23 @@ namespace Generic.Repository.Extension.Repository
             ThrowErrorIf.IsLessThanOrEqualsZero(chunkSize);
 
             await repository.UnitOfWorkScopedTransactionsAsync(
-                async () =>
+                async (cancellationToken) =>
                 {
                     var listSplit = list.SplitList(chunkSize);
 
-                    var tasksList = listSplit.Select(async values =>
+                    var concurrentBag = new ConcurrentBag<Task>();
+
+                    foreach (var values in listSplit)
                     {
-                        await task(values, token, true).
-                            ConfigureAwait(false);
-                    }).ToList();
+                        concurrentBag.Add(task(values, cancellationToken, true));
+                    }
 
-                    await Task.WhenAll(tasksList);
+                    _ = Parallel.ForEach(concurrentBag, taskToDo =>
+                          {
+                              taskToDo.
+                               ConfigureAwait(false);
+                          });
 
-                    await repository.SaveChangesAsync(token);
                 }, token).ConfigureAwait(false);
         }
     }

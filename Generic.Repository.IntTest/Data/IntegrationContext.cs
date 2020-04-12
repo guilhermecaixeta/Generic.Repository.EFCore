@@ -1,7 +1,7 @@
-﻿using Generic.Repository.IntTest.Model;
+﻿using Generic.RepositoryTest.Int.Model;
 using Microsoft.EntityFrameworkCore;
 
-namespace Generic.Repository.IntTest.Data
+namespace Generic.RepositoryTest.Int.Data
 {
     public class IntegrationContext : DbContext
     {
@@ -14,7 +14,6 @@ namespace Generic.Repository.IntTest.Data
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
-            //optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         }
     }
 }

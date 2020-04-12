@@ -4631,9 +4631,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\Generic.Repository.IntTest\\Generic.Repository.IntTest.csproj",
-      "projectName": "Generic.Repository.IntTest",
-      "projectPath": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\Generic.Repository.IntTest\\Generic.Repository.IntTest.csproj",
+      "projectUniqueName": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\Generic.Repository.IntTest\\Generic.RepositoryTest.Int.csproj",
+      "projectName": "Generic.RepositoryTest.Int",
+      "projectPath": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\Generic.Repository.IntTest\\Generic.RepositoryTest.Int.csproj",
       "packagesPath": "C:\\Users\\ctw00503\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\ctw00503\\Documents\\Projects\\Generic.Repository.EFCore\\Generic.Repository.IntTest\\obj\\",
       "projectStyle": "PackageReference",

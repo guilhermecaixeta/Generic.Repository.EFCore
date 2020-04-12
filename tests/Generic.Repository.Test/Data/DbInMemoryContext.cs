@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
-namespace Generic.Repository.UnitTest.Data
+namespace Generic.RepositoryTest.Unit.Data
 {
     public class DbInMemoryContext<T> : DbContext
     where T : class

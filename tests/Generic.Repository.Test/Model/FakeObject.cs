@@ -1,4 +1,4 @@
-﻿namespace Generic.Repository.UnitTest.Model
+﻿namespace Generic.RepositoryTest.Unit.Model
 {
     public class FakeObject
     {

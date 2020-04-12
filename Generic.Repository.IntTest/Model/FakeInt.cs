@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Generic.Repository.IntTest.Model
+namespace Generic.RepositoryTest.Int.Model
 {
     public class FakeInt : IEquatable<FakeInt>
     {

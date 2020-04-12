@@ -1,13 +1,13 @@
 using Generic.Repository.Models.PageAggregation.PageConfig;
-using Generic.Repository.UnitTest.Model;
-using Generic.Repository.UnitTest.Model.Filter;
-using Generic.Repository.UnitTest.Repository.Commom;
+using Generic.RepositoryTest.Unit.Model;
+using Generic.RepositoryTest.Unit.Model.Filter;
+using Generic.RepositoryTest.Unit.Repository.Commom;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace Generic.Repository.UnitTest.Repository
+namespace Generic.RepositoryTest.Unit.Repository
 {
     [TestFixture]
     public class BaseRepositoryAsyncTest :

@@ -1,10 +1,10 @@
 ﻿using Generic.Repository.Cache;
 using Generic.Repository.Interfaces.Repository;
-using Generic.Repository.IntTest.Model;
+using Generic.RepositoryTest.Int.Model;
 using Generic.Repository.Repository;
 using Microsoft.EntityFrameworkCore;
 
-namespace Generic.Repository.IntTest.Data
+namespace Generic.RepositoryTest.Int.Data
 {
     public static class DataInjector
     {

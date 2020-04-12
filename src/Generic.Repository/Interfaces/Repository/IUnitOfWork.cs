@@ -49,7 +49,7 @@ namespace Generic.Repository.Interfaces.Repository
         /// <param name="token">The token.</param>
         /// <returns></returns>
         Task UnitOfWorkTransactionsAsync(
-            Func<DbContext, Task> transaction,
+            Func<DbContext, CancellationToken, Task> transaction,
             CancellationToken token);
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace Generic.Repository.Interfaces.Repository
         /// <param name="token">The token.</param>
         /// <returns></returns>
         Task UnitOfWorkScopedTransactionsAsync(
-            Func<Task> transaction,
+            Func<CancellationToken, Task> transaction,
             CancellationToken token);
     }
 }

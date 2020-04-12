@@ -10,12 +10,15 @@ namespace Generic.Repository.Repository
     public class UnitOfWorkAsync<TContext>
         where TContext : DbContext
     {
-        private bool _autoTransaction;
-
         /// <summary>
         /// The context
         /// </summary>
         protected readonly TContext Context;
+
+        /// <summary>
+        /// The automatic transaction
+        /// </summary>
+        private bool _autoTransaction;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UnitOfWorkAsync{TContext}"/> class.
@@ -34,18 +37,6 @@ namespace Generic.Repository.Repository
         }
 
         /// <summary>
-        /// Disables the autotransaction and begin transaction.
-        /// </summary>
-        /// <param name="token">The token.</param>
-        /// <returns></returns>
-        public Task DisableAutotransactionAndBeginTransaction(CancellationToken token)
-        {
-            Context.Database.AutoTransactionsEnabled = false;
-
-            return Context.Database.BeginTransactionAsync(token);
-        }
-
-        /// <summary>
         /// Begins the transaction asynchronous.
         /// </summary>
         /// <param name="token">The token.</param>
@@ -58,11 +49,23 @@ namespace Generic.Repository.Repository
         /// </summary>
         /// <param name="token">The token.</param>
         /// <returns></returns>
-        public Task CommitAsync(CancellationToken token)
-        {
-            Context.Database.AutoTransactionsEnabled = _autoTransaction;
+        public Task CommitAsync(CancellationToken token) =>
+            Task.Run(() => Context.Database.CommitTransaction(), token).
+                ContinueWith(_ =>
+                {
+                    Context.Database.AutoTransactionsEnabled = _autoTransaction;
+                });
 
-            return Task.Run(() => Context.Database.CommitTransaction(), token);
+        /// <summary>
+        /// Disables the autotransaction and begin transaction.
+        /// </summary>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
+        public Task DisableAutotransactionAndBeginTransaction(CancellationToken token)
+        {
+            Context.Database.AutoTransactionsEnabled = false;
+
+            return Context.Database.BeginTransactionAsync(token);
         }
 
         /// <summary>
@@ -85,64 +88,85 @@ namespace Generic.Repository.Repository
             Context.SaveChangesAsync(token);
 
         /// <summary>
-        /// Unit of Work Transactions asynchronous.
-        /// All transaction here are inside a Unit Of Work Block:
-        /// (Begin transaction) { try{ Your Transactions }catch(Error){ Rollback; Throw Error;} } 
-        /// </summary>
-        /// <param name="transaction">The transaction.</param>
-        /// <param name="token">The token.</param>
-        public async Task UnitOfWorkTransactionsAsync(
-            Func<DbContext, Task> transaction,
-            CancellationToken token)
-        {
-            ThrowErrorIf.
-                IsNullValue(transaction, nameof(transaction), nameof(UnitOfWorkTransactionsAsync));
-
-            var strategy = Context.
-                Database.
-                CreateExecutionStrategy();
-
-            await strategy.ExecuteAsync(async () =>
-               {
-                   using (var contextTransaction = Context.
-                   Database.
-                   BeginTransaction())
-                   {
-                       try
-                       {
-                           await transaction(Context).
-                                ConfigureAwait(false);
-
-                           await contextTransaction.
-                               CommitAsync(token).
-                               ConfigureAwait(false);
-                       }
-                       catch (Exception e)
-                       {
-                           await contextTransaction.
-                               RollbackAsync(token).
-                               ConfigureAwait(false);
-
-                           throw e;
-                       }
-                   };
-               });
-        }
-
-        /// <summary>
         /// Units the of work scoped transactions asynchronous.
         /// </summary>
         /// <param name="transaction">The transaction.</param>
         /// <param name="token">The token.</param>
         public async Task UnitOfWorkScopedTransactionsAsync(
-            Func<Task> transaction,
+            Func<CancellationToken, Task> transaction,
+            CancellationToken token)
+        {
+            await ProcessTransactions(async cancellationToken =>
+                {
+                    using (var transactionScope =
+                    new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                    {
+
+                        await transaction(cancellationToken).
+                        ConfigureAwait(false);
+
+                        await SaveChangesAsync(cancellationToken);
+                        transactionScope.Complete();
+                    };
+                }, nameof(UnitOfWorkScopedTransactionsAsync), token).
+               ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Unit of Work Transactions asynchronous.
+        /// All transaction here are inside a Unit Of Work Block:
+        /// (Begin transaction) { try{ Your_Transactions; Commit; }catch(Error){ Rollback; Throw Error;} } 
+        /// </summary>
+        /// <param name="transaction">The transaction.</param>
+        /// <param name="token">The token.</param>
+        public async Task UnitOfWorkTransactionsAsync(
+            Func<DbContext, CancellationToken, Task> transaction,
+            CancellationToken token)
+        {
+            await ProcessTransactions(async cancellationToken =>
+               {
+                   using (var contextTransaction = await Context.
+                      Database.
+                      BeginTransactionAsync(cancellationToken))
+                   {
+                       try
+                       {
+                           await transaction(Context, cancellationToken).
+                                 ConfigureAwait(false);
+
+                           await contextTransaction.
+                               CommitAsync(cancellationToken).
+                               ConfigureAwait(false);
+                       }
+                       catch
+                       {
+                           await contextTransaction.
+                                RollbackAsync(cancellationToken).
+                                ConfigureAwait(false);
+
+                           throw;
+                       }
+                   };
+               }, nameof(UnitOfWorkTransactionsAsync), token).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Processes the transactions.
+        /// </summary>
+        /// <param name="transaction">The transaction.</param>
+        /// <param name="methodName">Name of the method.</param>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
+        private async Task ProcessTransactions(
+            Func<CancellationToken, Task> transaction,
+            string methodName,
             CancellationToken token)
         {
             ThrowErrorIf.
                 IsNullValue(
                     transaction,
                     nameof(transaction),
-                    nameof(UnitOfWorkScopedTransactionsAsync));
+                    methodName);
 
             var strategy = Context.
                 Database.
@@ -150,16 +174,8 @@ namespace Generic.Repository.Repository
 
             await strategy.
                 ExecuteAsync(async () =>
-                {
-                    using (var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-                    {
-
-                        await transaction().
-                        ConfigureAwait(false);
-
-                        transactionScope.Complete();
-                    };
-                });
+                    await transaction(token).ConfigureAwait(false)).
+                ConfigureAwait(false);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Generic.Repository.UnitTest.Model.DTO
+﻿namespace Generic.RepositoryTest.Unit.Model.DTO
 {
     public class FakeDTO
     {

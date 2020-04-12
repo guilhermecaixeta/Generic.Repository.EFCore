@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace Generic.Repository.UnitTest.Repository
+namespace Generic.RepositoryTest.Unit.Repository
 {
     [TestFixture]
     public abstract class BaseRepositoryExceptionTest<TValue, TFilter> : BaseRepositoryAsyncQueryTest<TValue, TFilter>

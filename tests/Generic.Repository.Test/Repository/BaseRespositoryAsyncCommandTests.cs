@@ -6,7 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace Generic.Repository.UnitTest.Repository
+namespace Generic.RepositoryTest.Unit.Repository
 {
     [TestFixture]
     public abstract class BaseRepositoryAsyncCommandTest<TValue, TFilter>
