@@ -115,7 +115,7 @@ namespace Generic.RepositoryTest.Int.Command
             var fake = FakeFactory.GetFake();
 
             await RepositoryAsync.
-                DisableAutotransactionAndBeginTransaction(_tokenDefault).
+                DisableAutotransactionAndBeginTransactionAsync(_tokenDefault).
                 ConfigureAwait(false);
 
             await RepositoryAsync.
@@ -144,7 +144,7 @@ namespace Generic.RepositoryTest.Int.Command
             fake = FakeFactory.UpdateFake(fake);
 
             await RepositoryAsync.
-                DisableAutotransactionAndBeginTransaction(_tokenDefault).
+                DisableAutotransactionAndBeginTransactionAsync(_tokenDefault).
                 ConfigureAwait(false);
 
             await RepositoryAsync.UpdateAsync(fake, _tokenDefault, true).
@@ -170,7 +170,7 @@ namespace Generic.RepositoryTest.Int.Command
             fake = await RepositoryAsync.CreateAsync(fake, _tokenDefault);
 
             await RepositoryAsync.
-                DisableAutotransactionAndBeginTransaction(_tokenDefault).
+                DisableAutotransactionAndBeginTransactionAsync(_tokenDefault).
                 ConfigureAwait(false);
 
             await RepositoryAsync.
@@ -195,7 +195,7 @@ namespace Generic.RepositoryTest.Int.Command
             var fake = FakeFactory.GetFake();
 
             await RepositoryAsync.
-                DisableAutotransactionAndBeginTransaction(_tokenDefault).
+                DisableAutotransactionAndBeginTransactionAsync(_tokenDefault).
                 ConfigureAwait(false);
 
             await RepositoryAsync.

@@ -41,7 +41,8 @@ namespace Generic.Repository.Repository
         /// </summary>
         /// <param name="token">The token.</param>
         /// <returns></returns>
-        public Task BeginTransactionAsync(CancellationToken token) =>
+        public Task BeginTransactionAsync(
+                                        CancellationToken token) =>
             Context.Database.BeginTransactionAsync(token);
 
         /// <summary>
@@ -49,7 +50,8 @@ namespace Generic.Repository.Repository
         /// </summary>
         /// <param name="token">The token.</param>
         /// <returns></returns>
-        public Task CommitAsync(CancellationToken token) =>
+        public Task CommitAsync(
+                              CancellationToken token) =>
             Task.Run(() => Context.Database.CommitTransaction(), token).
                 ContinueWith(_ =>
                 {
@@ -61,7 +63,8 @@ namespace Generic.Repository.Repository
         /// </summary>
         /// <param name="token">The token.</param>
         /// <returns></returns>
-        public Task DisableAutotransactionAndBeginTransaction(CancellationToken token)
+        public Task DisableAutotransactionAndBeginTransactionAsync(
+                                                            CancellationToken token)
         {
             Context.Database.AutoTransactionsEnabled = false;
 
@@ -72,7 +75,8 @@ namespace Generic.Repository.Repository
         /// Saves the changes and commit asynchronous.
         /// </summary>
         /// <param name="token">The token.</param>
-        public async Task SaveChangesAndCommitAsync(CancellationToken token)
+        public async Task SaveChangesAndCommitAsync(
+                                                  CancellationToken token)
         {
             await SaveChangesAsync(token).
                 ContinueWith(_ => CommitAsync(token)).
@@ -84,7 +88,8 @@ namespace Generic.Repository.Repository
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        public Task SaveChangesAsync(CancellationToken token) =>
+        public Task SaveChangesAsync(
+                                    CancellationToken token) =>
             Context.SaveChangesAsync(token);
 
         /// <summary>
@@ -92,11 +97,17 @@ namespace Generic.Repository.Repository
         /// </summary>
         /// <param name="transaction">The transaction.</param>
         /// <param name="token">The token.</param>
-        public async Task UnitOfWorkScopedTransactionsAsync(
-            Func<CancellationToken, Task> transaction,
-            CancellationToken token)
+        public Task UnitOfWorkScopedTransactionsAsync(
+                                                    Func<CancellationToken, Task> transaction,
+                                                    CancellationToken token)
         {
-            await ProcessTransactions(async cancellationToken =>
+            ThrowErrorIf.
+               IsNullValue(
+                   transaction,
+                   nameof(transaction),
+                   nameof(UnitOfWorkScopedTransactionsAsync));
+
+            return ProcessTransactionsAsync(async cancellationToken =>
                 {
                     using (var transactionScope =
                     new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
@@ -108,31 +119,114 @@ namespace Generic.Repository.Repository
                         await SaveChangesAsync(cancellationToken);
                         transactionScope.Complete();
                     };
-                }, nameof(UnitOfWorkScopedTransactionsAsync), token).
-               ConfigureAwait(false);
+                }, token);
+        }
+
+        /// <summary>
+        /// Units the of work scoped transactions asynchronous.
+        /// </summary>
+        /// <param name="transaction">The transaction.</param>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
+        public Task UnitOfWorkScopedTransactionsAsync(
+                                                    Action transaction,
+                                                    CancellationToken token)
+        {
+            ThrowErrorIf.
+               IsNullValue(
+                   transaction,
+                   nameof(transaction),
+                   nameof(UnitOfWorkScopedTransactionsAsync));
+
+            return ProcessTransactionsAsync(async cancellationToken =>
+                {
+                    using (var transactionScope =
+                    new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                    {
+
+                        transaction();
+
+                        await SaveChangesAsync(cancellationToken).
+                            ConfigureAwait(false);
+
+                        transactionScope.Complete();
+                    };
+                }, token);
         }
 
         /// <summary>
         /// Unit of Work Transactions asynchronous.
         /// All transaction here are inside a Unit Of Work Block:
-        /// (Begin transaction) { try{ Your_Transactions; Commit; }catch(Error){ Rollback; Throw Error;} } 
+        /// (Begin transaction) { try{ Your_Transactions; Commit; }catch(Error){ Rollback; Throw;} } 
         /// </summary>
         /// <param name="transaction">The transaction.</param>
         /// <param name="token">The token.</param>
-        public async Task UnitOfWorkTransactionsAsync(
-            Func<DbContext, CancellationToken, Task> transaction,
-            CancellationToken token)
+        public Task UnitOfWorkTransactionsAsync(
+                                            Func<DbContext, CancellationToken, Task> transaction,
+                                            CancellationToken token)
         {
-            await ProcessTransactions(async cancellationToken =>
+            ThrowErrorIf.
+               IsNullValue(
+                   transaction,
+                   nameof(transaction),
+                   nameof(UnitOfWorkTransactionsAsync));
+
+            return ProcessTransactionsAsync(async cancellationToken =>
+              {
+                  using (var contextTransaction = await Context.
+                     Database.
+                     BeginTransactionAsync(cancellationToken).
+                     ConfigureAwait(false))
+                  {
+                      try
+                      {
+                          await transaction(Context, cancellationToken).
+                                ConfigureAwait(false);
+
+                          await contextTransaction.
+                              CommitAsync(cancellationToken).
+                              ConfigureAwait(false);
+                      }
+                      catch
+                      {
+                          await contextTransaction.
+                               RollbackAsync(cancellationToken).
+                               ConfigureAwait(false);
+
+                          throw;
+                      }
+                  };
+              }, token);
+        }
+
+        /// <summary>
+        /// Units the of work transactions asynchronous.
+        /// All transaction here are inside a Unit Of Work Block:
+        /// (Begin transaction) { try{ Your_Transactions; Commit; }catch(Error){ Rollback; Throw;} }
+        /// </summary>
+        /// <param name="transaction">The transaction.</param>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
+        public Task UnitOfWorkTransactionsAsync(
+                                            Action<DbContext> transaction,
+                                            CancellationToken token)
+        {
+            ThrowErrorIf.
+               IsNullValue(
+                   transaction,
+                   nameof(transaction),
+                   nameof(UnitOfWorkTransactionsAsync));
+
+            return ProcessTransactionsAsync(async (cancellationToken) =>
                {
                    using (var contextTransaction = await Context.
                       Database.
-                      BeginTransactionAsync(cancellationToken))
+                      BeginTransactionAsync(cancellationToken).
+                      ConfigureAwait(false))
                    {
                        try
                        {
-                           await transaction(Context, cancellationToken).
-                                 ConfigureAwait(false);
+                           transaction(Context);
 
                            await contextTransaction.
                                CommitAsync(cancellationToken).
@@ -147,7 +241,7 @@ namespace Generic.Repository.Repository
                            throw;
                        }
                    };
-               }, nameof(UnitOfWorkTransactionsAsync), token).ConfigureAwait(false);
+               }, token);
         }
 
         /// <summary>
@@ -157,25 +251,16 @@ namespace Generic.Repository.Repository
         /// <param name="methodName">Name of the method.</param>
         /// <param name="token">The token.</param>
         /// <returns></returns>
-        private async Task ProcessTransactions(
-            Func<CancellationToken, Task> transaction,
-            string methodName,
-            CancellationToken token)
+        private Task ProcessTransactionsAsync(
+                                    Func<CancellationToken, Task> transaction,
+                                    CancellationToken token)
         {
-            ThrowErrorIf.
-                IsNullValue(
-                    transaction,
-                    nameof(transaction),
-                    methodName);
-
             var strategy = Context.
                 Database.
                 CreateExecutionStrategy();
 
-            await strategy.
-                ExecuteAsync(async () =>
-                    await transaction(token).ConfigureAwait(false)).
-                ConfigureAwait(false);
+            return strategy.
+                ExecuteAsync(() => transaction(token));
         }
     }
 }

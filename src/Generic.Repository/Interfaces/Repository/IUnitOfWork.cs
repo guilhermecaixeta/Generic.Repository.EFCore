@@ -8,13 +8,6 @@ namespace Generic.Repository.Interfaces.Repository
     public interface IUnitOfWork
     {
         /// <summary>
-        /// Disables the autotransaction and begin trnsaction.
-        /// </summary>
-        /// <param name="token">The token.</param>
-        /// <returns></returns>
-        Task DisableAutotransactionAndBeginTransaction(CancellationToken token);
-
-        /// <summary>
         /// Begins the transaction.
         /// </summary>
         /// <param name="token">The token.</param>
@@ -27,6 +20,13 @@ namespace Generic.Repository.Interfaces.Repository
         /// <param name="token">The token.</param>
         /// <returns></returns>
         Task CommitAsync(CancellationToken token);
+
+        /// <summary>
+        /// Disables the autotransaction and begin transaction asynchronous.
+        /// </summary>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
+        Task DisableAutotransactionAndBeginTransactionAsync(CancellationToken token);
 
         /// <summary>
         /// Saves the changes and commit asynchronous.
@@ -43,13 +43,13 @@ namespace Generic.Repository.Interfaces.Repository
         Task SaveChangesAsync(CancellationToken token);
 
         /// <summary>
-        /// Multis the transactions asynchronous.
+        /// Units the of work scoped transactions asynchronous.
         /// </summary>
         /// <param name="transaction">The transaction.</param>
         /// <param name="token">The token.</param>
         /// <returns></returns>
-        Task UnitOfWorkTransactionsAsync(
-            Func<DbContext, CancellationToken, Task> transaction,
+        Task UnitOfWorkScopedTransactionsAsync(
+            Func<CancellationToken, Task> transaction,
             CancellationToken token);
 
         /// <summary>
@@ -59,7 +59,31 @@ namespace Generic.Repository.Interfaces.Repository
         /// <param name="token">The token.</param>
         /// <returns></returns>
         Task UnitOfWorkScopedTransactionsAsync(
-            Func<CancellationToken, Task> transaction,
+            Action transaction,
+            CancellationToken token);
+
+        /// <summary>
+        /// Units the of work transactions asynchronous.
+        /// All transaction here are inside a Unit Of Work Block:
+        /// (Begin transaction) { try{ Your_Transactions; Commit; }catch(Error){ Rollback; Throw;} }
+        /// </summary>
+        /// <param name="transaction">The transaction.</param>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
+        Task UnitOfWorkTransactionsAsync(
+            Func<DbContext, CancellationToken, Task> transaction,
+            CancellationToken token);
+
+        /// <summary>
+        /// Unit of Work Transactions asynchronous.
+        /// All transaction here are inside a Unit Of Work Block:
+        /// (Begin transaction) { try{ Your_Transactions; Commit; }catch(Error){ Rollback; Throw;} }
+        /// </summary>
+        /// <param name="transaction">The transaction.</param>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
+        Task UnitOfWorkTransactionsAsync(
+            Action<DbContext> transaction,
             CancellationToken token);
     }
 }

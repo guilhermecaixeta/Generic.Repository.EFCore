@@ -13,11 +13,15 @@ namespace Generic.RepositoryTest.Int.Data
         /// </summary>
         public static void BaseDown()
         {
+
             using (var ctx = CreateAndGetContext())
             {
-                var list = ctx.FakeInt.AsNoTracking();
-                ctx.FakeInt.RemoveRange(list);
-                ctx.SaveChanges();
+                ctx.Database.EnsureDeleted();
+
+                // TODO: Remove this after add docker support on cake.
+                //var list = ctx.FakeInt.AsNoTracking();
+                //ctx.FakeInt.RemoveRange(list);
+                //ctx.SaveChanges();
             }
         }
 

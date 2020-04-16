@@ -66,7 +66,8 @@ namespace Generic.Repository.ThrowError
         /// <typeparam name="TException">The type of the exception.</typeparam>
         /// <param name="obj">The object.</param>
         /// <exception cref="TException"></exception>
-        public static void IsEmptyOrNullString<TException>(string obj)
+        public static void IsEmptyOrNullString<TException>(
+            string obj)
         where TException : Exception, new()
         {
             var result = !obj.IsStringNotNullOrEmpty();
@@ -79,7 +80,8 @@ namespace Generic.Repository.ThrowError
         /// <summary>Determines whether [is less than or equals zero] [the specified value].</summary>
         /// <param name="value">The value.</param>
         /// <exception cref="LessThanOrEqualsZeroException">val &lt;= 0</exception>
-        public static void IsLessThanOrEqualsZero(int value)
+        public static void IsLessThanOrEqualsZero(
+            int value)
         {
             if (value <= 0)
             {
@@ -87,10 +89,27 @@ namespace Generic.Repository.ThrowError
             }
         }
 
+        /// <summary>
+        /// Determines whether [is less than or equals zero] [the specified value].
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="nameParameter">The name parameter.</param>
+        /// <exception cref="Generic.Repository.Exceptions.LessThanOrEqualsZeroException"></exception>
+        public static void IsLessThanOrEqualsZero(
+            int value,
+            string nameParameter)
+        {
+            if (value <= 0)
+            {
+                throw new LessThanOrEqualsZeroException(nameParameter, value.ToString());
+            }
+        }
+
         /// <summary>Determines whether [is less than zero] [the specified value].</summary>
         /// <param name="value">The value.</param>
         /// <exception cref="LessThanZeroException"></exception>
-        public static void IsLessThanZero(int value)
+        public static void IsLessThanZero(
+            int value)
         {
             if (value < 0)
             {
@@ -98,14 +117,16 @@ namespace Generic.Repository.ThrowError
             }
         }
 
-        /// <summary>Determines whether [is null or empty list] [the specified object].</summary>
-        /// <typeparam name="TList">The type of the list.</typeparam>
+        /// <summary>
+        /// Determines whether [is null or empty list] [the specified object].
+        /// </summary>
+        /// <typeparam name="TClass">The type of the list.</typeparam>
         /// <param name="obj">The object.</param>
         /// <param name="nameParameter">The name parameter.</param>
         /// <param name="nameMethod">The name method.</param>
         /// <exception cref="ListNullOrEmptyException"></exception>
-        public static void IsNullOrEmptyList<TList>(
-            IEnumerable<TList> obj,
+        public static void IsNullOrEmptyList<TClass>(
+            IEnumerable<TClass> obj,
             string nameParameter,
             string nameMethod)
         {
@@ -121,7 +142,8 @@ namespace Generic.Repository.ThrowError
         /// <typeparam name="TException">The type of the exception.</typeparam>
         /// <param name="obj">The object.</param>
         /// <exception cref="TException"></exception>
-        public static void IsNullOrEmptyList<TList, TException>(IEnumerable<TList> obj)
+        public static void IsNullOrEmptyList<TList, TException>(
+            IEnumerable<TList> obj)
         where TException : Exception, new()
         {
             var result = obj.HasAny();
@@ -152,7 +174,8 @@ namespace Generic.Repository.ThrowError
         /// <typeparam name="TException">The type of the exception.</typeparam>
         /// <param name="obj">The object.</param>
         /// <exception cref="TException"></exception>
-        public static void IsNullValue<TException>(object obj)
+        public static void IsNullValue<TException>(
+            object obj)
         where TException : Exception, new()
         {
             var result = obj.IsNull();
@@ -166,7 +189,8 @@ namespace Generic.Repository.ThrowError
         /// <typeparam name="T">Type to compare</typeparam>
         /// <param name="obj">The object.</param>
         /// <exception cref="InvalidTypeException"></exception>
-        public static void IsTypeNotEquals<T>(object obj)
+        public static void IsTypeNotEquals<T>(
+            object obj)
         {
             var isTypeValid = obj.IsType<T>();
 
@@ -180,7 +204,8 @@ namespace Generic.Repository.ThrowError
         /// <typeparam name="T">Type not allowed.</typeparam>
         /// <param name="obj">The object.</param>
         /// <exception cref="InvalidTypeException"></exception>
-        public static void TypeIsNotAllowed<T>(object obj)
+        public static void TypeIsNotAllowed<T>(
+            object obj)
         {
             var isValidType = obj.IsType<T>();
             if (isValidType)
@@ -192,7 +217,9 @@ namespace Generic.Repository.ThrowError
         /// <summary>Check if cache was initialized.</summary>
         /// <param name="cacheRepository">The cache repository.</param>
         /// <exception cref="CacheNotInitializedException">ThrowErrorIf</exception>
-        internal static void HasNoCache(ICacheRepository cacheRepository, string value)
+        internal static void HasNoCache(
+            ICacheRepository cacheRepository,
+            string value)
         {
             if (cacheRepository.IsNull())
             {

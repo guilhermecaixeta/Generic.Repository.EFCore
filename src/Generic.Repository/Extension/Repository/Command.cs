@@ -97,12 +97,12 @@ namespace Generic.Repository.Extension.Repository
         /// <param name="className">Name of the class.</param>
         /// <param name="token">The token.</param>
         internal static async Task ProcessTaskAsync<TValue, TContext>(
-            IBaseRepositoryAsync<TValue, TContext> repository,
-            IEnumerable<TValue> list,
-            int chunkSize,
-            Func<IEnumerable<TValue>, CancellationToken, bool, Task> task,
-            string className,
-            CancellationToken token)
+                                                                    IBaseRepositoryAsync<TValue, TContext> repository,
+                                                                    IEnumerable<TValue> list,
+                                                                    int chunkSize,
+                                                                    Func<IEnumerable<TValue>, CancellationToken, bool, Task> task,
+                                                                    string className,
+                                                                    CancellationToken token)
             where TValue : class
             where TContext : DbContext
         {
@@ -110,25 +110,20 @@ namespace Generic.Repository.Extension.Repository
 
             ThrowErrorIf.IsNullOrEmptyList(list, nameof(list), className);
 
-            ThrowErrorIf.IsLessThanOrEqualsZero(chunkSize);
+            ThrowErrorIf.IsLessThanOrEqualsZero(chunkSize, nameof(chunkSize));
 
-            await repository.UnitOfWorkScopedTransactionsAsync(
-                async (cancellationToken) =>
+            await repository.UnitOfWorkScopedTransactionsAsync(() =>
                 {
-                    var listSplit = list.SplitList(chunkSize);
+                    var listSplited = list.SplitList(chunkSize);
 
                     var concurrentBag = new ConcurrentBag<Task>();
 
-                    foreach (var values in listSplit)
+                    foreach (var value in listSplited)
                     {
-                        concurrentBag.Add(task(values, cancellationToken, true));
+                        concurrentBag.Add(task(value, token, true));
                     }
 
-                    _ = Parallel.ForEach(concurrentBag, taskToDo =>
-                          {
-                              taskToDo.
-                               ConfigureAwait(false);
-                          });
+                    _ = Parallel.ForEach(concurrentBag, bag => bag.ConfigureAwait(false));
 
                 }, token).ConfigureAwait(false);
         }
