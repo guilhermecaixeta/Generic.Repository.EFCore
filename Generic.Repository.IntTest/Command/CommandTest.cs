@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Generic.RepositoryTest.Int.Command
 {
     //TODO: add docker support on cake build to do this tests runs.
-    //[Ignore("Need add docker support to this test.")]
+    [Ignore("Need add docker support to this test.")]
     [TestFixture]
     public class CommandTest
     {
@@ -222,6 +222,8 @@ namespace Generic.RepositoryTest.Int.Command
         [SetUp]
         public void SetUpIntTest()
         {
+            FakeFactory.Initialize();
+
             DataInjector.EnsureCreateAndMigrateBase();
 
             RepositoryAsync = DataInjector.GetRepositoryAsync();

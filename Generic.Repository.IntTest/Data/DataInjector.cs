@@ -13,7 +13,6 @@ namespace Generic.RepositoryTest.Int.Data
         /// </summary>
         public static void BaseDown()
         {
-
             using (var ctx = CreateAndGetContext())
             {
                 ctx.Database.EnsureDeleted();
@@ -38,7 +37,6 @@ namespace Generic.RepositoryTest.Int.Data
             builder.UseNpgsql(connectionString, opt =>
             {
                 opt.EnableRetryOnFailure();
-                opt.MaxBatchSize(100);
             });
 
             var context = new IntegrationContext(builder.Options);

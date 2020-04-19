@@ -106,12 +106,14 @@ namespace Generic.Repository.Cache
                 IsNullValue(method, nameof(method), nameof(ExtractMethod));
 
             var type = typeof(ICacheRepositoryFacade);
+            
             var genericMethod = type.GetMethod(nameMethod);
+            
             var genericHelper = genericMethod?.
                 MakeGenericMethod(typeof(TValue), property.PropertyType);
 
             var extractedMethod = (TReturn)genericHelper?.
-                Invoke(this, new object[] { method });
+                Invoke(this, new [] { method });
 
             return extractedMethod;
         }

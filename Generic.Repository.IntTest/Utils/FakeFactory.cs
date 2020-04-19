@@ -13,7 +13,7 @@ namespace Generic.RepositoryTest.Int.Utils
         /// <summary>
         /// The size list test
         /// </summary>
-        public const int SizeListTest = 10_000;
+        public static int SizeListTest;
 
         /// <summary>
         /// The chars
@@ -96,6 +96,15 @@ namespace Generic.RepositoryTest.Int.Utils
             {
                 yield return UpdateFake(fake);
             }
+        }
+
+        /// <summary>
+        /// Initializes the specified initial value.
+        /// </summary>
+        /// <param name="initialValue">The initial value.</param>
+        public static void Initialize(int initialValue = 1_000)
+        {
+            SizeListTest = initialValue;
         }
     }
 }

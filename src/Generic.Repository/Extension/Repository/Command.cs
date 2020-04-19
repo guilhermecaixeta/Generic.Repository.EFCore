@@ -19,22 +19,21 @@ namespace Generic.Repository.Extension.Repository
         /// <param name="list">The list.</param>
         /// <param name="chunkSize">Size of the chunk.</param>
         /// <param name="token">The token.</param>
-        public static async Task BulkDeleteAsync<TValue, TContext>(
-                                                                this IBaseRepositoryAsync<TValue, TContext> repository,
-                                                                IEnumerable<TValue> list,
-                                                                int chunkSize,
-                                                                CancellationToken token)
+        public static Task BulkDeleteAsync<TValue, TContext>(
+                                                        this IBaseRepositoryAsync<TValue, TContext> repository,
+                                                        IEnumerable<TValue> list,
+                                                        int chunkSize,
+                                                        CancellationToken token)
             where TValue : class
             where TContext : DbContext
         {
-            await ProcessTaskAsync(
+            return ProcessTaskAsync(
                     repository,
                     list,
                     chunkSize,
                     repository.DeleteAsync,
                     nameof(BulkDeleteAsync),
-                    token).
-                ConfigureAwait(false);
+                    token);
         }
 
         /// <summary>Bulks the insert asynchronous.</summary>
@@ -43,22 +42,21 @@ namespace Generic.Repository.Extension.Repository
         /// <param name="list">The list.</param>
         /// <param name="chunkSize">Size of the chunk.</param>
         /// <param name="token">The token.</param>
-        public static async Task BulkInsertAsync<TValue, TContext>(
-                                                                this IBaseRepositoryAsync<TValue, TContext> repository,
-                                                                IEnumerable<TValue> list,
-                                                                int chunkSize,
-                                                                CancellationToken token)
+        public static Task BulkInsertAsync<TValue, TContext>(
+                                                        this IBaseRepositoryAsync<TValue, TContext> repository,
+                                                        IEnumerable<TValue> list,
+                                                        int chunkSize,
+                                                        CancellationToken token)
             where TValue : class
             where TContext : DbContext
         {
-            await ProcessTaskAsync(
+            return ProcessTaskAsync(
                     repository,
                     list,
                     chunkSize,
                     repository.CreateAsync,
                     nameof(BulkInsertAsync),
-                    token).
-                ConfigureAwait(false);
+                    token);
         }
 
         /// <summary>Bulks the update asynchronous.</summary>
@@ -67,22 +65,21 @@ namespace Generic.Repository.Extension.Repository
         /// <param name="list">The list.</param>
         /// <param name="chunkSize">Size of the chunk.</param>
         /// <param name="token">The token.</param>
-        public static async Task BulkUpdateAsync<TValue, TContext>(
-                                                                this IBaseRepositoryAsync<TValue, TContext> repository,
-                                                                IEnumerable<TValue> list,
-                                                                int chunkSize,
-                                                                CancellationToken token)
+        public static Task BulkUpdateAsync<TValue, TContext>(
+                                                        this IBaseRepositoryAsync<TValue, TContext> repository,
+                                                        IEnumerable<TValue> list,
+                                                        int chunkSize,
+                                                        CancellationToken token)
             where TValue : class
             where TContext : DbContext
         {
-            await ProcessTaskAsync(
+            return ProcessTaskAsync(
                     repository,
                     list,
                     chunkSize,
                     repository.UpdateAsync,
                     nameof(BulkUpdateAsync),
-                    token).
-                ConfigureAwait(false);
+                    token);
         }
 
         /// <summary>
@@ -96,13 +93,13 @@ namespace Generic.Repository.Extension.Repository
         /// <param name="task">The task.</param>
         /// <param name="className">Name of the class.</param>
         /// <param name="token">The token.</param>
-        internal static async Task ProcessTaskAsync<TValue, TContext>(
-                                                                    IBaseRepositoryAsync<TValue, TContext> repository,
-                                                                    IEnumerable<TValue> list,
-                                                                    int chunkSize,
-                                                                    Func<IEnumerable<TValue>, CancellationToken, bool, Task> task,
-                                                                    string className,
-                                                                    CancellationToken token)
+        internal static Task ProcessTaskAsync<TValue, TContext>(
+                                                            IBaseRepositoryAsync<TValue, TContext> repository,
+                                                            IEnumerable<TValue> list,
+                                                            int chunkSize,
+                                                            Func<IEnumerable<TValue>, CancellationToken, bool, Task> task,
+                                                            string className,
+                                                            CancellationToken token)
             where TValue : class
             where TContext : DbContext
         {
@@ -112,20 +109,21 @@ namespace Generic.Repository.Extension.Repository
 
             ThrowErrorIf.IsLessThanOrEqualsZero(chunkSize, nameof(chunkSize));
 
-            await repository.UnitOfWorkScopedTransactionsAsync(() =>
+            return repository.UnitOfWorkScopedTransactionsAsync((cancellationToken) =>
                 {
-                    var listSplited = list.SplitList(chunkSize);
 
                     var concurrentBag = new ConcurrentBag<Task>();
 
-                    foreach (var value in listSplited)
+                    foreach (var value in list.SplitList(chunkSize))
                     {
-                        concurrentBag.Add(task(value, token, true));
+                        concurrentBag.Add(task(value, cancellationToken, true));
                     }
 
                     _ = Parallel.ForEach(concurrentBag, bag => bag.ConfigureAwait(false));
 
-                }, token).ConfigureAwait(false);
+                    return repository.SaveChangesAsync(cancellationToken);
+
+                }, token);
         }
     }
 }

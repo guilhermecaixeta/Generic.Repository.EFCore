@@ -8,7 +8,7 @@ namespace Generic.RepositoryTest.Unit.Cache
         : CacheRepositoryExceptionTest<T>
         where T : class
     {
-        private const int MaxIterations = 10;
+        private const int MaxIterations = 5;
 
         [Test]
         public async Task CacheAccess_Input_Stress()
@@ -53,15 +53,12 @@ namespace Generic.RepositoryTest.Unit.Cache
         [Test]
         public async Task CacheAccess_Output_Stress()
         {
-            var valid = true;
 
             void CheckIfIsValid(object result)
             {
-                if (!valid)
-                {
-                    return;
-                }
-                valid = result != null;
+                var valid = result != null;
+
+                Assert.IsTrue(valid);
             }
 
             for (var j = 0; j <= MaxIterations; j++)
@@ -77,48 +74,56 @@ namespace Generic.RepositoryTest.Unit.Cache
                         {
                             var @task = Task.Run(async () =>
                             {
-                                var result = await Cache.GetMethodGet(NameType, NameProperty, default).ConfigureAwait(false);
+                                var result = await Cache.
+                                    GetMethodGet(NameType, NameProperty, default).
+                                    ConfigureAwait(false);
                                 CheckIfIsValid(result);
                             });
                             listTaskIO.Add(@task);
 
                             @task = Task.Run(async () =>
                             {
-                                var result = await Cache.GetMethodSet(NameType, NameProperty, default).ConfigureAwait(false);
+                                var result = await Cache.
+                                    GetMethodSet(NameType, NameProperty, default).
+                                    ConfigureAwait(false);
                                 CheckIfIsValid(result);
                             });
                             listTaskIO.Add(@task);
 
                             @task = Task.Run(async () =>
                             {
-                                var result = await Cache.GetProperty(NameType, NameProperty, default).ConfigureAwait(false);
+                                var result = await Cache.
+                                    GetProperty(NameType, NameProperty, default).
+                                    ConfigureAwait(false);
                                 CheckIfIsValid(result);
                             });
                             listTaskIO.Add(@task);
 
                             @task = Task.Run(async () =>
                             {
-                                var result = await Cache.GetAttribute(NameType, NameProperty, NameAttribute, default).ConfigureAwait(false);
+                                var result = await Cache.
+                                    GetAttribute(NameType, NameProperty, NameAttribute, default).
+                                    ConfigureAwait(false);
                                 CheckIfIsValid(result);
                             });
                             listTaskIO.Add(@task);
                         }
 
-                        await Task.WhenAll(listTaskIO).ConfigureAwait(false);
+                        await Task.
+                            WhenAll(listTaskIO).
+                            ConfigureAwait(false);
                     });
 
                     scheduledListTask.Add(mainTask);
                 }
                 catch
                 {
-                    valid = false;
                     throw;
                 }
 
-                await Task.WhenAll(scheduledListTask).ConfigureAwait(false);
+                await Task.WhenAll(scheduledListTask).
+                    ConfigureAwait(false);
             }
-
-            Assert.IsTrue(valid);
         }
     }
 }
