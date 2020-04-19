@@ -34,15 +34,11 @@ namespace Generic.Repository.Models.PageAggregation
             Cache = cache;
             PageConfig = config;
             ListEntities = listEntities;
-            Count = listEntities.Count();
 
             Sort = PageConfig.Sort.ToString();
             NumberPage = PageConfig.Page;
             Order = PageConfig.Order;
             Size = PageConfig.Size;
-            TotalElements = Count;
-
-            TotalPage = TotalElements / Size;
         }
 
         #region PARAMETERS CTOR
@@ -98,8 +94,14 @@ namespace Generic.Repository.Models.PageAggregation
             var result = await GetQueryable(token).
                 ConfigureAwait(false);
 
-            return await result.ToListAsync(token).
+            var list = await result.ToListAsync(token).
                 ConfigureAwait(false);
+
+            TotalElements = list.Count;
+
+            TotalPage = TotalElements / Size;
+
+            return list;
         }
 
         protected async Task<IQueryable<TIn>> GetQueryable(CancellationToken token)

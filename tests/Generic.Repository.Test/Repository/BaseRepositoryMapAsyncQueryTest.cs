@@ -98,7 +98,7 @@ namespace Generic.RepositoryTest.Unit.Repository
                 ConfigureAwait(false);
 
             Assert.IsNotNull(page);
-            Assert.AreEqual(ComparablePageFilterResult, page.Content.Count);
+            Assert.AreEqual(ComparablePageFilterResult, page.TotalElements);
         }
 
         [Test]

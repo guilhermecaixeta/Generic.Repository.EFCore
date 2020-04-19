@@ -37,7 +37,9 @@ namespace Generic.RepositoryTest.Unit.Repository
         [Test]
         public async Task CountAsync_Success()
         {
-            var count = await Repository.CountAsync(default).ConfigureAwait(false);
+            var count = await Repository.
+                CountAsync(default).
+                ConfigureAwait(false);
 
             Assert.AreEqual(ComparableListLength, count);
         }

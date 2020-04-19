@@ -84,8 +84,7 @@ namespace Generic.Repository.Repository
                 nameof(predicate),
                 nameof(CountAsync));
 
-            await CreateQuery(true, token).
-                ConfigureAwait(false);
+            CreateQuery(true, token);
 
             return await Query.
                 CountAsync(predicate, token).
@@ -95,8 +94,7 @@ namespace Generic.Repository.Repository
         public virtual async Task<int> CountAsync(
                                                 CancellationToken token)
         {
-            await CreateQuery(true, token).
-                ConfigureAwait(false);
+            CreateQuery(true, token);
 
             return await Query.
                 CountAsync(token).
@@ -109,7 +107,7 @@ namespace Generic.Repository.Repository
         /// <param name="parameters">The parameters.</param>
         /// <returns></returns>
         public virtual async Task<TValue> FindAsync(
-                                                    params object[] parameters)
+                                                  params object[] parameters)
         {
             ThrowErrorIf.
                 IsNullValue(parameters, nameof(parameters), nameof(FindAsync));
@@ -171,8 +169,7 @@ namespace Generic.Repository.Repository
                     nameof(predicate),
                     nameof(GetFirstOrDefaultAsync));
 
-            await CreateQuery(notTracking, token).
-                ConfigureAwait(false);
+            CreateQuery(notTracking, token);
 
             return await Query.
                 FirstOrDefaultAsync(predicate, token).
@@ -197,8 +194,7 @@ namespace Generic.Repository.Repository
                     nameof(predicate),
                     nameof(GetSingleOrDefaultAsync));
 
-            await CreateQuery(notTracking, token).
-                ConfigureAwait(false);
+            CreateQuery(notTracking, token);
 
             return await Query.
                 SingleOrDefaultAsync(predicate, token).
@@ -240,15 +236,10 @@ namespace Generic.Repository.Repository
                                                             bool notTracking,
                                                             CancellationToken token)
         {
-            var result = await CreateQuery(notTracking, token).
-                ContinueWith(_ =>
-                {
-                    return Query.
-                        ToListAsync(token);
-                }).
-                ConfigureAwait(false);
+            CreateQuery(notTracking, token);
 
-            return await result.
+            return await Query.
+                ToListAsync(token).
                 ConfigureAwait(false);
         }
 
@@ -264,18 +255,13 @@ namespace Generic.Repository.Repository
                                                                     bool notTracking,
                                                                     CancellationToken token)
         {
-            var result = await CreateQueryFiltered(
-                    predicate,
-                    notTracking,
-                    token).
-                ContinueWith(_ =>
-                   {
-                       return Query.
-                           ToListAsync(token);
-                   }).
-                ConfigureAwait(false);
+            CreateQueryFiltered(
+                   predicate,
+                   notTracking,
+                   token);
 
-            return await result.
+            return await Query.
+                ToListAsync(token).
                 ConfigureAwait(false);
         }
 
@@ -284,19 +270,19 @@ namespace Generic.Repository.Repository
         /// </summary>
         /// <param name="notTracking">if set to <c>true</c> [not tracking].</param>
         /// <param name="token">The token.</param>
-        internal Task CreateQuery(
+        internal void CreateQuery(
                                 bool notTracking,
-                                CancellationToken token) =>
-            InitializeCache(token).
-                ContinueWith(_ =>
-            {
-                if (notTracking)
-                {
-                    Query = Query.AsNoTracking();
-                }
+                                CancellationToken token)
+        {
+            InitializeCache<TValue>(token);
 
-                Query = SetIncludes(Query);
-            });
+            if (notTracking)
+            {
+                Query = Query.AsNoTracking();
+            }
+
+            Query = SetIncludes(Query);
+        }
 
         /// <summary>
         /// Creates the query filtered.
@@ -304,34 +290,28 @@ namespace Generic.Repository.Repository
         /// <param name="predicate">The predicate.</param>
         /// <param name="notTracking">if set to <c>true</c> [not tracking].</param>
         /// <param name="token">The token.</param>
-        internal Task CreateQueryFiltered(
+        internal void CreateQueryFiltered(
                                         Expression<Func<TValue, bool>> predicate,
                                         bool notTracking,
-                                        CancellationToken token) =>
-                 CreateQuery(notTracking, token).
-                        ContinueWith(_ =>
-                        {
-                            Query = Query.Where(predicate);
-                        });
+                                        CancellationToken token)
+        {
+            CreateQuery(notTracking, token);
+
+            Query = Query.Where(predicate);
+        }
 
         /// <summary>
         /// Initializes the cache.
         /// </summary>
         /// <param name="token">The token.</param>
-        protected virtual async Task InitializeCache(
+        protected virtual void InitializeCache<TCacheValue>(
                                                     CancellationToken token)
         {
-            await CacheService.AddGet<TValue>(token).
-                ConfigureAwait(false);
-
-            await CacheService.AddSet<TValue>(token).
-                ConfigureAwait(false);
-
-            await CacheService.AddProperty<TValue>(token).
-                ConfigureAwait(false);
-
-            await CacheService.AddAttribute<TValue>(token).
-                ConfigureAwait(false);
+            Parallel.Invoke(
+                () => CacheService.AddGet<TCacheValue>(token),
+                () => CacheService.AddSet<TCacheValue>(token),
+                () => CacheService.AddProperty<TCacheValue>(token),
+                () => CacheService.AddAttribute<TCacheValue>(token));
         }
 
         #endregion INTERNAL - SET QUERY

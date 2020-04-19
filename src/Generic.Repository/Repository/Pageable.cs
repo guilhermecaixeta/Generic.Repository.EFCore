@@ -28,7 +28,7 @@ namespace Generic.Repository.Repository
         {
             ThrowErrorIf.IsNullValue(config, nameof(config), nameof(GetPageAsync));
 
-            await CreateQuery(notTracking, token).ConfigureAwait(false);
+            CreateQuery(notTracking, token);
 
             return await Query.ToPage(CacheService, config, token).
                     ConfigureAwait(false);
@@ -46,7 +46,7 @@ namespace Generic.Repository.Repository
             ThrowErrorIf.
                 IsNullValue(predicate, nameof(predicate), nameof(GetPageAsync));
 
-            await CreateQueryFiltered(predicate, notTracking, token).ConfigureAwait(false);
+            CreateQueryFiltered(predicate, notTracking, token);
 
             return await Query.ToPage(CacheService, config, token).
                     ConfigureAwait(false);
@@ -69,7 +69,7 @@ namespace Generic.Repository.Repository
         {
             ThrowErrorIf.IsNullValue(config, nameof(config), nameof(GetPageAsync));
 
-            await CreateQuery(notTracking, token).ConfigureAwait(false);
+            CreateQuery(notTracking, token);
 
             return await Query.ToPageFiltered<TValue, TFilter>(CacheService, config, token).
                     ConfigureAwait(false);
@@ -87,7 +87,7 @@ namespace Generic.Repository.Repository
             ThrowErrorIf.
                 IsNullValue(predicate, nameof(predicate), nameof(GetPageAsync));
 
-            await CreateQueryFiltered(predicate, notTracking, token).ConfigureAwait(false);
+            CreateQueryFiltered(predicate, notTracking, token);
 
             return await Query.ToPageFiltered<TValue, TFilter>(CacheService, config, token).
                     ConfigureAwait(false);
@@ -107,7 +107,7 @@ namespace Generic.Repository.Repository
 
             var predicate = await filter.CreateGenericFilter<TValue, TFilter>(CacheService, token);
 
-            await CreateQueryFiltered(predicate, notTracking, token).ConfigureAwait(false);
+            CreateQueryFiltered(predicate, notTracking, token);
 
             return await Query.
                     ToPageFiltered<TValue, TFilter>(CacheService, config, token).
