@@ -11,17 +11,29 @@ namespace Generic.Repository.Repository
         where TValue : class
         where TContext : DbContext
     {
-        protected CommandAsync(TContext context, ICacheRepository cacheService)
-            : base(context, cacheService)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CommandAsync{TValue, TContext}"/> class.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <param name="cacheService">The cache service.</param>
+        protected CommandAsync(TContext context, ICacheRepository cacheService) : 
+            base(context, cacheService)
         {
         }
 
         #region COMMAND - (CREAT, UPDATE, DELETE) With CancellationToken
 
+        /// <summary>
+        /// Creates the asynchronous.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        /// <param name="token">The token.</param>
+        /// <param name="useUnitOfWork">if set to <c>true</c> [use unit of work].</param>
+        /// <returns></returns>
         public virtual async Task<TValue> CreateAsync(
-            TValue entity,
-            CancellationToken token,
-            bool useUnitOfWork = false)
+                                                TValue entity,
+                                                CancellationToken token,
+                                                bool useUnitOfWork = false)
         {
             ThrowErrorIf.
                 IsNullValue(entity, nameof(entity), nameof(CreateAsync));
@@ -36,10 +48,16 @@ namespace Generic.Repository.Repository
             return entity;
         }
 
+        /// <summary>
+        /// Creates the asynchronous.
+        /// </summary>
+        /// <param name="entityList">The entity list.</param>
+        /// <param name="token">The token.</param>
+        /// <param name="useUnitOfWork">if set to <c>true</c> [use unit of work].</param>
         public virtual async Task CreateAsync(
-            IEnumerable<TValue> entityList,
-            CancellationToken token,
-            bool useUnitOfWork = false)
+                                        IEnumerable<TValue> entityList,
+                                        CancellationToken token,
+                                        bool useUnitOfWork = false)
         {
             ThrowErrorIf.
                 IsNullOrEmptyList(
@@ -55,10 +73,17 @@ namespace Generic.Repository.Repository
                 ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Deletes the asynchronous.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        /// <param name="token">The token.</param>
+        /// <param name="useUnitOfWork">if set to <c>true</c> [use unit of work].</param>
+        /// <returns></returns>
         public virtual Task DeleteAsync(
-            TValue entity,
-            CancellationToken token,
-            bool useUnitOfWork = false)
+                                    TValue entity,
+                                    CancellationToken token,
+                                    bool useUnitOfWork = false)
         {
             ThrowErrorIf.
                 IsNullValue(
@@ -71,10 +96,17 @@ namespace Generic.Repository.Repository
             return SaveChangesAsync(useUnitOfWork, token);
         }
 
+        /// <summary>
+        /// Deletes the asynchronous.
+        /// </summary>
+        /// <param name="entityList">The entity list.</param>
+        /// <param name="token">The token.</param>
+        /// <param name="useUnitOfWork">if set to <c>true</c> [use unit of work].</param>
+        /// <returns></returns>
         public virtual Task DeleteAsync(
-            IEnumerable<TValue> entityList,
-            CancellationToken token,
-            bool useUnitOfWork = false)
+                                    IEnumerable<TValue> entityList,
+                                    CancellationToken token,
+                                    bool useUnitOfWork = false)
         {
             ThrowErrorIf.
                 IsNullOrEmptyList(
@@ -87,10 +119,17 @@ namespace Generic.Repository.Repository
             return SaveChangesAsync(useUnitOfWork, token);
         }
 
+        /// <summary>
+        /// Updates the asynchronous.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        /// <param name="token">The token.</param>
+        /// <param name="useUnitOfWork">if set to <c>true</c> [use unit of work].</param>
+        /// <returns></returns>
         public virtual Task UpdateAsync(
-            TValue entity,
-            CancellationToken token,
-            bool useUnitOfWork = false)
+                                    TValue entity,
+                                    CancellationToken token,
+                                    bool useUnitOfWork = false)
         {
             ThrowErrorIf.
                 IsNullValue(
@@ -104,10 +143,17 @@ namespace Generic.Repository.Repository
             return SaveChangesAsync(useUnitOfWork, token);
         }
 
+        /// <summary>
+        /// Updates the asynchronous.
+        /// </summary>
+        /// <param name="entityList">The entity list.</param>
+        /// <param name="token">The token.</param>
+        /// <param name="useUnitOfWork">if set to <c>true</c> [use unit of work].</param>
+        /// <returns></returns>
         public virtual Task UpdateAsync(
-            IEnumerable<TValue> entityList,
-            CancellationToken token,
-            bool useUnitOfWork = false)
+                                    IEnumerable<TValue> entityList,
+                                    CancellationToken token,
+                                    bool useUnitOfWork = false)
         {
             ThrowErrorIf.
                 IsNullOrEmptyList(
@@ -127,8 +173,8 @@ namespace Generic.Repository.Repository
         /// <param name="token">The token.</param>
         /// <returns></returns>
         private async Task SaveChangesAsync(
-            bool useUnitOfWork,
-            CancellationToken token)
+                                        bool useUnitOfWork,
+                                        CancellationToken token)
         {
             if (!useUnitOfWork)
             {

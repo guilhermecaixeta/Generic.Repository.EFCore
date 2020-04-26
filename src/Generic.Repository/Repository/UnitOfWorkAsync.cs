@@ -1,5 +1,6 @@
 ﻿using Generic.Repository.ThrowError;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -138,16 +139,13 @@ namespace Generic.Repository.Repository
                    nameof(transaction),
                    nameof(UnitOfWorkScopedTransactionsAsync));
 
-            return ProcessTransactionsAsync(async cancellationToken =>
+            return ProcessTransactionsAsync(() =>
                 {
                     using (var transactionScope =
                     new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
                     {
 
                         transaction();
-
-                        await SaveChangesAsync(cancellationToken).
-                            ConfigureAwait(false);
 
                         transactionScope.Complete();
                     };
@@ -253,14 +251,29 @@ namespace Generic.Repository.Repository
         /// <returns></returns>
         private Task ProcessTransactionsAsync(
                                     Func<CancellationToken, Task> transaction,
-                                    CancellationToken token)
-        {
-            var strategy = Context.
+                                    CancellationToken token) =>
+            ExecutionStrategy
+                .ExecuteAsync(cancellationToken => transaction(cancellationToken), token);
+
+        /// <summary>
+        /// Processes the transactions asynchronous.
+        /// </summary>
+        /// <param name="transaction">The transaction.</param>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
+        private Task ProcessTransactionsAsync(
+                                    Action transaction,
+                                    CancellationToken token) =>
+            ExecutionStrategy
+                .ExecuteAsync(cancellationToken => Task.Run(() => transaction(), cancellationToken), token);
+
+        /// <summary>
+        /// Gets the execution strategy.
+        /// </summary>
+        /// <returns></returns>
+        private IExecutionStrategy ExecutionStrategy =>
+            Context.
                 Database.
                 CreateExecutionStrategy();
-
-            return strategy.
-                ExecuteAsync(() => transaction(token));
-        }
     }
 }
